@@ -1,8 +1,16 @@
 # Skills
 
-Agent-Driven Skills for AI-Native development. Learn more about the open standard at [Agent Skills](https://agentskills.io/home).
+Agent-Driven Skills for **AI-Native** development. Learn more about the open standard at [Agent Skills](https://agentskills.io/home).
 
-**Sync Upstream**
+## Overview
+
+- `emil-design-eng` — UI polish and animation philosophy
+- `motion-engine` — performant animations with CSS, WAAPI, and Motion.dev
+- `perf-audit` — Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
+- `typescript-magician` — complex generics, type guards, and strict typing
+- `triage` — issue and PR triage state machine
+
+### Sync Upstream
 
 `MANIFEST.yaml` tracks upstream sources. `sync.sh` diffs your local copy against them — review before applying.
 
@@ -13,7 +21,7 @@ Agent-Driven Skills for AI-Native development. Learn more about the open standar
 ./sync.sh <skill> --apply          # fetch + overwrite single skill + update MANIFEST
 ```
 
-## Beyond Skills
+## Extended Layer
 
-- [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp) (MCP)
-- [MDN](https://github.com/mdn/mcp) (MCP)
+- MCP — [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- MCP — [MDN](https://github.com/mdn/mcp)
