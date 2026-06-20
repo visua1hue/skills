@@ -2,6 +2,7 @@
 name: council
 description: Spawn a "council" of parallel read-only subagents to deeply explore an area of the codebase, then synthesize their findings before acting or planning. Reach for this whenever you need to UNDERSTAND code rather than just edit it — mapping an unfamiliar subsystem, tracing how something works end to end, hunting down where a confusing bug or error actually originates, auditing everything that touches a feature, or grounding a refactor/design plan in what the code really does. Trigger it even when the user doesn't say "council" or "subagents" — phrases like "how does X work", "where is X used", "investigate this error", "map out", "trace", "audit", or "plan a refactor of X" are strong signals. Skip it for trivial single-file lookups that one Read or Grep already answers, and note that it's for *understanding* code, not for dividing up implementation work — don't reach for it just because a request mentions agents or parallelism.
 allowed-tools: Task, Read, Glob, Grep, LS
+disable-model-invocation: true
 ---
 
 You are orchestrating a *council*: several subagents investigate one area in parallel, each from a different angle, and you fuse their reports into a single grounded picture. The point is breadth and variance — many independent looks catch things a single linear pass misses — without you personally reading the whole codebase one file at a time.

@@ -4,10 +4,20 @@ Agent-Driven Skills for **AI-Native** development. Learn more about the open sta
 
 ## Overview
 
+Skills activate in one of two ways:
+
+- **Model-invoked** — Claude reads the skill's `description` and activates it automatically when your request matches. No command needed.
+- **User-invoked** — you trigger it explicitly (e.g. `/council`); it sets `disable-model-invocation: true` so Claude won't auto-run it.
+
+### Model-invoked
+
 - [emil-design-eng](emil-design-eng/): UI polish and animation philosophy — by [Emil Kowalski](https://github.com/emilkowalski)
 - [motion-engine](motion-engine/): performant animations with CSS, WAAPI, and Motion.dev
 - [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
 - [typescript-magician](typescript-magician/): complex generics, type guards, and strict typing — by [Matt Pocock](https://github.com/mattpocock)
+
+### User-invoked
+
 - [council](council/): parallel read-only subagents that investigate a codebase area, then synthesize findings
 - [triage](triage/): GitHub issue and PR triage state machine
 
