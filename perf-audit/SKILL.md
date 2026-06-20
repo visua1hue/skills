@@ -1,5 +1,5 @@
 ---
-name: web-perf
+name: perf-audit
 description: Analyzes web performance using Chrome DevTools MCP. Measures Core Web Vitals (LCP, INP, CLS) and supplementary metrics (FCP, TBT, Speed Index), identifies render-blocking resources, network dependency chains, layout shifts, caching issues, and accessibility gaps. Use when asked to audit, profile, debug, or optimize page load performance, Lighthouse scores, or site speed. Biases towards retrieval from current documentation over pre-trained knowledge.
 ---
 
@@ -44,9 +44,9 @@ Ask the user to add this to their MCP config:
 | Load page | `navigate_page(url: "...")` |
 | Start trace | `performance_start_trace(autoStop: true, reload: true)` |
 | Analyze insight | `performance_analyze_insight(insightSetId: "...", insightName: "...")` |
+| Lighthouse audit | `lighthouse_audit(url: "...", categories: ["performance"])` |
 | List requests | `list_network_requests(resourceTypes: ["Script", "Stylesheet", ...])` |
 | Request details | `get_network_request(reqid: <id>)` |
-| A11y snapshot | `take_snapshot(verbose: true)` |
 
 ## Workflow
 
@@ -75,6 +75,11 @@ Audit Progress:
 
 3. Wait for trace completion, then retrieve results.
 
+4. Optionally run Lighthouse for a scored summary:
+   ```
+   lighthouse_audit(url: "<target-url>", categories: ["performance"])
+   ```
+
 **Troubleshooting:**
 - If trace returns empty or fails, verify the page loaded correctly with `navigate_page` first
 - If insight names don't match, inspect the trace response to list available insights
@@ -90,10 +95,11 @@ Common insight names:
 | Metric | Insight Name | What to Look For |
 |--------|--------------|------------------|
 | LCP | `LCPBreakdown` | Time to largest contentful paint; breakdown of TTFB, resource load, render delay |
+| INP | `INPBreakdown` | Interaction delay; breakdown of input delay, processing time, presentation delay |
 | CLS | `CLSCulprits` | Elements causing layout shifts (images without dimensions, injected content, font swaps) |
 | Render Blocking | `RenderBlocking` | CSS/JS blocking first paint |
 | Document Latency | `DocumentLatency` | Server response time issues |
-| Network Dependencies | `NetworkRequestsDepGraph` | Request chains delaying critical resources |
+| Network Dependencies | `NetworkDependencyTree` | Request chains delaying critical resources |
 
 Example:
 ```
@@ -130,18 +136,9 @@ For detailed request info:
 get_network_request(reqid: <id>)
 ```
 
-### Phase 4: Accessibility Snapshot
+### Phase 4: Accessibility
 
-Take an accessibility tree snapshot:
-```
-take_snapshot(verbose: true)
-```
-
-**Flag high-level gaps:**
-- Missing or duplicate ARIA IDs
-- Elements with poor contrast ratios (check against WCAG AA: 4.5:1 for normal text, 3:1 for large text)
-- Focus traps or missing focus indicators
-- Interactive elements without accessible names
+For a11y auditing, invoke `chrome-devtools-mcp:a11y-debugging`.
 
 ## Phase 5: Codebase Analysis
 
