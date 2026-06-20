@@ -1,9 +1,9 @@
 upstreams:
-  triage:
-    url: ~
+  typescript-magician:
+    url: https://raw.githubusercontent.com/mcollina/skills/main/skills/typescript-magician/SKILL.md
     last_synced: ~
     sha: ~
-  typescript-magician:
-    url: ~
+  emil-design-eng:
+    url: https://raw.githubusercontent.com/emilkowalski/skills/main/skills/emil-design-eng/SKILL.md
     last_synced: ~
     sha: ~
