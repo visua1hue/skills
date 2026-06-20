@@ -1,6 +1,6 @@
 ---
 name: motion-engine
-description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use this skill whenever animations need to be implemented, reviewed for performance, debugged for jank, or optimized for Core Web Vitals. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, animation orchestration, or reduced motion handling. This skill owns the execution layer — pair it with a design taste skill (like emil-design-eng) for animation decision-making.
+description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use this skill whenever animations need to be implemented, debugged for jank, or optimized for Core Web Vitals. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, animation orchestration, or reduced motion handling. This skill owns the execution layer — pair it with a design taste skill (like emil-design-eng) for animation decision-making.
 ---
 
 # Motion Engine
@@ -91,7 +91,7 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 | 2    | CSS Keyframes + `animation-timeline` | Scroll-driven animations. Zero JS, full compositor. Gate with `@supports`.                                                    |
 | 3    | WAAPI                                | Programmatic control, single element. Hardware-accelerated, no library needed.                                                |
 | 4    | Motion.dev                           | Orchestration, stagger, sequencing, scroll fallbacks. Thin WAAPI wrapper.                                                     |
-| 5    | Framer Motion springs                | Drag, gesture, interruptible physics. Shorthand props (`x`, `y`) are NOT hardware-accelerated — use full `transform` strings. |
+| 5    | Motion springs                       | Drag, gesture, interruptible physics. Shorthand props (`x`, `y`) are NOT hardware-accelerated — use full `transform` strings. |
 
 **Key rules across all tiers:**
 
@@ -162,7 +162,7 @@ Performance-focused review. Taste-level checks (easing selection, duration choic
 | Hardcoded values in JS               | Read from CSS custom properties                  | Design system is the single source of truth    |
 | Missing `prefers-reduced-motion`     | Add media query + JS check                       | Accessibility requirement                      |
 | Hover without `(hover: hover)` query | Gate behind media query                          | False-positive hover on touch devices          |
-| Framer Motion `x`/`y`/`scale` props  | Use `transform: "translateX()"`                  | Shorthand is not hardware-accelerated          |
+| Motion `x`/`y`/`scale` props         | Use `transform: "translateX()"`                  | Shorthand is not hardware-accelerated          |
 | CSS var update during drag           | Set `transform` directly                         | Variable inheritance recalculates all children |
 | `useEffect` + `setMounted` for entry | Use `@starting-style`                            | CSS-native, no extra render cycle              |
 | Focus ring animated                  | Animate element background/shadow instead        | Focus indicator triggers paint                 |

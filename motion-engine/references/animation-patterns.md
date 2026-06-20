@@ -135,12 +135,12 @@ inView("[data-motion-scroll]", (el) => {
 
 Use Motion.dev when you need to coordinate multiple elements, build a preset system, or provide WAAPI-based fallbacks for CSS scroll timeline. For a single element with no orchestration, raw WAAPI (Tier 3) is sufficient.
 
-## Tier 5: Spring Physics (Framer Motion)
+## Tier 5: Spring Physics (Motion)
 
 For drag interactions, gesture-driven animation, and elements that need to feel physically alive. Springs don't have fixed durations — they settle based on physical parameters, making them ideal for interruptible gestures.
 
 ```tsx
-import { motion, useSpring } from "framer-motion";
+import { motion, useSpring } from "motion";
 
 // Spring-based drag
 <motion.div
@@ -153,7 +153,7 @@ import { motion, useSpring } from "framer-motion";
 const springX = useSpring(mouseX, { stiffness: 100, damping: 10 });
 ```
 
-**Critical caveat:** Framer Motion's shorthand properties (`x`, `y`, `scale`) use `requestAnimationFrame` on the main thread and are NOT hardware-accelerated. Under load (page transitions, heavy rendering), they drop frames. Use the full `transform` string for hardware acceleration:
+**Critical caveat:** Motion's shorthand properties (`x`, `y`, `scale`) use `requestAnimationFrame` on the main thread and are NOT hardware-accelerated. Under load (page transitions, heavy rendering), they drop frames. Use the full `transform` string for hardware acceleration:
 
 ```tsx
 // Drops frames under load
