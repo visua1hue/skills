@@ -12,11 +12,14 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      # written outside the repo so `git add -A` never commits it
+      SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
     steps:
       - uses: actions/checkout@v4
 
       - name: fetch upstream changes
-        run: ./sync.sh --apply
+        run: ./sync.sh
 
       - name: check for changes
         id: diff
@@ -41,7 +44,9 @@ jobs:
           if [[ "$open_prs" == "0" ]]; then
             gh pr create \
               --title "chore: sync upstream skills" \
-              --body "Automated upstream sync. Review diffs before merging." \
+              --body-file "$SYNC_SUMMARY" \
               --base main \
               --head "$branch"
+          else
+            gh pr edit "$branch" --body-file "$SYNC_SUMMARY"
           fi

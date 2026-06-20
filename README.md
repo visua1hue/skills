@@ -10,15 +10,23 @@ Agent-Driven Skills for **AI-Native** development. Learn more about the open sta
 - [typescript-magician](typescript-magician/): complex generics, type guards, and strict typing — by [Matt Pocock](https://github.com/mattpocock)
 - [triage](triage/): GitHub issue and PR triage state machine
 
-### Sync Upstream
+### Validate
 
-`MANIFEST.yaml` tracks upstream sources. `sync.sh` diffs your local copy against them — review before applying.
+`lint.sh` checks every skill against the SKILL.md spec — runs in CI on each PR, or locally:
 
 ```bash
-./sync.sh                          # dry-run all upstreams — show what changed
-./sync.sh --apply                  # fetch + overwrite all upstreams + update MANIFEST
-./sync.sh <skill>                  # dry-run a single skill
-./sync.sh <skill> --apply          # fetch + overwrite single skill + update MANIFEST
+./lint.sh                          # lint all (name, description, format)
+```
+
+### Sync Upstream
+
+`MANIFEST.yaml` tracks upstream sources. `sync.sh` overwrites your local copy from them — use `--diff` to review first.
+
+```bash
+./sync.sh                          # sync all upstreams + update MANIFEST
+./sync.sh --diff                   # dry-run all — show what would change (new/changed/removed)
+./sync.sh <skill>                  # sync a single skill
+./sync.sh <skill> --diff           # dry-run a single skill
 ```
 
 ## Extended Layer
