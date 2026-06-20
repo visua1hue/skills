@@ -1,6 +1,6 @@
 # Skills
 
-Agent-Driven Skills for AI-Native development. Learn more at [agentskills.io](https://agentskills.io/home).
+Agent-Driven Skills for AI-Native development. Learn more about the open standard at [Agent Skills](https://agentskills.io/home).
 
 **Sync Upstream**
 
