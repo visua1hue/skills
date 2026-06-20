@@ -148,9 +148,69 @@ In JavaScript, check `window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 Never block user interaction during stagger animations. Stagger is decorative — all elements must be interactive immediately. Keep stagger delays short (30–80ms between items).
 
+## Review Mode
+
+When asked to review animation code, adopt this posture and output format.
+
+**Posture:** default to flagging — approval is earned, not assumed. A transition that "works" but feels sluggish, fires too often, or drops frames is a regression, not a pass.
+
+### Output format
+
+**Part 1 — Findings table** (always present):
+
+| Before | After | Why |
+| --- | --- | --- |
+| `transition: all 300ms` | `transition: transform 200ms ease-out` | `all` animates layout-triggering properties off-GPU |
+
+**Part 2 — Verdict**, grouped by impact tier (omit empty tiers):
+
+1. **Feel-breaking regressions** — sluggish easing, comes-from-nowhere, fires on high-frequency/keyboard actions
+2. **Missed simplifications** — animations that should be removed or drastically reduced
+3. **Performance** — non-GPU properties, dropped-frame risks, recalc storms
+4. **Interruptibility & timing** — keyframes where transitions/springs belong; symmetric timing that should be asymmetric
+5. **Origin, physicality & cohesion** — wrong transform-origin, mismatched personality
+6. **Accessibility** — missing reduced-motion or hover gating
+
+Close with an explicit decision:
+- **Block** — any feel-breaking regression, animation on keyboard/high-frequency action, `scale(0)`/`ease-in` on UI, non-GPU animation with an easy fix
+- **Approve** — no feel-breaking regressions, durations and easing within bounds, interruptibility handled, reduced-motion respected
+
+### Remedial hierarchy
+
+When proposing fixes, prefer earlier moves:
+
+1. Delete the animation (high-frequency / no purpose / keyboard-triggered)
+2. Reduce it — shorter duration, smaller transform, fewer properties
+3. Fix the easing — swap `ease-in` → `ease-out` / custom curve
+4. Fix origin/physicality — correct `transform-origin`; replace `scale(0)` with `scale(0.95)` + opacity
+5. Make it interruptible — keyframes → transitions, or a spring for gesture-driven motion
+6. Move it to the GPU — layout props → `transform`/`opacity`; WAAPI for programmatic CSS
+7. Asymmetric timing — slow the deliberate phase, snap the response
+8. Polish — blur crossfades, stagger groups, `@starting-style` for entry
+9. Accessibility & cohesion — reduced-motion + hover gating; tune to component personality
+
+### Escalation triggers
+
+Flag these immediately:
+
+- `transition: all`
+- `scale(0)` or pure-fade with no initial transform
+- `ease-in` on any UI interaction
+- Animation on keyboard shortcut or 100+/day action
+- UI duration > 300ms with no justification
+- `transform-origin: center` on a trigger-anchored popover/dropdown/tooltip
+- Keyframes on toasts, toggles, or anything triggered rapidly
+- Animating layout properties (`width`/`height`/`margin`/`padding`/`top`/`left`)
+- Motion `x`/`y`/`scale` props on animation running while the page is busy
+- CSS variable updated on a parent to drive a child transform
+- Missing `prefers-reduced-motion` on movement
+- Ungated `:hover` motion
+- Symmetric enter/exit timing on a press-and-release interaction
+- Everything-at-once entrance where a 30–80ms stagger belongs
+
 ## Review Checklist
 
-Performance-focused review. Taste-level checks (easing selection, duration choice, animation purpose) belong to the design taste skill.
+Performance-focused. Taste-level checks (easing selection, duration choice, animation purpose) belong to the design taste skill.
 
 | Issue                                | Fix                                              | Why                                            |
 | ------------------------------------ | ------------------------------------------------ | ---------------------------------------------- |
