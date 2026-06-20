@@ -4,8 +4,9 @@ set -euo pipefail
 MANIFEST="$(dirname "$0")/MANIFEST.yaml"
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# When SYNC_SUMMARY is set, a markdown change summary is written there (used by CI
-# to populate the upstream-sync PR body). SYNC_BODY is the internal accumulator.
+# The marker-tree summary always prints to stdout. When SYNC_SUMMARY is set, a
+# markdown copy is also written there (used by CI for the PR body). SYNC_BODY is
+# the internal accumulator.
 SUMMARY_FILE="${SYNC_SUMMARY:-}"
 SYNC_BODY=""
 
@@ -131,15 +132,11 @@ sync_skill() {
     return
   fi
 
-  local new_sha=""
-  if [[ "$apply" == "--apply" || -n "$SUMMARY_FILE" ]]; then
-    new_sha="$(fetch_tree_sha "$repo" "$ref")"
-  fi
+  local new_sha
+  new_sha="$(fetch_tree_sha "$repo" "$ref")"
 
-  if [[ -n "$SUMMARY_FILE" ]]; then
-    SYNC_BODY+="$(printf '%s  [%s -> %s]' "$skill" "${old_sha:0:7}" "${new_sha:0:7}")"$'\n'
-    SYNC_BODY+="$entries"$'\n'
-  fi
+  SYNC_BODY+="$(printf '%s  [%s -> %s]' "$skill" "${old_sha:0:7}" "${new_sha:0:7}")"$'\n'
+  SYNC_BODY+="$entries"$'\n'
 
   if [[ "$apply" == "--apply" ]]; then
     update_field "$skill" "last_synced" "$(date +%Y-%m-%d)"
@@ -149,8 +146,10 @@ sync_skill() {
 }
 
 write_summary() {
-  [[ -n "$SUMMARY_FILE" && -n "$SYNC_BODY" ]] || return 0
-  {
+  [[ -n "$SYNC_BODY" ]] || return 0
+  printf '\n%s' "$SYNC_BODY"            # marker tree to stdout (every run)
+  [[ -n "$SUMMARY_FILE" ]] || return 0
+  {                                     # markdown copy for the CI PR body
     printf '## Upstream sync — %s\n\n' "$(date +%Y-%m-%d)"
     printf '```\n%s```\n' "$SYNC_BODY"
   } > "$SUMMARY_FILE"
