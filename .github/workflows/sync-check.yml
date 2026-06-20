@@ -1,0 +1,47 @@
+name: sync-check
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: fetch upstream changes
+        run: ./sync.sh --apply
+
+      - name: check for changes
+        id: diff
+        run: |
+          git diff --quiet && git diff --cached --quiet \
+            && echo "changed=false" >> "$GITHUB_OUTPUT" \
+            || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: open pr
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          branch="chore/upstream-sync"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add -A
+          git commit -m "chore: sync upstream skills $(date +%Y-%m-%d)"
+          git push --force origin "$branch"
+          open_prs=$(gh pr list --base main --head "$branch" --state open --json number -q 'length')
+          if [[ "$open_prs" == "0" ]]; then
+            gh pr create \
+              --title "chore: sync upstream skills" \
+              --body "Automated upstream sync. Review diffs before merging." \
+              --base main \
+              --head "$branch"
+          fi
