@@ -1,17 +1,19 @@
 # Skills
 
-Core Agent-Driven Skills for AI-Native development
+Agent-Driven Skills for AI-Native development. Learn more at [agentskills.io](https://agentskills.io/home).
 
-**Install** (symlink)
+**Sync Upstream**
 
-```bash
-for d in ~/Development/skills/*/; do ln -sfn "$d" ~/.claude/skills/"$(basename "$d")"; done
-```
-
-**Sync upstream**
+`MANIFEST.yaml` tracks upstream sources. `sync.sh` diffs your local copy against them — review before applying.
 
 ```bash
-./sync.sh                    # check all upstreams for changes
-./sync.sh triage             # diff triage vs upstream
-./sync.sh triage --apply     # fetch + overwrite + update MANIFEST
+./sync.sh                          # dry-run all upstreams — show what changed
+./sync.sh --apply                  # fetch + overwrite all upstreams + update MANIFEST
+./sync.sh <skill>                  # dry-run a single skill
+./sync.sh <skill> --apply          # fetch + overwrite single skill + update MANIFEST
 ```
+
+## Beyond Skills
+
+- [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp) (MCP)
+- [MDN](https://github.com/mdn/mcp) (MCP)

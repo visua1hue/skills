@@ -1,9 +1,13 @@
 upstreams:
   typescript-magician:
-    url: https://raw.githubusercontent.com/mcollina/skills/main/skills/typescript-magician/SKILL.md
-    last_synced: ~
-    sha: ~
+    repo: mcollina/skills
+    path: skills/typescript-magician
+    ref: main
+    last_synced: 2026-06-20
+    sha: 5b2a81354b6d10325da0db9decc9ce5ecc714138
   emil-design-eng:
-    url: https://raw.githubusercontent.com/emilkowalski/skills/main/skills/emil-design-eng/SKILL.md
-    last_synced: ~
-    sha: ~
+    repo: emilkowalski/skills
+    path: skills/emil-design-eng
+    ref: main
+    last_synced: 2026-06-20
+    sha: 47226d9d54d48b49f081193d02334bf0405bab4e
