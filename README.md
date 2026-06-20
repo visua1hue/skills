@@ -4,11 +4,11 @@ Agent-Driven Skills for **AI-Native** development. Learn more about the open sta
 
 ## Overview
 
-- `emil-design-eng` — UI polish and animation philosophy
-- `motion-engine` — performant animations with CSS, WAAPI, and Motion.dev
-- `perf-audit` — Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
-- `typescript-magician` — complex generics, type guards, and strict typing
-- `triage` — issue and PR triage state machine
+- [emil-design-eng](emil-design-eng/) — UI polish and animation philosophy
+- [motion-engine](motion-engine/) — performant animations with CSS, WAAPI, and Motion.dev
+- [perf-audit](perf-audit/) — Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
+- [typescript-magician](typescript-magician/) — complex generics, type guards, and strict typing
+- [triage](triage/) — issue and PR triage state machine
 
 ### Sync Upstream
 
