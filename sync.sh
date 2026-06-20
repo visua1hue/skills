@@ -17,7 +17,11 @@ parse_field() {
 
 update_field() {
   local skill="$1" field="$2" value="$3"
-  sed -i '' "/^  ${skill}:/,/^  [^ ]/ s|^    ${field}: .*|    ${field}: ${value}|" "$MANIFEST"
+  local tmp
+  tmp="$(mktemp)"
+  # avoid `sed -i` — its syntax differs between BSD (macOS) and GNU (Linux/CI)
+  sed "/^  ${skill}:/,/^  [^ ]/ s|^    ${field}: .*|    ${field}: ${value}|" "$MANIFEST" > "$tmp"
+  mv "$tmp" "$MANIFEST"
 }
 
 list_upstreams() {
