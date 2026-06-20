@@ -16,7 +16,7 @@ jobs:
       # written outside the repo so `git add -A` never commits it
       SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: fetch upstream changes
         run: ./sync.sh
