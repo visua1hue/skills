@@ -8,6 +8,7 @@ Agent-Driven Skills for **AI-Native** development. Learn more about the open sta
 - [motion-engine](motion-engine/): performant animations with CSS, WAAPI, and Motion.dev
 - [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
 - [typescript-magician](typescript-magician/): complex generics, type guards, and strict typing — by [Matt Pocock](https://github.com/mattpocock)
+- [council](council/): parallel read-only subagents that investigate a codebase area, then synthesize findings
 - [triage](triage/): GitHub issue and PR triage state machine
 
 ### Validate
