@@ -12,9 +12,6 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    env:
-      # written outside the repo so `git add -A` never commits it
-      SYNC_SUMMARY: ${{ env.RUNNER_TEMP }}/sync-summary.md
     steps:
       - uses: actions/checkout@v7
 
@@ -32,6 +29,7 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
         run: |
           branch="chore/upstream-sync"
           git config user.name "github-actions[bot]"
