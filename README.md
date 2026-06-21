@@ -1,25 +1,30 @@
-# Skills
+<a id="top"></a>
 
-Agent-Driven Skills for **AI-Native** development. Learn more about the open standard at [Agent Skills](https://agentskills.io/home).
+![pi-pane preview](.github/assets/preview.png)
 
-## Overview
+<div align="center">
 
-Skills activate in one of two ways:
+Agent Skills. **Built by you, run by agents**. Learn more about the open standard at [Agent Skills](https://agentskills.io/home).
 
-- **Model-invoked** — Claude reads the skill's `description` and activates it automatically when your request matches. No command needed.
-- **User-invoked** — you trigger it explicitly (e.g. `/council`); it sets `disable-model-invocation: true` so Claude won't auto-run it.
+</div>
+
+## Agent Skills <sup><small>[⌃](#top)</small></sup>
+
+Skills are either **Model-invoked** — Agents auto-activates them when your request matches — or **User-invoked** via a slash command like `/triage`.
 
 ### Model-invoked
 
+- [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing — by [Matt Pocock](https://github.com/mattpocock)
 - [emil-design-eng](emil-design-eng/): UI polish and animation philosophy — by [Emil Kowalski](https://github.com/emilkowalski)
-- [motion-engine](motion-engine/): performant animations with CSS, WAAPI, and Motion.dev
+- [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
-- [typescript-magician](typescript-magician/): complex generics, type guards, and strict typing — by [Matt Pocock](https://github.com/mattpocock)
 
 ### User-invoked
 
-- [council](council/): parallel read-only subagents that investigate a codebase area, then synthesize findings
+- [council](council/): Parallel read-only subagents — run, then synthesize
 - [triage](triage/): GitHub issue and PR triage state machine
+
+## Commands <sup><small>[⌃](#top)</small></sup>
 
 ### Validate
 
@@ -40,7 +45,7 @@ Skills activate in one of two ways:
 ./sync.sh <skill> --diff           # dry-run a single skill
 ```
 
-## Extended Layer
+## Extended Layer <sup><small>[⌃](#top)</small></sup>
 
 - Type: MCP | [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp)
 - Type: MCP | [MDN](https://github.com/mdn/mcp)
