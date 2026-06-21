@@ -14,7 +14,7 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 
 ### Model-invoked
 
-- [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing — by [Matt Pocock](https://github.com/mattpocock)
+- [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing — by [Matteo Collina](https://github.com/mcollina)
 - [emil-design-eng](emil-design-eng/): UI polish and animation philosophy — by [Emil Kowalski](https://github.com/emilkowalski)
 - [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
@@ -47,5 +47,6 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 
 ## Extended Layer <sup><small>[⌃](#top)</small></sup>
 
-- Type: MCP | [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp)
-- Type: MCP | [MDN](https://github.com/mdn/mcp)
+- Type: **MCP** | [fff](https://github.com/dmtrKovalenko/fff)
+- Type: **MCP** | [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- Type: **MCP** | [MDN](https://github.com/mdn/mcp)
