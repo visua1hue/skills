@@ -1,6 +1,6 @@
 ---
 name: motion-engine
-description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use this skill whenever animations need to be implemented, debugged for jank, or optimized for Core Web Vitals. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, animation orchestration, or reduced motion handling. This skill owns the execution layer — pair it with a design taste skill (like emil-design-eng) for animation decision-making.
+description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev, plus device/network capability scaling — reducing decorative complexity (stagger size, blur, spring count) on constrained CSS/Motion.dev setups, and survival-gate tiering with a static fallback for WebGL/Three.js. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use whenever animations need to be implemented, debugged for jank, optimized for Core Web Vitals, scaled back for low-power/mobile, or when a WebGL/Three.js layer needs to degrade safely. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, reduced motion, WebGL, Three.js, or device/GPU tiering. Owns the execution layer — pair with a design taste skill (like visua1-design-eng) for animation decisions.
 ---
 
 # Motion Engine
@@ -9,7 +9,7 @@ An animation execution skill. It assumes the design decision has already been ma
 
 The operating principle is progressive enhancement: CSS handles the default state and scroll-driven animations natively, JavaScript orchestrates load sequencing and provides fallbacks. Every animation runs on the GPU compositor thread. Layout-triggering properties are never animated. The target is 120fps with zero render-blocking.
 
-This skill pairs with design taste skills (such as `emil-design-eng`) that own the "should this animate?" and "how should it feel?" decisions. This skill owns the "how do you ship it?"
+This skill pairs with a design taste skill (such as `visua1-design-eng`) that owns the "should this animate?" and "how should it feel?" decisions. This skill owns the "how do you ship it?"
 
 ## Performance Contract
 
@@ -99,6 +99,39 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 - `@starting-style` replaces the React `useEffect(() => setMounted(true))` pattern for CSS-native entry animations.
 - Gate hover animations behind `@media (hover: hover) and (pointer: fine)` to prevent false-positive touch hover states.
 - CSS animations run off the main thread and remain smooth when the browser is busy. Prefer CSS for predetermined animations; JS for dynamic, interruptible ones.
+
+## Device Capability Scaling
+
+Distinct from Execution Tiers above — that table is about which mechanism to use once you know the browser can render it. This is about scaling back decorative load when the device or network can't sustain the full experience — a different axis, and one that applies to CSS/Motion.dev too, not just WebGL.
+
+### CSS/WAAPI/Motion.dev — complexity budget
+
+"GPU-composited" isn't the same as "free." It holds for a single isolated `transform`/`opacity` transition; it doesn't hold for cumulative decorative load:
+
+- Heavy `filter`/`backdrop-filter` (blur especially) is real GPU cost — the 20px blur ceiling above should be lower still, or skipped, on a constrained device.
+- Motion.dev spring physics run on the main thread per frame per element — a large stagger group is real main-thread work that scales with element count, not free just because each spring individually targets `transform`.
+- Motion's shorthand props (`x`/`y`/`scale`) aren't hardware-accelerated — under main-thread load on a low-power device, this is exactly where frames drop.
+
+Scale down on constrained devices: smaller/fewer stagger groups, skip decorative parallax layers, avoid or shrink blur, cap simultaneous spring count. This is a **different, performance-motivated reason to reduce motion than `prefers-reduced-motion`** (that's about vestibular/motion sensitivity, opt-in by user preference) — the two are independent and stack. Use the same policy-cap principle as WebGL below: treat mobile/low-power as a class-level cap, not something to re-benchmark per animation.
+
+### WebGL/Three.js — survival gate
+
+Whether the device and network can sustain a WebGL layer at all, not just how much decorative complexity to allow. Only applies when a WebGL/Three.js rendering layer exists. For the full blueprint (resource pooling, guardrails-in-code, detection approach), read `references/webgl-device-tiers.md`.
+
+Three tiers, gated on GPU benchmark and network capability:
+
+| Tier | Experience | Gate |
+| --- | --- | --- |
+| 0 — Static fallback | No WebGL context. Static image/video instead. | Context creation fails, GPU blocklisted, or benchmark below floor |
+| 1 — Constrained WebGL | Capped resolution, reduced textures, trimmed effects/post-processing. | Everything else on mobile (policy cap, not a benchmark result) or a low-but-viable desktop GPU |
+| 2 — Full quality | No caps. | Capable desktop GPU + fast network |
+
+**Key rules:**
+
+- Mobile is hard-capped to Tier 1 as policy, not re-benchmarked per device — don't try to detect your way into giving some phones Tier 2.
+- Bake performance ceilings into the code itself (hard caps on shader complexity, particle count, texture resolution), not just review discipline — the goal is that art direction *cannot* accidentally regress performance.
+- Authored motion decision rule: run it live only when interactivity is worth it. Interactive pieces stay in a real-time engine; anything linear/non-interactive should be a pre-rendered video instead.
+- Scope live-render resource usage (VRAM, framebuffers) to what's actually visible, not to everything that exists on the page — release resources for content that's scrolled off.
 
 ## Paint & Load Strategy
 
@@ -226,6 +259,10 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 | CSS var update during drag           | Set `transform` directly                         | Variable inheritance recalculates all children |
 | `useEffect` + `setMounted` for entry | Use `@starting-style`                            | CSS-native, no extra render cycle              |
 | Focus ring animated                  | Animate element background/shadow instead        | Focus indicator triggers paint                 |
+| Large stagger group or many concurrent springs, unscaled | Cap group size / spring count on low-power devices | Main-thread physics cost scales with element count, not free just because it targets `transform` |
+| Heavy blur/backdrop-filter with no device check | Reduce or skip on constrained devices | Real GPU cost regardless of compositing |
+| Full-quality WebGL served unconditionally | Gate behind device tier (0/1/2), static fallback at Tier 0 | No WebGL context or a weak GPU crashes/thermal-throttles instead of degrading |
+| Live-rendered non-interactive WebGL motion | Pre-render to video instead | Nothing needs live simulation if it never responds to input |
 
 ### Debugging
 
@@ -244,3 +281,5 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 - [Web Animation Performance Tier List](https://motion.dev/blog/web-animation-performance-tier-list) — Motion.dev
 - [CSS animation-timeline](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline) — MDN
 - [easing.dev](https://easing.dev/) — Custom easing curve playground
+- [detect-gpu](https://github.com/pmndrs/detect-gpu) — GPU benchmark/tier classification, pmndrs
+- [Scaling performance](https://r3f.docs.pmnd.rs/advanced/scaling-performance) — React Three Fiber
