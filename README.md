@@ -15,7 +15,6 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 ### Model-invoked
 
 - [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing — by [Matteo Collina](https://github.com/mcollina)
-- [emil-design-eng](emil-design-eng/): UI polish and animation philosophy — by [Emil Kowalski](https://github.com/emilkowalski)
 - [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
 
