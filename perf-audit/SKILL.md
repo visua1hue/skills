@@ -115,6 +115,8 @@ performance_analyze_insight(insightSetId: "<id-from-trace>", insightName: "LCPBr
 - CLS: < 0.1 / < 0.25 / > 0.25
 - Speed Index: < 3.4s / < 5.8s / > 5.8s
 
+**If LCP lands in needs-improvement or poor**: don't re-derive the root cause here — invoke `chrome-devtools-mcp:debug-optimize-lcp` for the subpart-level breakdown (TTFB / resource-load-delay / resource-load-duration / render-delay, each with its own target %), the LCP-element-identification snippet, and network/CPU-throttled verification. It's deeper and more current than duplicating that analysis in this skill.
+
 ### Phase 3: Network Analysis
 
 List all network requests to identify optimization opportunities:
