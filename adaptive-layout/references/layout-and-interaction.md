@@ -114,3 +114,5 @@ p {
 `balance` distributes text across lines to minimize the difference in line length — fixes the classic "one orphaned word on its own line" heading problem. Browsers cap the number of lines it'll balance (typically ~6) for performance, so it's only appropriate for short text (headings, callouts), not long-form content.
 
 `pretty` targets a narrower problem (avoiding a short orphan on the final line) without the line-count cap, at a higher computational cost — reasonable on individual paragraphs, worth avoiding on a page with hundreds of paragraphs rendering at once.
+
+**Browser support**: `balance` is broadly supported (Chromium 114+, Firefox 121+, Safari 17.5+). `pretty` is narrower — Chromium 117+ and Safari 26+, but **no Firefox support at all** as of mid-2026. Both are progressive enhancements (unsupported browsers just get normal wrapping, no breakage), but `pretty` is meaningfully less safe to lean on as a primary fix than `balance` is.

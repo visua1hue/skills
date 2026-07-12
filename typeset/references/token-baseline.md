@@ -94,6 +94,14 @@ Two failure modes to watch for:
 - **Tabular data without `tabular-nums`**: proportional digits have different widths per glyph (`1` is narrower than `8`), so a column of changing numbers visibly jitters as digits change. This is especially noticeable in live-updating UI (timers, live stock prices, counters).
 - **Programming ligatures on by default**: fonts like Fira Code or Cascadia Code render `=>`, `!=`, `>=` as single glyphs. This is a legitimate personal preference, not a default — some people read code faster with them, some find they obscure the actual characters being typed (which matters when debugging or teaching). Default off, let it be an explicit choice.
 
+## Typographic characters
+
+Content-level, not CSS — but the same "invisible detail that compounds" logic applies, and it's cheap to get right:
+
+- **Ellipsis**: the real character `…` (U+2026), not three periods `...`. Loading/pending states: `"Loading…"`, not `"Loading..."`.
+- **Quotes**: curly/smart quotes (`"` `"` `'` `'`), not straight typewriter quotes (`"` `'`).
+- **Non-breaking spaces**: between a number and its unit, a keyboard shortcut's modifier and key, or inside a brand name — anywhere an automatic line-break would land in a visually wrong spot: `10&nbsp;MB`, `⌘&nbsp;K`.
+
 ## Spacing scale
 
 ```css
@@ -125,7 +133,7 @@ Where these tokens actually live, for a plain-CSS project (no CSS-in-JS, no util
 Three files, one import chain:
 
 - **`variables.css`** — tokens only, no selectors. Both layers live here: raw (`--color-primary-100`, `--font-size-0`) and semantic (`--color-text-default`, `--text-body`).
-- **`motion.css`** — the motion feature bundled together: its own tokens (durations, easings) plus the behavioral contract that goes with them — the FCP-safe initial state and `prefers-reduced-motion` override that `motion-engine`'s load-orchestration strategy expects (see that skill for the full pattern, not repeated here).
+- **`motion.css`** — motion tokens (durations, easings) and their load/accessibility contract; owned by `motion-engine`, not repeated here.
 - **`global.css`** — imports both of the above, then universal resets and base element styles (box-sizing, `html`/`body` defaults). The only file with page-wide selectors that aren't scoped to a specific feature.
 
 Not a strict rule for every setup — a project using CSS-in-JS or a utility framework (Tailwind, etc.) won't have a `variables.css` in this shape at all. It's the convention specifically for "plain CSS custom properties, no framework."

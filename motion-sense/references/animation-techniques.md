@@ -36,6 +36,8 @@ Unlike `width`/`height`, `scale()` scales an element's children along with it. S
 
 Every element has an anchor point transforms execute from — default is center. Set it explicitly to match where the interaction actually originates (see popover origin-awareness below).
 
+**SVG gotcha**: SVG elements don't respect `transform-origin` the way HTML elements do by default — it's relative to the SVG viewport's coordinate system, not the element's own bounding box. Animating a `<g>` or `<path>` with an unexpected pivot point is almost always this. Fix: `transform-box: fill-box; transform-origin: center` on the element, which switches it to the same own-bounding-box behavior HTML elements use.
+
 ## `clip-path` for Animation
 
 Not just for shapes — one of the most versatile animation tools in CSS.
@@ -76,7 +78,7 @@ Overlay two images. Clip the top one with `clip-path: inset(0 50% 0 0)`, then ad
 
 ## Component Patterns (Animation-Flavored)
 
-Motion-specific component craft — pairs with the non-animation craft in `component-principles.md`.
+Motion-specific component craft — pairs with the non-animation craft in `adaptive-layout`'s `component-principles.md`.
 
 ### Buttons must feel responsive
 

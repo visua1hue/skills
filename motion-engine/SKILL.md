@@ -1,6 +1,6 @@
 ---
 name: motion-engine
-description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev, plus device/network capability scaling — reducing decorative complexity (stagger size, blur, spring count) on constrained CSS/Motion.dev setups, and survival-gate tiering with a static fallback for WebGL/Three.js. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use whenever animations need to be implemented, debugged for jank, optimized for Core Web Vitals, scaled back for low-power/mobile, or when a WebGL/Three.js layer needs to degrade safely. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, reduced motion, WebGL, Three.js, or device/GPU tiering. Owns the execution layer — pair with a design taste skill (like visua1-design-eng) for animation decisions.
+description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev, plus device/network capability scaling — reducing decorative complexity (stagger size, blur, spring count) on constrained CSS/Motion.dev setups, and survival-gate tiering with a static fallback for WebGL/Three.js. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use whenever animations need to be implemented, debugged for jank, optimized for Core Web Vitals, scaled back for low-power/mobile, or when a WebGL/Three.js layer needs to degrade safely. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, reduced motion, WebGL, Three.js, or device/GPU tiering. Owns the execution layer — pair with a design taste skill (like motion-sense) for animation decisions.
 ---
 
 # Motion Engine
@@ -9,7 +9,7 @@ An animation execution skill. It assumes the design decision has already been ma
 
 The operating principle is progressive enhancement: CSS handles the default state and scroll-driven animations natively, JavaScript orchestrates load sequencing and provides fallbacks. Every animation runs on the GPU compositor thread. Layout-triggering properties are never animated. The target is 120fps with zero render-blocking.
 
-This skill pairs with a design taste skill (such as `visua1-design-eng`) that owns the "should this animate?" and "how should it feel?" decisions. This skill owns the "how do you ship it?"
+This skill pairs with a design taste skill (such as `motion-sense`) that owns the "should this animate?" and "how should it feel?" decisions. This skill owns the "how do you ship it?"
 
 ## Performance Contract
 

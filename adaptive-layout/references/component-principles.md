@@ -1,13 +1,19 @@
 # Component Building Principles — Reference
 
-Non-animation component craft — hit targets, form/field states, density, empty/loading/error states: the parts of a component that are correct or incorrect independent of any animation. Animation-flavored component patterns (button press feedback, popover origin-awareness, transitions) are covered in `animation-techniques.md`, not here.
+Non-animation component craft — hit targets, form/field states, density, empty/loading/error states: the parts of a component that are correct or incorrect independent of any animation. Animation-flavored component patterns (button press feedback, popover origin-awareness, transitions) are covered in `motion-sense`'s `animation-techniques.md`, not here.
 
 ## Hit targets
 
 - Minimum interactive target: 44×44px on touch, 24×24px on pointer-only surfaces with adequate spacing between adjacent targets (WCAG 2.5.8 Target Size, Level AA).
 - A visually small icon button (16-20px glyph) still needs a 44px tap area — pad the hit area, don't scale up the icon to compensate.
 - Adjacent small targets (icon toolbars, table row actions) need at least 8px of gutter between hit areas even if the visible icons sit closer — otherwise mis-taps become a real failure mode on touch, not just a theoretical one.
-- Don't shrink hit targets to fit a dense layout. Increase spacing between components instead — the token scale in `token-baseline.md` exists precisely so "needs more room" has an answer that isn't an arbitrary pixel value.
+- Don't shrink hit targets to fit a dense layout. Increase spacing between components instead — the token scale in `typeset`'s `token-baseline.md` exists precisely so "needs more room" has an answer that isn't an arbitrary pixel value.
+
+## Touch & interaction
+
+- `touch-action: manipulation` on tappable elements — removes the ~300ms double-tap-to-zoom delay browsers otherwise wait out on every tap.
+- Set `-webkit-tap-highlight-color` intentionally (usually `transparent`, paired with a real `:active` state) rather than leaving the browser default flash.
+- `overscroll-behavior: contain` on modals, drawers, and sheets — stops a scroll gesture inside them from bleeding into a scroll/bounce on the page behind.
 
 ## Form and field states
 
@@ -16,6 +22,8 @@ Non-animation component craft — hit targets, form/field states, density, empty
 - Disabled fields should look unmistakably inert — reduced contrast, no interactive affordances (no hover states, no focus ring, cursor `not-allowed`). Don't just gray the text slightly; a barely-changed disabled state reads as a bug, not a state.
 - Error messages state what's wrong and how to fix it, not just that something is wrong. "Invalid" is not a message. "Must be at least 8 characters" is.
 - Success state matters too, not just error: a field that was wrong and is now correct should visibly confirm that, especially for async validation (username availability, etc.) — otherwise the user can't tell if their fix registered.
+- Focus state means `:focus-visible`, not `:focus` — `:focus` also fires on click, so a bare `:focus` ring flashes on every mouse click, not just keyboard navigation. Never remove the outline (`outline: none`) without shipping a replacement indicator; a compound control (e.g. a labeled input group) gets `:focus-within` so the whole group indicates focus, not just the inner control.
+- Every input needs `autocomplete` and a meaningful `name` attribute, the correct `type` (`email`, `tel`, `url`, `number`) and `inputmode` for the data it collects, and a label that's actually clickable (`<label for>` or wrapping the control) — not just visually adjacent. Never block paste (no `onPaste` + `preventDefault`). Disable spellcheck (`spellcheck="false"`) on emails, codes, and other non-prose fields where the red squiggle is just noise.
 
 ## Density
 

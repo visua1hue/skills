@@ -15,8 +15,10 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 ### Model-invoked
 
 - [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing — by [Matteo Collina](https://github.com/mcollina)
-- [visua1-design-eng](visua1-design-eng/): Design Engineering, the visua1 edition — modern web standards
+- [motion-sense](motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
+- [adaptive-layout](adaptive-layout/): Solid component states, touch handling, and adaptive CSS
+- [typeset](typeset/): Type scale, spacing, and line-height that actually varies
 - [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
 
 ### User-invoked

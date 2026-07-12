@@ -64,7 +64,7 @@ The pattern combines cleanly with a breakpoint gate — e.g. a panel that's alwa
 - `@starting-style` only has an effect on the *first* style update after an element goes from not-rendered to rendered (or `display: none` to displayed). It does nothing on subsequent updates — that's correct, it's an entry-only hook.
 - The `@starting-style` block needs to target the state the element is transitioning *into*, with the starting values — not the base/hidden selector.
 - Works with `content-visibility: hidden` the same way as `display: none`, useful when you want the element to stay measurable (`content-visibility` keeps layout box, `display: none` doesn't).
-- Baseline-available across current Chromium, Firefox, and Safari as of 2025 — check current support before relying on it as the only code path for a critical interaction; a no-JS fallback is just "the element pops instead of fading," which is an acceptable degradation, not a broken experience.
+- Baseline Newly Available since Firefox 129 (mid-2024) — Chromium 117+, Safari 17.5+, Firefox 129+ all support it, safe to use as a primary code path rather than an escape hatch. Where a fallback still matters (very old browser floors), a no-JS fallback is just "the element pops instead of fading," which is an acceptable degradation, not a broken experience.
 
 ## The `linear()` Easing Function
 
@@ -132,3 +132,5 @@ Cross-document (full MPA navigation, no client-side router needed):
 ```
 
 Opting a same-origin navigation into a browser-managed cross-document transition — same pseudo-element model as the same-document version.
+
+**Browser support**: same-document transitions ship in Chromium 111+, Safari 18+, and Firefox 144+ — safe as a primary code path. Cross-document is narrower: Chromium 126+ and Safari 18.2+ support it, but Firefox doesn't yet (in development, not shipped). Cross-document transitions are a progressive enhancement by design — an unsupported browser just does a normal navigation with no visual transition, not a broken one, so ship it unconditionally rather than feature-detecting around it.
