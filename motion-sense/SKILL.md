@@ -5,7 +5,7 @@ description: Encodes visua1's personal animation-taste judgment — when and why
 
 # Motion Sense (visua1)
 
-Personal animation-taste judgment — covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating. Spring-physics animation guidance (JS `useSpring`, mass/stiffness/damping config) is intentionally out of scope for this skill.
+Personal animation-taste judgment — covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating, and `svg-path-animation`, which owns SVG's own coordinate-system and path-data animation territory (line-drawing, morphing, motion-along-a-path, `viewBox`). Spring-physics animation guidance (JS `useSpring`, mass/stiffness/damping config) is intentionally out of scope for this skill.
 
 ## Core Philosophy
 
@@ -87,7 +87,6 @@ When reviewing UI code, use a markdown table with Before/After/Why columns — o
 | `transform-origin: center` on a trigger-anchored popover | Set to the trigger location (modals are exempt) |
 | Symmetric enter/exit timing on a press-and-release interaction | Make release/exit faster than press/enter |
 | Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event |
-| `<g>`/`<path>` transform pivoting from the wrong point | Add `transform-box: fill-box; transform-origin: center` |
 | Abrupt state change with no transition where one would aid comprehension (instant visibility toggle, jarring content swap) | Add a purposeful transition — still gated by the Decision Framework above, not a license to animate everything |
 
 ## External References

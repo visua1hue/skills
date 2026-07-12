@@ -36,7 +36,7 @@ Unlike `width`/`height`, `scale()` scales an element's children along with it. S
 
 Every element has an anchor point transforms execute from — default is center. Set it explicitly to match where the interaction actually originates (see popover origin-awareness below).
 
-**SVG gotcha**: SVG elements don't respect `transform-origin` the way HTML elements do by default — it's relative to the SVG viewport's coordinate system, not the element's own bounding box. Animating a `<g>` or `<path>` with an unexpected pivot point is almost always this. Fix: `transform-box: fill-box; transform-origin: center` on the element, which switches it to the same own-bounding-box behavior HTML elements use.
+SVG elements have their own `transform-origin`/`transform-box` coordinate-system quirks, distinct from HTML — see `svg-path-animation`.
 
 ## `clip-path` for Animation
 
