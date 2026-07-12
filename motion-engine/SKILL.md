@@ -155,6 +155,7 @@ Minimal performance guardrails for drag and swipe interactions — not a full im
 - **Velocity over threshold**: dismiss based on flick velocity (`distance / elapsed time`), not just distance. A quick flick should dismiss regardless of travel.
 - **Multi-touch protection**: ignore additional touch points after drag begins.
 - **Boundary damping**: increasing friction past the natural limit, not hard stops.
+- **Selection/interaction guard**: disable text selection (`user-select: none`) and set `inert` on the dragged element for the duration of the drag — without it, a fast drag can select surrounding text or let a pointerup land on whatever's underneath.
 
 ## Accessibility
 
@@ -263,6 +264,7 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 | Heavy blur/backdrop-filter with no device check | Reduce or skip on constrained devices | Real GPU cost regardless of compositing |
 | Full-quality WebGL served unconditionally | Gate behind device tier (0/1/2), static fallback at Tier 0 | No WebGL context or a weak GPU crashes/thermal-throttles instead of degrading |
 | Live-rendered non-interactive WebGL motion | Pre-render to video instead | Nothing needs live simulation if it never responds to input |
+| Draggable element with no selection/interaction guard | `user-select: none` + `inert` for the drag's duration | Fast drags otherwise select surrounding text or leak pointerup to elements underneath |
 
 ### Debugging
 
