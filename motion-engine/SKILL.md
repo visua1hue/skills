@@ -90,7 +90,7 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 | 1    | CSS Transitions                      | State changes: hover, focus, active, class toggle. Interruptible by default.                                                  |
 | 2    | CSS Keyframes + `animation-timeline` | Scroll-driven animations. Zero JS, full compositor. Gate with `@supports`.                                                    |
 | 3    | WAAPI                                | Programmatic control, single element. Hardware-accelerated, no library needed.                                                |
-| 4    | Motion.dev                           | Orchestration, stagger, sequencing, scroll fallbacks. Thin WAAPI wrapper.                                                     |
+| 4    | Motion.dev                           | Orchestration, stagger, sequencing, scroll fallbacks, View Transitions orchestration (`animateView()`). Thin WAAPI wrapper.   |
 | 5    | Motion springs                       | Drag, gesture, interruptible physics. Shorthand props (`x`, `y`) are NOT hardware-accelerated — use full `transform` strings. |
 
 **Key rules across all tiers:**
@@ -281,6 +281,7 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 ## External References
 
 - [Web Animation Performance Tier List](https://motion.dev/blog/web-animation-performance-tier-list) — Motion.dev
+- [`animateView()`](https://motion.dev/docs/animate-view) — Motion.dev docs
 - [CSS animation-timeline](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline) — MDN
 - [easing.dev](https://easing.dev/) — Custom easing curve playground
 - [detect-gpu](https://github.com/pmndrs/detect-gpu) — GPU benchmark/tier classification, pmndrs

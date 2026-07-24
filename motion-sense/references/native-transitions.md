@@ -134,3 +134,5 @@ Cross-document (full MPA navigation, no client-side router needed):
 Opting a same-origin navigation into a browser-managed cross-document transition — same pseudo-element model as the same-document version.
 
 **Browser support**: same-document transitions ship in Chromium 111+, Safari 18+, and Firefox 144+ — safe as a primary code path. Cross-document is narrower: Chromium 126+ and Safari 18.2+ support it, but Firefox doesn't yet (in development, not shipped). Cross-document transitions are a progressive enhancement by design — an unsupported browser just does a normal navigation with no visual transition, not a broken one, so ship it unconditionally rather than feature-detecting around it.
+
+For springs, differentiated enter/exit, or staggered shared-element morphs beyond this raw pattern, see Motion.dev's `animateView()` in `motion-engine/references/animation-patterns.md`.

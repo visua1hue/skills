@@ -61,7 +61,7 @@ The "how do you ship it natively" layer for entry/exit and page-level motion —
 
 ### Page transitions
 
-View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or cross-document) for the primitives — same-document via `document.startViewTransition()`, cross-document via `@view-transition { navigation: auto; }`. Full pattern: `references/native-transitions.md`.
+View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or cross-document) for the primitives — same-document via `document.startViewTransition()`, cross-document via `@view-transition { navigation: auto; }`. Full pattern: `references/native-transitions.md`. When the transition needs springs, differentiated enter/exit, or a staggered shared-element morph, Motion.dev's `animateView()` wrapper removes the manual naming/pseudo-element bookkeeping the raw API requires — execution detail lives in `motion-engine/references/animation-patterns.md`.
 
 ### The `linear()` easing function
 
@@ -93,5 +93,6 @@ When reviewing UI code, use a markdown table with Before/After/Why columns — o
 
 - [`@starting-style`](https://developer.mozilla.org/en-US/docs/Web/CSS/@starting-style) / [`transition-behavior`](https://developer.mozilla.org/en-US/docs/Web/CSS/transition-behavior) — MDN
 - [View Transitions API](https://developer.chrome.com/docs/web-platform/view-transitions) — Chrome for Developers
+- [`animateView()`](https://motion.dev/docs/animate-view) — Motion.dev docs
 - [`linear()` easing function](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/linear) — MDN
 - [easing.dev](https://easing.dev/) / [easings.co](https://easings.co/) — custom easing curve playgrounds
