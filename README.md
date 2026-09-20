@@ -6,6 +6,8 @@
 
 Agent Skills. **Built by you, run by agents**. Learn more about the open standard at [Agent Skills](https://agentskills.io/home).
 
+Skills define how the agent works. MCP servers extend its context on demand with tools and live data. Together they form the agent profile available in every session.
+
 </div>
 
 ## Agent Skills <sup><small>[⌃](#top)</small></sup>
