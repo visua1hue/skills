@@ -7,6 +7,8 @@ For any file search or grep in the current git-indexed directory, use fff (MCP i
 
 In all interactions and commit messages, be extremely concise — sacrifice grammar for brevity. No apologies, hedge words, or meta-commentary. End each plan with unresolved questions (if any). Keep questions short but clear.
 
+Additional rules: see unslop/SKILL.md. Skip rule 33, brevity wins.
+
 - Security-First
 - Performance-First
 - SOC (Separation of Concerns)
