@@ -142,7 +142,7 @@ The strategy in brief:
 1. **CSS initial state**: `[data-motion] { opacity: 0.01; will-change: transform, opacity, filter; }` — elements are painted but invisible. `0.01` not `0` because Lighthouse ignores `opacity: 0` for FCP.
 2. **Asset lock**: `await document.fonts.ready` — prevents FOUT during animation.
 3. **Paint lock**: check `performance.getEntriesByType('paint')` for existing FCP → `PerformanceObserver` fallback → `requestAnimationFrame` fallback.
-4. **Execute**: trigger load animation presets only after both locks clear.
+4. **Execute**: trigger load animation presets only after both locks clear, then clear `will-change` when each animation finishes.
 
 **Declarative API**: `data-motion="preset-name"` for load animations, `data-motion-scroll="preset-name"` for scroll animations, `data-motion-delay="0.2"` for timing overrides. Presets are functions in a centralized TypeScript registry that read motion tokens from CSS custom properties at runtime.
 
@@ -251,7 +251,7 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 | `transition: all`                    | Specify exact properties                         | Transitions layout-triggering properties       |
 | Layout property animated             | Use `transform` equivalent                       | Triggers layout recalculation on every frame   |
 | Animating `height`/`max-height`      | `scaleY`, `clip-path`, or measure + `translateY` | Layout on every frame                          |
-| Missing `will-change`                | Add on animated elements                         | Browser needs hint for compositor promotion    |
+| `will-change` missing during animation, or left on after | Set while animating, remove once a one-shot finishes | Hint enables compositor promotion; leaving it wastes GPU memory |
 | `will-change` on disabled elements   | Remove it                                        | Wastes GPU memory on inert elements            |
 | Hardcoded values in JS               | Read from CSS custom properties                  | Design system is the single source of truth    |
 | Missing `prefers-reduced-motion`     | Add media query + JS check                       | Accessibility requirement                      |

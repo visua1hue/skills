@@ -22,7 +22,7 @@ The TypeScript controller waits for two conditions before triggering load animat
 1. **Asset lock** — `document.fonts.ready` resolves, ensuring web fonts are loaded. This prevents font-swap glitches during animation (FOUT artifacts mid-transition).
 2. **Paint lock** — First Contentful Paint has occurred. Check `performance.getEntriesByType('paint')` for an existing FCP entry. If none exists, observe via `PerformanceObserver`. Fallback to `requestAnimationFrame` if `PerformancePaintTiming` is not supported.
 
-Only after both locks clear does the controller query `[data-motion]` elements and run their animation presets.
+Only after both locks clear does the controller query `[data-motion]` elements and run their animation presets. Each preset clears `will-change` when its animation finishes — the CSS declaration is a load-time hint, not permanent.
 
 ## Declarative API
 
