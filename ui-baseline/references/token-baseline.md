@@ -99,7 +99,7 @@ Two failure modes to watch for:
 Content-level, not CSS — but the same "invisible detail that compounds" logic applies, and it's cheap to get right:
 
 - **Ellipsis**: the real character `…` (U+2026), not three periods `...`. Loading/pending states: `"Loading…"`, not `"Loading..."`.
-- **Quotes**: curly/smart quotes (`"` `"` `'` `'`), not straight typewriter quotes (`"` `'`).
+- **Quotes**: in rendered UI copy, curly/smart quotes (`"` `"` `'` `'`), not straight typewriter quotes (`"` `'`). Prose and docs (READMEs, comments, skill files) keep straight quotes.
 - **Non-breaking spaces**: between a number and its unit, a keyboard shortcut's modifier and key, or inside a brand name — anywhere an automatic line-break would land in a visually wrong spot: `10&nbsp;MB`, `⌘&nbsp;K`.
 
 ## Spacing scale
