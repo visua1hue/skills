@@ -1,6 +1,6 @@
 ---
 name: motion-sense
-description: Encodes visua1's personal animation-taste judgment — when and why to animate, easing/duration decisions, CSS transform and clip-path animation technique, animation-flavored component-feel patterns (button press feedback, popover origin-awareness, tooltip delay behavior), and native CSS entry/exit and page transitions (transition-behavior allow-discrete with @starting-style, the linear() easing function, View Transitions API). Deliberately excludes spring-physics animation (JS useSpring, mass/stiffness/damping config, out of scope) and execution/performance mechanics, which live in motion-engine. Use when deciding whether or how something should animate, choosing easing or duration, reviewing animation-flavored component patterns, or implementing CSS-native entry/exit/page transitions.
+description: visua1's animation taste — whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Use when deciding or reviewing how something should animate. Springs and perf live in motion-engine.
 ---
 
 # Motion Sense (visua1)

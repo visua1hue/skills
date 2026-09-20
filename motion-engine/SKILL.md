@@ -1,6 +1,6 @@
 ---
 name: motion-engine
-description: Animation execution skill for shipping performant, compositor-only animations using CSS, WAAPI, and Motion.dev, plus device/network capability scaling — reducing decorative complexity (stagger size, blur, spring count) on constrained CSS/Motion.dev setups, and survival-gate tiering with a static fallback for WebGL/Three.js. Covers load orchestration, scroll-driven animation, accessibility, and FCP-safe initialization. Use whenever animations need to be implemented, debugged for jank, optimized for Core Web Vitals, scaled back for low-power/mobile, or when a WebGL/Three.js layer needs to degrade safely. Trigger on any mention of animation performance, WAAPI, Motion.dev, scroll-driven animation, FCP/LCP optimization, compositor-only rendering, reduced motion, WebGL, Three.js, or device/GPU tiering. Owns the execution layer — pair with a design taste skill (like motion-sense) for animation decisions.
+description: Ships performant animation — compositor-only CSS/WAAPI/Motion.dev, scroll-driven animation, load orchestration, reduced motion, and device scaling incl. WebGL/Three.js tiers. Use when implementing animations, debugging jank, or optimizing for Core Web Vitals or low-power devices.
 ---
 
 # Motion Engine
