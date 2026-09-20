@@ -22,6 +22,7 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 ### User-invoked
 
 - [triage](triage/): GitHub issue and PR triage state machine
+- [unslop](unslop/): Strip AI tells and filler from writing — by [Lauren Tan](https://github.com/poteto)
 
 ## Commands <sup><small>[⌃](#top)</small></sup>
 

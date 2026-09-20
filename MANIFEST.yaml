@@ -5,3 +5,9 @@ upstreams:
     ref: main
     last_synced: 2026-06-20
     sha: 5b2a81354b6d10325da0db9decc9ce5ecc714138
+  unslop:
+    repo: cursor/plugins
+    path: pstack/skills/unslop
+    ref: main
+    last_synced: 2026-09-20
+    sha: 6ed0f7a9504f577d7529064103cecce9be7dfc5e
