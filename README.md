@@ -1,6 +1,6 @@
 <a id="top"></a>
 
-![pi-pane preview](.github/assets/preview.png)
+![Agent Skills](.github/assets/preview.png)
 
 <div align="center">
 
