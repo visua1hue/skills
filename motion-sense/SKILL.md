@@ -67,15 +67,6 @@ View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or 
 
 CSS-native spring approximation — a piecewise easing function sampled from a real spring simulation, so overshoot-and-settle motion ships as a plain CSS value with no JS. Generate control points from a spring simulator, don't hand-write them. Full detail: `references/native-transitions.md`.
 
-## Review Format (Required)
-
-When reviewing UI code, use a markdown table with Before/After/Why columns — one row per issue found:
-
-| Before | After | Why |
-| --- | --- | --- |
-| `display: none` toggled via JS class swap | `allow-discrete` + `@starting-style` | Exit animation without a JS unmount-timing listener |
-| `ease-in` dropdown at 300ms | `ease-out` at 180ms | Starts fast, feels responsive; UI stays under 300ms |
-
 ## Review Checklist
 
 | Issue | Fix |
