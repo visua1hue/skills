@@ -5,7 +5,7 @@ description: Encodes visua1's personal animation-taste judgment — when and why
 
 # Motion Sense (visua1)
 
-Personal animation-taste judgment — covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating, and `svg-path-animation`, which owns SVG's own coordinate-system and path-data animation territory (line-drawing, morphing, motion-along-a-path, `viewBox`). Spring-physics animation guidance (JS `useSpring`, mass/stiffness/damping config) is intentionally out of scope for this skill.
+Personal animation-taste judgment — covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating. Spring-physics animation guidance (JS `useSpring`, mass/stiffness/damping config) is intentionally out of scope for this skill.
 
 ## Core Philosophy
 
