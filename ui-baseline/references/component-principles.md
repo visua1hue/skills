@@ -1,6 +1,6 @@
 # Component Building Principles — Reference
 
-Non-animation component craft — hit targets, form/field states, density, empty/loading/error states: the parts of a component that are correct or incorrect independent of any animation. Animation-flavored component patterns (button press feedback, popover origin-awareness, transitions) are covered in `motion-sense`'s `animation-techniques.md`, not here.
+Non-animation component patterns — hit targets, form/field states, density, empty/loading/error states: the parts of a component that are correct or incorrect independent of any animation. Animation-flavored component patterns (button press feedback, popover origin-awareness, transitions) are covered in `motion-sense`'s `animation-techniques.md`, not here.
 
 ## Hit targets
 

@@ -1,11 +1,11 @@
 ---
 name: ui-baseline
-description: visua1's UI baseline — type/spacing tokens, component craft (hit targets, field states, density, empty/loading/error), and adaptive CSS (container queries, range media queries, :has()). Use when building or reviewing components, setting up type/spacing scales, or writing responsive CSS. Never proposes colors.
+description: visua1's UI baseline — type/spacing tokens, component patterns (hit targets, field states, density, empty/loading/error), and adaptive CSS (container queries, range media queries, :has()). Use when building or reviewing components, setting up type/spacing scales, or writing responsive CSS. Never proposes colors.
 ---
 
 # UI Baseline (visua1)
 
-Personal baseline for type/spacing tokens, component craft, and adaptive CSS. Animation taste lives in `motion-sense`; compositor/perf execution lives in `motion-engine`.
+Personal baseline for type/spacing tokens, component patterns, and adaptive CSS. Animation taste lives in `motion-sense`; compositor/perf execution lives in `motion-engine`.
 
 **Color is explicitly out of scope.** No default palette, ever — always read color from the project's own tokens.
 
@@ -25,7 +25,7 @@ If the project already defines its own scale (`variables.css`, `DESIGN.md`, or s
 
 ## Component Building Principles
 
-Non-animation component craft: hit targets (44px touch minimum), touch/interaction (`touch-action`, tap-highlight, `overscroll-behavior`), form/field states (validate inline, four visually distinct states minimum, `:focus-visible` over `:focus`, autocomplete/type/inputmode hygiene), density (a deliberate per-surface choice, not compounding accidental padding), and empty/loading/error states (designed, not default-browser). Full list: `references/component-principles.md`.
+Non-animation component patterns: hit targets (44px touch minimum), touch/interaction (`touch-action`, tap-highlight, `overscroll-behavior`), form/field states (validate inline, four visually distinct states minimum, `:focus-visible` over `:focus`, autocomplete/type/inputmode hygiene), density (a deliberate per-surface choice, not compounding accidental padding), and empty/loading/error states (designed, not default-browser). Full list: `references/component-principles.md`.
 
 ## Adaptive CSS
 
