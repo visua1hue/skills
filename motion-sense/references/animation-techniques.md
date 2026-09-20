@@ -78,7 +78,7 @@ Overlay two images. Clip the top one with `clip-path: inset(0 50% 0 0)`, then ad
 
 ## Component Patterns (Animation-Flavored)
 
-Motion-specific component craft — pairs with the non-animation craft in `adaptive-layout`'s `component-principles.md`.
+Motion-specific component craft — pairs with the non-animation craft in `ui-baseline`'s `component-principles.md`.
 
 ### Buttons must feel responsive
 

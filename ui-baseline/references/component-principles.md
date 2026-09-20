@@ -7,7 +7,7 @@ Non-animation component craft — hit targets, form/field states, density, empty
 - Minimum interactive target: 44×44px on touch, 24×24px on pointer-only surfaces with adequate spacing between adjacent targets (WCAG 2.5.8 Target Size, Level AA).
 - A visually small icon button (16-20px glyph) still needs a 44px tap area — pad the hit area, don't scale up the icon to compensate.
 - Adjacent small targets (icon toolbars, table row actions) need at least 8px of gutter between hit areas even if the visible icons sit closer — otherwise mis-taps become a real failure mode on touch, not just a theoretical one.
-- Don't shrink hit targets to fit a dense layout. Increase spacing between components instead — the token scale in `typeset`'s `token-baseline.md` exists precisely so "needs more room" has an answer that isn't an arbitrary pixel value.
+- Don't shrink hit targets to fit a dense layout. Increase spacing between components instead — the token scale in `token-baseline.md` exists precisely so "needs more room" has an answer that isn't an arbitrary pixel value.
 
 ## Touch & interaction
 
