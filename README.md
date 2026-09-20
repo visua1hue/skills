@@ -23,7 +23,6 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 
 ### User-invoked
 
-- [exec](exec/): Orchestrate parallel read-only subagents, then synthesize (default n=5)
 - [triage](triage/): GitHub issue and PR triage state machine
 
 ## Commands <sup><small>[⌃](#top)</small></sup>
