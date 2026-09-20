@@ -20,7 +20,6 @@ Skills are either **Model-invoked** — Agents auto-activates them when your req
 - [svg-path-animation](svg-path-animation/): Line-drawing, path morphing, and motion-along-a-path
 - [adaptive-layout](adaptive-layout/): Solid component states, touch handling, and adaptive CSS
 - [typeset](typeset/): Type scale, spacing, and line-height that actually varies
-- [perf-audit](perf-audit/): Core Web Vitals auditing via Chrome DevTools MCP and Lighthouse
 
 ### User-invoked
 
