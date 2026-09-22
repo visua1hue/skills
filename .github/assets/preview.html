@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Agent Skills preview</title>
+<style>
+  :root {
+    --ink: #2b2b2b;
+    --muted: #8a8a8a;
+    --card: #ffffff;
+    --edge: #d6d6d6;
+    --bg: #fcfcfc;
+  }
+  * { box-sizing: border-box; margin: 0; border-radius: 0; }
+  html, body { width: 1760px; height: 560px; overflow: hidden; }
+  body {
+    position: relative;
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(#f0f0f0 1px, transparent 1px),
+      linear-gradient(90deg, #f0f0f0 1px, transparent 1px);
+    background-size: 20px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .abs { position: absolute; }
+
+  .card {
+    position: absolute;
+    background: var(--card);
+    border: 1.5px solid var(--edge);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px;
+  }
+  .ico { width: 56px; height: 56px; background: #f3f3f3; display: grid; place-items: center; }
+  .card h3 { font-size: 40px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.1; }
+  .card p { font-size: 22px; color: var(--muted); margin-top: 8px; }
+
+  /* sources */
+  .src { left: 157px; width: 300px; height: 110px; padding: 20px 28px; justify-content: center; }
+  .src h3 { font-size: 32px; }
+  .src p { font-size: 22px; }
+
+  /* injection tag */
+  .tag {
+    left: 517px; top: 250px; width: 200px; height: 60px;
+    display: grid; place-items: center; text-align: center;
+    background: var(--bg); border: 1.5px solid var(--edge);
+    font-size: 14px; line-height: 1.5; color: var(--muted);
+  }
+
+  /* context window */
+  .window { left: 747px; top: 122px; width: 856px; height: 316px; border: 1.5px dashed #b0b0b0; background: rgba(255,255,255,.55); }
+  .ctx { top: 61px; width: 360px; height: 190px; padding: 26px; }
+  .ctx .ico { width: 44px; height: 44px; }
+  .ctx h3 { font-size: 36px; }
+  .ctx p { font-size: 20px; }
+  .window-label { position: absolute; right: 24px; bottom: 20px; font-size: 16px; color: var(--muted); }
+
+  svg.wires { position: absolute; inset: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<svg class="wires" width="1760" height="560" viewBox="0 0 1760 560" fill="none">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#8a8a8a"/>
+    </marker>
+  </defs>
+  <g stroke="#a8a8a8" stroke-width="1.5" stroke-linejoin="miter">
+    <path d="M457 217H492V280"/>
+    <path d="M457 343H492V280"/>
+    <path d="M492 280H517"/>
+    <path d="M717 280H745" marker-end="url(#arr)"/>
+  </g>
+  <rect x="488" y="276" width="8" height="8" fill="#8a8a8a"/>
+</svg>
+
+<!-- sources -->
+<div class="card src" style="top:162px;">
+  <div><h3>AGENT SKILLS</h3><p>Open standard</p></div>
+</div>
+<div class="card src" style="top:288px;">
+  <div><h3>MCP</h3><p>Extended layer</p></div>
+</div>
+
+<div class="abs tag mono">Selective<br>Context Injection</div>
+
+<!-- context window -->
+<div class="abs window">
+  <div class="card ctx" style="left:46px;">
+    <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="1.8" stroke-linejoin="miter"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></svg></div>
+    <div><h3>Model-invoked</h3><p>Auto-activates on request match</p></div>
+  </div>
+  <div class="card ctx" style="left:446px;">
+    <div class="ico"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="1.8" stroke-linejoin="miter"><path d="M16 3 8 21"/></svg></div>
+    <div><h3>User-invoked</h3><p>Triggered by a slash command</p></div>
+  </div>
+
+  <div class="window-label mono">Context Window</div>
+</div>
+
+</body>
+</html>
