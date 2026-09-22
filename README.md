@@ -20,6 +20,7 @@ Skills are either **Model-invoked** – Agents auto-activates them when your req
 - [motion-sense](motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [ui-baseline](ui-baseline/): Type/spacing tokens, component patterns, and adaptive CSS
+- [git-stack-flow](git-stack-flow/): Commit/branch conventions, PR flow, and worktree audit
 
 ### User-invoked
 

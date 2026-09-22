@@ -1,5 +1,5 @@
-Last updated: 2026-06-21
-Version: v.0.8.2
+Last updated: 2026-09-22
+Version: v.0.9.0
 
 ## Principles
 
@@ -29,14 +29,4 @@ Additional rules: see unslop/SKILL.md. Skip rule 33, brevity wins.
 ## Context
 
 After auto-compact, re-read any files actively being modified. Never summarize remaining work — implement it.
-
-## Git
-
-- Commits: `<type>: <description>` — imperative, <50 chars, no caps/period after colon
-  - Types: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`
-- One logical change per Commit
-- Branches: `<prefix>/<description>` — lowercase, hyphen-separated
-  - Prefixes: `feature`, `bugfix`, `hotfix`
-- Rebase over merge — keep history linear
-- Keep workflows modular, single-responsibility
 
