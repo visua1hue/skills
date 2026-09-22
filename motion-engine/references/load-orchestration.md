@@ -1,10 +1,10 @@
-# Paint & Load Strategy — Reference
+# Paint & Load Strategy. Reference
 
 Detailed guidance for FCP-safe animation initialization. Read this when building or debugging the load animation orchestration system.
 
 ## Initial State
 
-Set animated elements to `opacity: 0.01` in CSS. Lighthouse ignores `opacity: 0` for FCP calculations — setting `0.01` ensures the element registers as painted content without being visible to the user.
+Set animated elements to `opacity: 0.01` in CSS. Lighthouse ignores `opacity: 0` for FCP calculations. Setting `0.01` ensures the element registers as painted content without being visible to the user.
 
 ```css
 [data-motion] {
@@ -19,18 +19,18 @@ This state is defined in CSS, not JavaScript, so it applies immediately during p
 
 The TypeScript controller waits for two conditions before triggering load animations:
 
-1. **Asset lock** — `document.fonts.ready` resolves, ensuring web fonts are loaded. This prevents font-swap glitches during animation (FOUT artifacts mid-transition).
-2. **Paint lock** — First Contentful Paint has occurred. Check `performance.getEntriesByType('paint')` for an existing FCP entry. If none exists, observe via `PerformanceObserver`. Fallback to `requestAnimationFrame` if `PerformancePaintTiming` is not supported.
+1. **Asset lock.** `document.fonts.ready` resolves, ensuring web fonts are loaded. This prevents font-swap glitches during animation (FOUT artifacts mid-transition).
+2. **Paint lock.** First Contentful Paint has occurred. Check `performance.getEntriesByType('paint')` for an existing FCP entry. If none exists, observe via `PerformanceObserver`. Fallback to `requestAnimationFrame` if `PerformancePaintTiming` is not supported.
 
-Only after both locks clear does the controller query `[data-motion]` elements and run their animation presets. Each preset clears `will-change` when its animation finishes — the CSS declaration is a load-time hint, not permanent.
+Only after both locks clear does the controller query `[data-motion]` elements and run their animation presets. Each preset clears `will-change` when its animation finishes. The CSS declaration is a load-time hint, not permanent.
 
 ## Declarative API
 
 Animations are applied via data attributes. The controller detects and initializes all registered elements automatically.
 
-- `data-motion="preset-name"` — load animation, triggered after FCP
-- `data-motion-scroll="preset-name"` — scroll animation (CSS-native with WAAPI fallback)
-- `data-motion-delay="0.2"` — timing override in seconds, applied as animation delay
+- `data-motion="preset-name"`. Load animation, triggered after FCP
+- `data-motion-scroll="preset-name"`. Scroll animation (CSS-native with WAAPI fallback)
+- `data-motion-delay="0.2"`. Timing override in seconds, applied as animation delay
 
 This declarative approach keeps animation intent in the markup, supports SSR and static rendering, and allows the CSS layer to define the initial state independently of JavaScript execution.
 
@@ -56,4 +56,4 @@ const PRESETS = {
 };
 ```
 
-Every value the preset uses — duration, distance, easing — is read from CSS custom properties first, with sensible defaults as fallback. This ensures the design system (whether in `DESIGN.md`, `motion.css`, or `variables.css`) remains the single source of truth.
+Every value the preset uses, duration, distance, easing, is read from CSS custom properties first, with sensible defaults as fallback. This ensures the design system (whether in `DESIGN.md`, `motion.css`, or `variables.css`) remains the single source of truth.

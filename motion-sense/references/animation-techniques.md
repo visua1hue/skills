@@ -1,4 +1,4 @@
-# Animation Technique Library — Reference
+# Animation Technique Library, Reference
 
 CSS technique patterns for shipping the feel decisions in `animation-decisions.md`. Discrete-property transitions (`allow-discrete` + `@starting-style`) and the `linear()` spring-approximation easing are covered in `native-transitions.md`, not repeated here.
 
@@ -6,18 +6,18 @@ CSS technique patterns for shipping the feel decisions in `animation-decisions.m
 
 ### `translateY` with percentages
 
-Percentage values in `translate()` are relative to the element's own size, not the viewport. `translateY(100%)` moves an element by its own height regardless of actual dimensions — this is how Sonner positions toasts and how Vaul hides a drawer before animating it in.
+Percentage values in `translate()` are relative to the element's own size, not the viewport. `translateY(100%)` moves an element by its own height regardless of actual dimensions. This is how Sonner positions toasts and how Vaul hides a drawer before animating it in.
 
 ```css
 .drawer-hidden { transform: translateY(100%); } /* works regardless of drawer height */
 .toast-enter { transform: translateY(-100%); }   /* works regardless of toast height */
 ```
 
-Prefer percentages over hardcoded pixel values — less error-prone, adapts to content automatically.
+Prefer percentages over hardcoded pixel values, less error-prone, adapts to content automatically.
 
 ### `scale()` scales children too
 
-Unlike `width`/`height`, `scale()` scales an element's children along with it. Scaling a button on press scales its font size, icons, and content proportionally — a feature, not a bug, since it reinforces the "this is one physical object being pressed" feeling.
+Unlike `width`/`height`, `scale()` scales an element's children along with it. Scaling a button on press scales its font size, icons, and content proportionally, a feature, not a bug, since it reinforces the "this is one physical object being pressed" feeling.
 
 ### 3D transforms for depth
 
@@ -34,13 +34,13 @@ Unlike `width`/`height`, `scale()` scales an element's children along with it. S
 
 ### `transform-origin`
 
-Every element has an anchor point transforms execute from — default is center. Set it explicitly to match where the interaction actually originates (see popover origin-awareness below).
+Every element has an anchor point transforms execute from. Default is center. Set it explicitly to match where the interaction actually originates (see popover origin-awareness below).
 
-SVG elements default to a viewport-relative `transform-origin`, not their own box — set `transform-box: fill-box` for own-bounding-box origin.
+SVG elements default to a viewport-relative `transform-origin`, not their own box. Set `transform-box: fill-box` for own-bounding-box origin.
 
 ## `clip-path` for Animation
 
-Not just for shapes — one of the most versatile animation tools in CSS.
+Not just for shapes, one of the most versatile animation tools in CSS.
 
 ### The inset shape
 
@@ -62,7 +62,7 @@ Not just for shapes — one of the most versatile animation tools in CSS.
 
 ### Tabs with perfect color transitions
 
-Duplicate the tab list. Style the copy as "active" (different background/text color). Clip the copy so only the active tab is visible, and animate the clip on tab change. This produces a seamless color transition that animating individual tab colors can never match — the "active" look is always one continuous shape sliding under the labels, not N separate color transitions racing each other.
+Duplicate the tab list. Style the copy as "active" (different background/text color). Clip the copy so only the active tab is visible, and animate the clip on tab change. This produces a seamless color transition that animating individual tab colors can never match. The "active" look is always one continuous shape sliding under the labels, not N separate color transitions racing each other.
 
 ### Hold-to-delete pattern
 
@@ -78,7 +78,7 @@ Overlay two images. Clip the top one with `clip-path: inset(0 50% 0 0)`, then ad
 
 ## Component Patterns (Animation-Flavored)
 
-Motion-specific component craft — pairs with the non-animation craft in `ui-baseline`'s `component-principles.md`.
+Motion-specific component craft, pairs with the non-animation craft in `ui-baseline`'s `component-principles.md`.
 
 ### Buttons must feel responsive
 
@@ -91,7 +91,7 @@ Instant feedback on `:active` makes the UI feel like it's actually listening. Ap
 
 ### Never animate from `scale(0)`
 
-Nothing in the real world disappears and reappears from nothing. Start from `scale(0.9)` or higher combined with opacity — even a barely-visible initial scale reads as more natural, like a balloon that still has a shape when deflated.
+Nothing in the real world disappears and reappears from nothing. Start from `scale(0.9)` or higher combined with opacity. Even a barely-visible initial scale reads as more natural, like a balloon that still has a shape when deflated.
 
 ```css
 /* Bad */
@@ -102,7 +102,7 @@ Nothing in the real world disappears and reappears from nothing. Start from `sca
 
 ### Make popovers origin-aware
 
-Popovers should scale in from their trigger, not from center — the default `transform-origin: center` is wrong for almost every popover. **Exception: modals** — they aren't anchored to a trigger, so centered is correct for them.
+Popovers should scale in from their trigger, not from center. The default `transform-origin: center` is wrong for almost every popover. **Exception: modals.** They aren't anchored to a trigger, so centered is correct for them.
 
 ```css
 .popover { transform-origin: var(--radix-popover-content-transform-origin); } /* Radix */
@@ -127,11 +127,11 @@ Tooltips should delay before appearing (prevents accidental activation on a stra
 
 ### Transitions over keyframes for rapidly-triggered UI
 
-CSS transitions can be interrupted and retargeted mid-flight; keyframes restart from zero. For anything triggered rapidly (adding toasts, toggling states repeatedly), transitions produce smoother results — no visible restart glitch when the user re-triggers before the previous animation finished.
+CSS transitions can be interrupted and retargeted mid-flight; keyframes restart from zero. For anything triggered rapidly (adding toasts, toggling states repeatedly), transitions produce smoother results, no visible restart glitch when the user re-triggers before the previous animation finished.
 
 ### Use blur to mask imperfect transitions
 
-When a crossfade between two states looks off no matter what easing/duration is tried, add a subtle `filter: blur(2px)` during the transition. Without it, a crossfade shows two distinct objects overlapping; blur bridges the gap, tricking the eye into perceiving one smooth transformation instead of a swap. Keep blur under 20px — heavy blur is expensive, especially in Safari.
+When a crossfade between two states looks off no matter what easing/duration is tried, add a subtle `filter: blur(2px)` during the transition. Without it, a crossfade shows two distinct objects overlapping; blur bridges the gap, tricking the eye into perceiving one smooth transformation instead of a swap. Keep blur under 20px. Heavy blur is expensive, especially in Safari.
 
 ```css
 .button-content { transition: filter 200ms ease, opacity 200ms ease; }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Read-only worktree audit. Classifies every git worktree by size, age, merge
 # state, uncommitted work, and remote/PR state. Emits a table sorted by size
-# with a suggested bucket. Never deletes anything — deletion stays a
+# with a suggested bucket. Never deletes anything. Deletion stays a
 # human-gated step in the git-stack-flow skill.
 #
 # Usage: worktree-audit.sh [repo-path]   (defaults to the current repo)

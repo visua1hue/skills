@@ -1,14 +1,14 @@
-# Native Transitions — Reference
+# Native Transitions, Reference
 
-Full patterns for exit animations, spring easing, and page transitions using what the platform now handles natively — no JavaScript orchestration required.
+Full patterns for exit animations, spring easing, and page transitions using what the platform now handles natively, no JavaScript orchestration required.
 
 ## `allow-discrete` + `@starting-style`
 
 ### The problem this solves
 
-Discrete properties (`display`, `content-visibility`, `overlay`) don't interpolate — the browser can't animate "50% between `none` and `flex`," so by default they just flip instantly at the midpoint of any transition. That's why exit animations traditionally need JavaScript: set `opacity: 0`, wait for the transition to finish (`transitionend`), *then* set `display: none`. Get the timing wrong and you either see a flash of the element with `display: none` fighting the fade, or the element stays in layout (and in the accessibility tree, and tab order) after it's visually gone.
+Discrete properties (`display`, `content-visibility`, `overlay`) don't interpolate. The browser can't animate "50% between `none` and `flex`," so by default they just flip instantly at the midpoint of any transition. That's why exit animations traditionally need JavaScript: set `opacity: 0`, wait for the transition to finish (`transitionend`), *then* set `display: none`. Get the timing wrong and you either see a flash of the element with `display: none` fighting the fade, or the element stays in layout (and in the accessibility tree, and tab order) after it's visually gone.
 
-`transition-behavior: allow-discrete` fixes this at the CSS level: the discrete property still flips instantly, but the browser delays the flip until the *end* of the transition when going from visible to hidden, and flips it immediately (before the transition starts) when going from hidden to visible. Paired with `@starting-style`, you get both directions — entry and exit — with no JS timing code.
+`transition-behavior: allow-discrete` fixes this at the CSS level: the discrete property still flips instantly, but the browser delays the flip until the *end* of the transition when going from visible to hidden, and flips it immediately (before the transition starts) when going from hidden to visible. Paired with `@starting-style`, you get both directions, entry and exit, with no JS timing code.
 
 ### Full pattern
 
@@ -35,11 +35,11 @@ Discrete properties (`display`, `content-visibility`, `overlay`) don't interpola
 
 Sequence on open (`.is-open` added): `display` flips to `flex` immediately (so opacity has something to transition on), `@starting-style` supplies the "from" value, opacity transitions 0→1 normally.
 
-Sequence on close (`.is-open` removed): opacity transitions 1→0 normally, `display` only flips to `none` once that transition completes — allow-discrete delays it, so the element stays visible (and in layout) for the full fade-out instead of vanishing at frame one.
+Sequence on close (`.is-open` removed): opacity transitions 1→0 normally, `display` only flips to `none` once that transition completes, allow-discrete delays it, so the element stays visible (and in layout) for the full fade-out instead of vanishing at frame one.
 
 ### Gating by media query
 
-The pattern combines cleanly with a breakpoint gate — e.g. a panel that's always visible below a breakpoint and only transitions in/out above it:
+The pattern combines cleanly with a breakpoint gate, e.g. a panel that's always visible below a breakpoint and only transitions in/out above it:
 
 ```css
 .panel {
@@ -61,16 +61,16 @@ The pattern combines cleanly with a breakpoint gate — e.g. a panel that's alwa
 
 ### Gotchas
 
-- `@starting-style` only has an effect on the *first* style update after an element goes from not-rendered to rendered (or `display: none` to displayed). It does nothing on subsequent updates — that's correct, it's an entry-only hook.
-- The `@starting-style` block needs to target the state the element is transitioning *into*, with the starting values — not the base/hidden selector.
+- `@starting-style` only has an effect on the *first* style update after an element goes from not-rendered to rendered (or `display: none` to displayed). It does nothing on subsequent updates. That's correct, it's an entry-only hook.
+- The `@starting-style` block needs to target the state the element is transitioning *into*, with the starting values, not the base/hidden selector.
 - Works with `content-visibility: hidden` the same way as `display: none`, useful when you want the element to stay measurable (`content-visibility` keeps layout box, `display: none` doesn't).
-- Baseline Newly Available since Firefox 129 (mid-2024) — Chromium 117+, Safari 17.5+, Firefox 129+ all support it, safe to use as a primary code path rather than an escape hatch. Where a fallback still matters (very old browser floors), a no-JS fallback is just "the element pops instead of fading," which is an acceptable degradation, not a broken experience.
+- Baseline Newly Available since Firefox 129 (mid-2024). Chromium 117+, Safari 17.5+, Firefox 129+ all support it, safe to use as a primary code path rather than an escape hatch. Where a fallback still matters (very old browser floors), a no-JS fallback is just "the element pops instead of fading," which is an acceptable degradation, not a broken experience.
 
 ## The `linear()` Easing Function
 
 ### What it's for
 
-Spring physics (mass/stiffness/damping) doesn't map onto a `cubic-bezier()` curve — bezier curves are monotonic between two points and can't produce the overshoot-and-settle motion a real spring has. Historically, getting spring-like motion in pure CSS meant multiple `@keyframes` steps approximating the curve by hand. `linear()` does this properly: it's a piecewise-linear easing function defined by an arbitrary list of output values (optionally with position percentages), so a spring's simulated position-over-time curve can be sampled at N points and shipped directly as a CSS value.
+Spring physics (mass/stiffness/damping) doesn't map onto a `cubic-bezier()` curve. Bezier curves are monotonic between two points and can't produce the overshoot-and-settle motion a real spring has. Historically, getting spring-like motion in pure CSS meant multiple `@keyframes` steps approximating the curve by hand. `linear()` does this properly: it's a piecewise-linear easing function defined by an arbitrary list of output values (optionally with position percentages), so a spring's simulated position-over-time curve can be sampled at N points and shipped directly as a CSS value.
 
 ### Syntax
 
@@ -88,7 +88,7 @@ Each entry is an output value (0 = start, 1 = end, values outside that range are
 );
 ```
 
-Values that exceed `1` (like `1.102` above) are the overshoot — the curve bounces past its target before settling, which is what makes it read as a spring rather than an eased approach.
+Values that exceed `1` (like `1.102` above) are the overshoot. The curve bounces past its target before settling, which is what makes it read as a spring rather than an eased approach.
 
 ### Generating one
 
@@ -99,7 +99,7 @@ Don't hand-write control points. Generate them from an actual spring simulation:
 
 ### When to use it vs. a JS spring
 
-Use `linear()` when the spring only needs to run once, on a state change, with no interruption mid-animation (e.g. a toast entrance, a button's settle-after-press). Use an actual JS spring (Motion.dev's `useSpring`, etc.) when the animation needs to be interruptible mid-flight with velocity preserved — a `linear()` curve is a fixed, precomputed timeline; it doesn't know about the current velocity if something interrupts it partway through, the same limitation as `@keyframes`.
+Use `linear()` when the spring only needs to run once, on a state change, with no interruption mid-animation (e.g. a toast entrance, a button's settle-after-press). Use an actual JS spring (Motion.dev's `useSpring`, etc.) when the animation needs to be interruptible mid-flight with velocity preserved. A `linear()` curve is a fixed, precomputed timeline; it doesn't know about the current velocity if something interrupts it partway through, the same limitation as `@keyframes`.
 
 ## Page Transitions
 
@@ -131,8 +131,8 @@ Cross-document (full MPA navigation, no client-side router needed):
 }
 ```
 
-Opting a same-origin navigation into a browser-managed cross-document transition — same pseudo-element model as the same-document version.
+Opting a same-origin navigation into a browser-managed cross-document transition, same pseudo-element model as the same-document version.
 
-**Browser support**: same-document transitions ship in Chromium 111+, Safari 18+, and Firefox 144+ — safe as a primary code path. Cross-document is narrower: Chromium 126+ and Safari 18.2+ support it, but Firefox doesn't yet (in development, not shipped). Cross-document transitions are a progressive enhancement by design — an unsupported browser just does a normal navigation with no visual transition, not a broken one, so ship it unconditionally rather than feature-detecting around it.
+**Browser support**: same-document transitions ship in Chromium 111+, Safari 18+, and Firefox 144+, safe as a primary code path. Cross-document is narrower: Chromium 126+ and Safari 18.2+ support it, but Firefox doesn't yet (in development, not shipped). Cross-document transitions are a progressive enhancement by design. An unsupported browser just does a normal navigation with no visual transition, not a broken one, so ship it unconditionally rather than feature-detecting around it.
 
 For springs, differentiated enter/exit, or staggered shared-element morphs beyond this raw pattern, see Motion.dev's `animateView()` in `motion-engine/references/animation-patterns.md`.

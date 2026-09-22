@@ -1,11 +1,11 @@
 ---
 name: motion-engine
-description: Ships performant animation — compositor-only CSS/WAAPI/Motion.dev, scroll-driven animation, load orchestration, reduced motion, and device scaling incl. WebGL/Three.js tiers. Use when implementing animations, debugging jank, or optimizing for Core Web Vitals or low-power devices.
+description: Ships performant animation. Compositor-only CSS/WAAPI/Motion.dev, scroll-driven animation, load orchestration, reduced motion, and device scaling incl. WebGL/Three.js tiers. Use when implementing animations, debugging jank, or optimizing for Core Web Vitals or low-power devices.
 ---
 
 # Motion Engine
 
-An animation execution skill. It assumes the design decision has already been made — what to animate, what easing, what duration — and focuses entirely on shipping that animation without blocking the main thread or degrading Core Web Vitals.
+An animation execution skill. It assumes the design decision has already been made, what to animate, what easing, what duration, and focuses entirely on shipping that animation without blocking the main thread or degrading Core Web Vitals.
 
 The operating principle is progressive enhancement: CSS handles the default state and scroll-driven animations natively, JavaScript orchestrates load sequencing and provides fallbacks. Every animation runs on the GPU compositor thread. Layout-triggering properties are never animated. The target is 120fps with zero render-blocking.
 
@@ -19,9 +19,9 @@ Animations run on the GPU compositor thread by exclusively using properties that
 
 These three property groups are composited on the GPU and never trigger layout or paint recalculation:
 
-- `transform` — translate, scale, rotate, skew
-- `opacity` — fade in/out, crossfade
-- `filter` — blur, hue-rotate, brightness, contrast
+- `transform`. Translate, scale, rotate, skew
+- `opacity`. Fade in/out, crossfade
+- `filter`. Blur, hue-rotate, brightness, contrast
 
 ### Prohibited Properties
 
@@ -35,10 +35,10 @@ To animate size or position changes, use `transform: scale()` and `transform: tr
 
 ### Compositor Hygiene
 
-- **`will-change`**: declare on elements that will animate. Only apply to active animations — overuse wastes GPU memory. Remove after one-shot animations complete.
+- **`will-change`**: declare on elements that will animate. Only apply to active animations. Overuse wastes GPU memory. Remove after one-shot animations complete.
 - **CSS variable caveat**: updating a custom property on a parent recalculates styles for all children. During active animation (drag, scroll-linked), set `transform` directly on the element.
 - **Height animation**: animating `height` or `max-height` triggers layout every frame. Use `transform: scaleY()` with `transform-origin: top`, `clip-path: inset()`, or measure once then animate `translateY` on a clip wrapper. Never animate `height: 0` to `height: auto`.
-- **Focus rings**: never animate the focus indicator itself — it triggers paint. Animate the element's background or shadow via opacity crossfade instead.
+- **Focus rings**: never animate the focus indicator itself. It triggers paint. Animate the element's background or shadow via opacity crossfade instead.
 - **Disabled elements**: remove all transition and `will-change` declarations. They waste compositor layers on elements that can't be interacted with.
 
 ## Motion Tokens
@@ -53,12 +53,12 @@ Define motion parameters as CSS custom properties so animations read from a sing
   --motion-dur-slow: 300ms;
   --motion-dur-long: 600ms;
 
-  /* Easing — use custom curves, not built-in keywords */
+  /* Easing. Use custom curves, not built-in keywords */
   --motion-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
   --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
-  /* Spring approximations — CSS cubic-bezier curves that mimic spring physics */
+  /* Spring approximations. CSS cubic-bezier curves that mimic spring physics */
   --motion-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --motion-spring-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-spring-snappy: cubic-bezier(0.16, 1, 0.3, 1);
@@ -77,9 +77,9 @@ Define motion parameters as CSS custom properties so animations read from a sing
 }
 ```
 
-All animation presets read values from these tokens via `getComputedStyle`. Never hardcode durations, distances, or easing curves in JavaScript — pull them from CSS custom properties so the design system remains the single source of truth.
+All animation presets read values from these tokens via `getComputedStyle`. Never hardcode durations, distances, or easing curves in JavaScript. Pull them from CSS custom properties so the design system remains the single source of truth.
 
-If the project has a `DESIGN.md` or equivalent design system file, reference it for motion token values. The token names above are the recommended vocabulary — the specific values are project-dependent.
+If the project has a `DESIGN.md` or equivalent design system file, reference it for motion token values. The token names above are the recommended vocabulary. The specific values are project-dependent.
 
 ## Execution Tiers
 
@@ -91,30 +91,30 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 | 2    | CSS Keyframes + `animation-timeline` | Scroll-driven animations. Zero JS, full compositor. Gate with `@supports`.                                                    |
 | 3    | WAAPI                                | Programmatic control, single element. Hardware-accelerated, no library needed.                                                |
 | 4    | Motion.dev                           | Orchestration, stagger, sequencing, scroll fallbacks, View Transitions orchestration (`animateView()`). Thin WAAPI wrapper.   |
-| 5    | Motion springs                       | Drag, gesture, interruptible physics. Shorthand props (`x`, `y`) are NOT hardware-accelerated — use full `transform` strings. |
+| 5    | Motion springs                       | Drag, gesture, interruptible physics. Shorthand props (`x`, `y`) are NOT hardware-accelerated. Use full `transform` strings. |
 
 **Key rules across all tiers:**
 
-- Avoid `transition: all` — always specify exact properties.
+- Avoid `transition: all`. Always specify exact properties.
 - `@starting-style` replaces the React `useEffect(() => setMounted(true))` pattern for CSS-native entry animations.
 - Gate hover animations behind `@media (hover: hover) and (pointer: fine)` to prevent false-positive touch hover states.
 - CSS animations run off the main thread and remain smooth when the browser is busy. Prefer CSS for predetermined animations; JS for dynamic, interruptible ones.
 
 ## Device Capability Scaling
 
-Distinct from Execution Tiers above — that table is about which mechanism to use once you know the browser can render it. This is about scaling back decorative load when the device or network can't sustain the full experience — a different axis, and one that applies to CSS/Motion.dev too, not just WebGL.
+Distinct from Execution Tiers above. That table is about which mechanism to use once you know the browser can render it. This is about scaling back decorative load when the device or network can't sustain the full experience, a different axis, and one that applies to CSS/Motion.dev too, not just WebGL.
 
-### CSS/WAAPI/Motion.dev — complexity budget
+### CSS/WAAPI/Motion.dev. Complexity budget
 
 "GPU-composited" isn't the same as "free." It holds for a single isolated `transform`/`opacity` transition; it doesn't hold for cumulative decorative load:
 
-- Heavy `filter`/`backdrop-filter` (blur especially) is real GPU cost — the 20px blur ceiling above should be lower still, or skipped, on a constrained device.
-- Motion.dev spring physics run on the main thread per frame per element — a large stagger group is real main-thread work that scales with element count, not free just because each spring individually targets `transform`.
-- Motion's shorthand props (`x`/`y`/`scale`) aren't hardware-accelerated — under main-thread load on a low-power device, this is exactly where frames drop.
+- Heavy `filter`/`backdrop-filter` (blur especially) is real GPU cost. The 20px blur ceiling above should be lower still, or skipped, on a constrained device.
+- Motion.dev spring physics run on the main thread per frame per element. A large stagger group is real main-thread work that scales with element count, not free just because each spring individually targets `transform`.
+- Motion's shorthand props (`x`/`y`/`scale`) aren't hardware-accelerated. Under main-thread load on a low-power device, this is exactly where frames drop.
 
-Scale down on constrained devices: smaller/fewer stagger groups, skip decorative parallax layers, avoid or shrink blur, cap simultaneous spring count. This is a **different, performance-motivated reason to reduce motion than `prefers-reduced-motion`** (that's about vestibular/motion sensitivity, opt-in by user preference) — the two are independent and stack. Use the same policy-cap principle as WebGL below: treat mobile/low-power as a class-level cap, not something to re-benchmark per animation.
+Scale down on constrained devices: smaller/fewer stagger groups, skip decorative parallax layers, avoid or shrink blur, cap simultaneous spring count. This is a **different, performance-motivated reason to reduce motion than `prefers-reduced-motion`** (that's about vestibular/motion sensitivity, opt-in by user preference). The two are independent and stack. Use the same policy-cap principle as WebGL below: treat mobile/low-power as a class-level cap, not something to re-benchmark per animation.
 
-### WebGL/Three.js — survival gate
+### WebGL/Three.js. Survival gate
 
 Whether the device and network can sustain a WebGL layer at all, not just how much decorative complexity to allow. Only applies when a WebGL/Three.js rendering layer exists. For the full blueprint (resource pooling, guardrails-in-code, detection approach), read `references/webgl-device-tiers.md`.
 
@@ -122,16 +122,16 @@ Three tiers, gated on GPU benchmark and network capability:
 
 | Tier | Experience | Gate |
 | --- | --- | --- |
-| 0 — Static fallback | No WebGL context. Static image/video instead. | Context creation fails, GPU blocklisted, or benchmark below floor |
-| 1 — Constrained WebGL | Capped resolution, reduced textures, trimmed effects/post-processing. | Everything else on mobile (policy cap, not a benchmark result) or a low-but-viable desktop GPU |
-| 2 — Full quality | No caps. | Capable desktop GPU + fast network |
+| 0. Static fallback | No WebGL context. Static image/video instead. | Context creation fails, GPU blocklisted, or benchmark below floor |
+| 1. Constrained WebGL | Capped resolution, reduced textures, trimmed effects/post-processing. | Everything else on mobile (policy cap, not a benchmark result) or a low-but-viable desktop GPU |
+| 2. Full quality | No caps. | Capable desktop GPU + fast network |
 
 **Key rules:**
 
-- Mobile is hard-capped to Tier 1 as policy, not re-benchmarked per device — don't try to detect your way into giving some phones Tier 2.
-- Bake performance ceilings into the code itself (hard caps on shader complexity, particle count, texture resolution), not just review discipline — the goal is that art direction *cannot* accidentally regress performance.
+- Mobile is hard-capped to Tier 1 as policy, not re-benchmarked per device. Don't try to detect your way into giving some phones Tier 2.
+- Bake performance ceilings into the code itself (hard caps on shader complexity, particle count, texture resolution), not just review discipline. The goal is that art direction *cannot* accidentally regress performance.
 - Authored motion decision rule: run it live only when interactivity is worth it. Interactive pieces stay in a real-time engine; anything linear/non-interactive should be a pre-rendered video instead.
-- Scope live-render resource usage (VRAM, framebuffers) to what's actually visible, not to everything that exists on the page — release resources for content that's scrolled off.
+- Scope live-render resource usage (VRAM, framebuffers) to what's actually visible, not to everything that exists on the page. Release resources for content that's scrolled off.
 
 ## Paint & Load Strategy
 
@@ -139,8 +139,8 @@ Load animations must not block FCP or degrade LCP. For full implementation detai
 
 The strategy in brief:
 
-1. **CSS initial state**: `[data-motion] { opacity: 0.01; will-change: transform, opacity, filter; }` — elements are painted but invisible. `0.01` not `0` because Lighthouse ignores `opacity: 0` for FCP.
-2. **Asset lock**: `await document.fonts.ready` — prevents FOUT during animation.
+1. **CSS initial state**: `[data-motion] { opacity: 0.01; will-change: transform, opacity, filter; }`. Elements are painted but invisible. `0.01` not `0` because Lighthouse ignores `opacity: 0` for FCP.
+2. **Asset lock**: `await document.fonts.ready`. Prevents FOUT during animation.
 3. **Paint lock**: check `performance.getEntriesByType('paint')` for existing FCP → `PerformanceObserver` fallback → `requestAnimationFrame` fallback.
 4. **Execute**: trigger load animation presets only after both locks clear, then clear `will-change` when each animation finishes.
 
@@ -148,14 +148,14 @@ The strategy in brief:
 
 ## Gesture Best Practices
 
-Minimal performance guardrails for drag and swipe interactions — not a full implementation guide.
+Minimal performance guardrails for drag and swipe interactions, not a full implementation guide.
 
-- **Compositor-only during gesture**: only update `transform`. Cache layout reads (`getBoundingClientRect`) before drag starts — never read them during the gesture loop.
+- **Compositor-only during gesture**: only update `transform`. Cache layout reads (`getBoundingClientRect`) before drag starts. Never read them during the gesture loop.
 - **Pointer capture**: `el.setPointerCapture(e.pointerId)` on drag start. Ensures events continue even if the pointer leaves element bounds.
 - **Velocity over threshold**: dismiss based on flick velocity (`distance / elapsed time`), not just distance. A quick flick should dismiss regardless of travel.
 - **Multi-touch protection**: ignore additional touch points after drag begins.
 - **Boundary damping**: increasing friction past the natural limit, not hard stops.
-- **Selection/interaction guard**: disable text selection (`user-select: none`) and set `inert` on the dragged element for the duration of the drag — without it, a fast drag can select surrounding text or let a pointerup land on whatever's underneath.
+- **Selection/interaction guard**: disable text selection (`user-select: none`) and set `inert` on the dragged element for the duration of the drag. Without it, a fast drag can select surrounding text or let a pointerup land on whatever's underneath.
 
 ## Accessibility
 
@@ -180,48 +180,48 @@ Respect `prefers-reduced-motion: reduce`. Reduced motion means fewer and gentler
 
 In JavaScript, check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before triggering animations. Skip transform-based presets; allow opacity-only presets to run.
 
-Never block user interaction during stagger animations. Stagger is decorative — all elements must be interactive immediately. Keep stagger delays short (30–80ms between items).
+Never block user interaction during stagger animations. Stagger is decorative. All elements must be interactive immediately. Keep stagger delays short (30–80ms between items).
 
 ## Review Mode
 
 When asked to review animation code, adopt this posture and output format.
 
-**Posture:** default to flagging — approval is earned, not assumed. A transition that "works" but feels sluggish, fires too often, or drops frames is a regression, not a pass.
+**Posture:** default to flagging. Approval is earned, not assumed. A transition that "works" but feels sluggish, fires too often, or drops frames is a regression, not a pass.
 
 ### Output format
 
-**Part 1 — Findings table** (always present):
+**Part 1. Findings table** (always present):
 
 | Before | After | Why |
 | --- | --- | --- |
 | `transition: all 300ms` | `transition: transform 200ms ease-out` | `all` animates layout-triggering properties off-GPU |
 
-**Part 2 — Verdict**, grouped by impact tier (omit empty tiers):
+**Part 2. Verdict**, grouped by impact tier (omit empty tiers):
 
-1. **Feel-breaking regressions** — sluggish easing, comes-from-nowhere, fires on high-frequency/keyboard actions
-2. **Missed simplifications** — animations that should be removed or drastically reduced
-3. **Performance** — non-GPU properties, dropped-frame risks, recalc storms
-4. **Interruptibility & timing** — keyframes where transitions/springs belong; symmetric timing that should be asymmetric
-5. **Origin, physicality & cohesion** — wrong transform-origin, mismatched personality
-6. **Accessibility** — missing reduced-motion or hover gating
+1. **Feel-breaking regressions.** Sluggish easing, comes-from-nowhere, fires on high-frequency/keyboard actions
+2. **Missed simplifications.** Animations that should be removed or drastically reduced
+3. **Performance.** Non-GPU properties, dropped-frame risks, recalc storms
+4. **Interruptibility & timing.** Keyframes where transitions/springs belong; symmetric timing that should be asymmetric
+5. **Origin, physicality & cohesion.** Wrong transform-origin, mismatched personality
+6. **Accessibility.** Missing reduced-motion or hover gating
 
 Close with an explicit decision:
-- **Block** — any feel-breaking regression, animation on keyboard/high-frequency action, `scale(0)`/`ease-in` on UI, non-GPU animation with an easy fix
-- **Approve** — no feel-breaking regressions, durations and easing within bounds, interruptibility handled, reduced-motion respected
+- **Block.** Any feel-breaking regression, animation on keyboard/high-frequency action, `scale(0)`/`ease-in` on UI, non-GPU animation with an easy fix
+- **Approve.** No feel-breaking regressions, durations and easing within bounds, interruptibility handled, reduced-motion respected
 
 ### Remedial hierarchy
 
 When proposing fixes, prefer earlier moves:
 
 1. Delete the animation (high-frequency / no purpose / keyboard-triggered)
-2. Reduce it — shorter duration, smaller transform, fewer properties
-3. Fix the easing — swap `ease-in` → `ease-out` / custom curve
-4. Fix origin/physicality — correct `transform-origin`; replace `scale(0)` with `scale(0.95)` + opacity
-5. Make it interruptible — keyframes → transitions, or a spring for gesture-driven motion
-6. Move it to the GPU — layout props → `transform`/`opacity`; WAAPI for programmatic CSS
-7. Asymmetric timing — slow the deliberate phase, snap the response
-8. Polish — blur crossfades, stagger groups, `@starting-style` for entry
-9. Accessibility & cohesion — reduced-motion + hover gating; tune to component personality
+2. Reduce it. Shorter duration, smaller transform, fewer properties
+3. Fix the easing. Swap `ease-in` → `ease-out` / custom curve
+4. Fix origin/physicality. Correct `transform-origin`; replace `scale(0)` with `scale(0.95)` + opacity
+5. Make it interruptible. Keyframes → transitions, or a spring for gesture-driven motion
+6. Move it to the GPU. Layout props → `transform`/`opacity`; WAAPI for programmatic CSS
+7. Asymmetric timing. Slow the deliberate phase, snap the response
+8. Polish. Blur crossfades, stagger groups, `@starting-style` for entry
+9. Accessibility & cohesion. Reduced-motion + hover gating; tune to component personality
 
 ### Escalation triggers
 
@@ -276,13 +276,13 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 
 **Real device testing**: for touch gestures, test on physical hardware. Simulators don't replicate gesture latency or frame pacing.
 
-**Automated verification**: Chrome DevTools MCP (`chrome-devtools-mcp`) — `performance_start_trace` / `performance_stop_trace` and `lighthouse_audit` to validate compositor-only rendering.
+**Automated verification**: Chrome DevTools MCP (`chrome-devtools-mcp`), `performance_start_trace` / `performance_stop_trace` and `lighthouse_audit` to validate compositor-only rendering.
 
 ## External References
 
-- [Web Animation Performance Tier List](https://motion.dev/blog/web-animation-performance-tier-list) — Motion.dev
-- [`animateView()`](https://motion.dev/docs/animate-view) — Motion.dev docs
-- [CSS animation-timeline](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline) — MDN
-- [easing.dev](https://easing.dev/) — Custom easing curve playground
-- [detect-gpu](https://github.com/pmndrs/detect-gpu) — GPU benchmark/tier classification, pmndrs
-- [Scaling performance](https://r3f.docs.pmnd.rs/advanced/scaling-performance) — React Three Fiber
+- [Web Animation Performance Tier List](https://motion.dev/blog/web-animation-performance-tier-list). Motion.dev
+- [`animateView()`](https://motion.dev/docs/animate-view). Motion.dev docs
+- [CSS animation-timeline](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline). MDN
+- [easing.dev](https://easing.dev/). Custom easing curve playground
+- [detect-gpu](https://github.com/pmndrs/detect-gpu). GPU benchmark/tier classification, pmndrs
+- [Scaling performance](https://r3f.docs.pmnd.rs/advanced/scaling-performance). React Three Fiber

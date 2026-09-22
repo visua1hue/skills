@@ -1,10 +1,10 @@
-# Execution Tiers — Reference
+# Execution Tiers. Reference
 
 Detailed guidance for each animation execution tier. Read this when implementing animations and you need the full code patterns and caveats.
 
 ## Tier 1: CSS Transitions
 
-For predetermined, non-interactive state changes. Hover effects, color transitions, simple toggles. CSS transitions are interruptible by default — triggering a new state mid-transition retargets smoothly rather than restarting from zero.
+For predetermined, non-interactive state changes. Hover effects, color transitions, simple toggles. CSS transitions are interruptible by default. Triggering a new state mid-transition retargets smoothly rather than restarting from zero.
 
 ```css
 .button {
@@ -15,7 +15,7 @@ For predetermined, non-interactive state changes. Hover effects, color transitio
 }
 ```
 
-Use when the animation is a direct response to a state change (hover, focus, active, class toggle). Avoid `transition: all` — always specify exact properties.
+Use when the animation is a direct response to a state change (hover, focus, active, class toggle). Avoid `transition: all`. Always specify exact properties.
 
 ### Interaction State Performance Rules
 
@@ -74,7 +74,7 @@ For scroll-driven animations with zero JavaScript. Native compositor performance
 Use `animation-timeline: view()` for viewport-entry animations. Use `animation-timeline: scroll()` for scroll-progress effects:
 
 ```css
-/* Scroll progress bar — fills as user scrolls the page */
+/* Scroll progress bar. Fills as user scrolls the page */
 .progress-bar {
   transform-origin: left;
   animation: progress-fill linear both;
@@ -91,7 +91,7 @@ Use `animation-timeline: view()` for viewport-entry animations. Use `animation-t
 }
 ```
 
-Read scroll ranges from motion tokens. Define keyframes that are shared between the CSS and WAAPI paths — write them once as `@keyframes`, reference the same values in JS presets for the fallback.
+Read scroll ranges from motion tokens. Define keyframes that are shared between the CSS and WAAPI paths. Write them once as `@keyframes`, reference the same values in JS presets for the fallback.
 
 ## Tier 3: Web Animations API (WAAPI)
 
@@ -115,7 +115,7 @@ WAAPI runs on the compositor thread like CSS animations but provides JavaScript 
 
 ## Tier 4: Motion.dev
 
-For orchestration, sequencing, stagger, and scroll fallbacks. Motion.dev is a thin wrapper over WAAPI — it adds a better API for coordinating multiple elements without sacrificing compositor performance.
+For orchestration, sequencing, stagger, and scroll fallbacks. Motion.dev is a thin wrapper over WAAPI. It adds a better API for coordinating multiple elements without sacrificing compositor performance.
 
 ```typescript
 import { animate, stagger, inView } from "motion";
@@ -137,14 +137,14 @@ Use Motion.dev when you need to coordinate multiple elements, build a preset sys
 
 ### View Transitions with `animateView()`
 
-Motion.dev's wrapper over the browser View Transitions API — same underlying primitive as the native `document.startViewTransition()` pattern (`motion-sense/references/native-transitions.md`), but it removes the manual bookkeeping that makes the raw API painful to ship: naming every layer by hand, writing `::view-transition-*` pseudo-element CSS, transitions snapping when interrupted, morph targets distorting on aspect-ratio mismatch, and no built-in stagger.
+Motion.dev's wrapper over the browser View Transitions API, same underlying primitive as the native `document.startViewTransition()` pattern (`motion-sense/references/native-transitions.md`), but it removes the manual bookkeeping that makes the raw API painful to ship: naming every layer by hand, writing `::view-transition-*` pseudo-element CSS, transitions snapping when interrupted, morph targets distorting on aspect-ratio mismatch, and no built-in stagger.
 
-**Not compositor `transform` animation** — this is the one exception to the Performance Contract above. View transitions snapshot the old/new DOM state and crossfade between images; only one view transition can run at a time. Motion's separate "layout animations" feature is the transform-based, fully interruptible, many-at-once alternative — reach for that for responsive in-page UI, and for `animateView` specifically for page transitions or where filesize is constrained (it ships smaller than a full layout-animation setup).
+**Not compositor `transform` animation.** This is the one exception to the Performance Contract above. View transitions snapshot the old/new DOM state and crossfade between images; only one view transition can run at a time. Motion's separate "layout animations" feature is the transform-based, fully interruptible, many-at-once alternative. Reach for that for responsive in-page UI, and for `animateView` specifically for page transitions or where filesize is constrained (it ships smaller than a full layout-animation setup).
 
 ```typescript
 import { animateView, spring, stagger } from "motion";
 
-// Basic — auto-generates and cleans up view-transition-name
+// Basic. Auto-generates and cleans up view-transition-name
 animateView(() => updateDOM()).add(".card");
 
 // Spring-based instead of a fixed duration
@@ -164,28 +164,28 @@ animateView(updateDOM)
 
 What it solves, concretely:
 
-- **Naming**: assigns/removes `view-transition-name` automatically instead of manual per-element bookkeeping — native names are globally unique, so a hand-named element joins *every* view transition on the page whether you want it to or not; `animateView` scopes names to the transition and removes them after.
-- **Pseudo-elements**: targets are Motion transition objects (springs, custom easing) instead of hand-written `::view-transition-old/new` keyframe CSS. Because pseudo-elements aren't reachable from JS, only CSS-animatable values work — for something like `mask-image`, register it first with `CSS.registerProperty()`.
+- **Naming**: assigns/removes `view-transition-name` automatically instead of manual per-element bookkeeping. Native names are globally unique, so a hand-named element joins *every* view transition on the page whether you want it to or not; `animateView` scopes names to the transition and removes them after.
+- **Pseudo-elements**: targets are Motion transition objects (springs, custom easing) instead of hand-written `::view-transition-old/new` keyframe CSS. Because pseudo-elements aren't reachable from JS, only CSS-animatable values work. For something like `mask-image`, register it first with `CSS.registerProperty()`.
 - **Interruption**: queues an incoming transition until the current one finishes rather than snapping to its end position; opt into `{ interrupt: "immediate" }` to override.
-- **Aspect ratio**: auto-crops morphing layers (`object-fit: cover` semantics) so a shared element that changes proportions doesn't stretch; `.crop(false)` disables it — needed when the shared layer is text, where cropping clips content rather than helping it.
-- **Grouping**: nests transition layers to match DOM structure (`view-transition-group: contain`) by default, so a child doesn't break free of an ancestor's clip mid-transition (Safari support for this is still rolling out); `.group(false)` lifts an element free on purpose — e.g. a card's icon that should fly across the whole screen rather than stay clipped to the card.
-- **Stagger**: `.add()` accepts a selector matching multiple elements — one call handles the group, `stagger()` staggers them. The selector re-runs after the update function, so elements added by that same DOM update are picked up too.
+- **Aspect ratio**: auto-crops morphing layers (`object-fit: cover` semantics) so a shared element that changes proportions doesn't stretch; `.crop(false)` disables it. Needed when the shared layer is text, where cropping clips content rather than helping it.
+- **Grouping**: nests transition layers to match DOM structure (`view-transition-group: contain`) by default, so a child doesn't break free of an ancestor's clip mid-transition (Safari support for this is still rolling out); `.group(false)` lifts an element free on purpose, e.g. a card's icon that should fly across the whole screen rather than stay clipped to the card.
+- **Stagger**: `.add()` accepts a selector matching multiple elements. One call handles the group, `stagger()` staggers them. The selector re-runs after the update function, so elements added by that same DOM update are picked up too.
 
 Defining `.exit()` also sets the `.enter()` animation's initial keyframe from it, when `.enter()` doesn't specify one.
 
 `.class("name")` tags a layer with `view-transition-class` for custom `::view-transition-group(.name)` CSS targeting.
 
-**Tip — group by direction, not just by "shared element"**: only animate elements moving *the same way* as part of one shared transition. An element that's present in both states but moves differently (e.g. a persistent control that shifts left while the rest of the layout moves up-right) reads better as its own fade-in/fade-out layer than forced into the shared-element group.
+**Tip. Group by direction, not just by "shared element"**: only animate elements moving *the same way* as part of one shared transition. An element that's present in both states but moves differently (e.g. a persistent control that shifts left while the rest of the layout moves up-right) reads better as its own fade-in/fade-out layer than forced into the shared-element group.
 
 Degrades gracefully: on a browser without View Transition API support, the DOM update still runs, just without the animation.
 
-**Browser support**: needs the View Transition API at all (Chromium, Safari 18+). Group-nesting and crop specifically need Chromium 140+ — on older Chromium/Safari the transition still runs, just without that refinement. Doesn't yet cancel in-flight scroll-position animations.
+**Browser support**: needs the View Transition API at all (Chromium, Safari 18+). Group-nesting and crop specifically need Chromium 140+. On older Chromium/Safari the transition still runs, just without that refinement. Doesn't yet cancel in-flight scroll-position animations.
 
-Reach for this over raw `document.startViewTransition()` when the transition needs springs, differentiated enter/exit, shared-element morphing, or stagger. A simple crossfade doesn't need it — the raw API (Tier 2/`native-transitions.md`) is enough and avoids the added dependency.
+Reach for this over raw `document.startViewTransition()` when the transition needs springs, differentiated enter/exit, shared-element morphing, or stagger. A simple crossfade doesn't need it. The raw API (Tier 2/`native-transitions.md`) is enough and avoids the added dependency.
 
 ## Tier 5: Spring Physics (Motion)
 
-For drag interactions, gesture-driven animation, and elements that need to feel physically alive. Springs don't have fixed durations — they settle based on physical parameters, making them ideal for interruptible gestures.
+For drag interactions, gesture-driven animation, and elements that need to feel physically alive. Springs don't have fixed durations. They settle based on physical parameters, making them ideal for interruptible gestures.
 
 ```tsx
 import { motion, useSpring } from "motion";
@@ -211,7 +211,7 @@ const springX = useSpring(mouseX, { stiffness: 100, damping: 10 });
 <motion.div animate={{ transform: "translateX(100px)" }} />
 ```
 
-Use springs for drag-to-dismiss, momentum-based interactions, and decorative mouse-tracking. For predetermined UI animations (enter/exit, hover, state change), springs add unnecessary complexity — use CSS transitions or WAAPI.
+Use springs for drag-to-dismiss, momentum-based interactions, and decorative mouse-tracking. For predetermined UI animations (enter/exit, hover, state change), springs add unnecessary complexity. Use CSS transitions or WAAPI.
 
 ## Scroll Fallback Pattern
 

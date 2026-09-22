@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Move issues and external PRs through a state machine of triage roles — categorise, verify, grill if needed, and write agent-ready briefs.
+description: Move issues and external PRs through a state machine of triage roles. Categorise, verify, grill if needed, and write agent-ready briefs.
 disable-model-invocation: true
 ---
 
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Move issues on the project issue tracker through a small state machine of triage roles.
 
-Triage covers external pull requests too: **a PR is an issue with attached code** — same roles, same states, same machine, with a few deltas marked "for a PR" below. Resolve a bare `#42` to an issue or PR via `gh`.
+Triage covers external pull requests too: **a PR is an issue with attached code.** Same roles, same states, same machine, with a few deltas marked "for a PR" below. Resolve a bare `#42` to an issue or PR via `gh`.
 
 Every comment or issue posted to the issue tracker during triage **must** start with this disclaimer:
 
@@ -18,30 +18,30 @@ Every comment or issue posted to the issue tracker during triage **must** start 
 
 ## Reference docs
 
-- [AGENT-BRIEF.md](AGENT-BRIEF.md) — how to write durable agent briefs
+- [AGENT-BRIEF.md](AGENT-BRIEF.md). How to write durable agent briefs
 
 ## Roles
 
 Two **category** roles:
 
-- `bug` — something is broken
-- `enhancement` — new feature or improvement
+- `bug`. Something is broken
+- `enhancement`. New feature or improvement
 
 Five **state** roles:
 
-- `needs-triage` — maintainer needs to evaluate
-- `needs-info` — waiting on reporter for more information
-- `ready-for-agent` — fully specified, ready for an AFK agent
-- `ready-for-human` — needs human implementation
-- `wontfix` — will not be actioned
+- `needs-triage`. Maintainer needs to evaluate
+- `needs-info`. Waiting on reporter for more information
+- `ready-for-agent`. Fully specified, ready for an AFK agent
+- `ready-for-human`. Needs human implementation
+- `wontfix`. Will not be actioned
 
 For a PR, the same states read against the attached code: `ready-for-agent` means a brief is attached and an agent should take the next step on the diff; `ready-for-human` means it's ready for a human to merge.
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names — the actual label strings used in the issue tracker may differ.
+These are canonical role names. The actual label strings used in the issue tracker may differ.
 
-State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time — flag transitions that look unusual and ask before proceeding.
+State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time. Flag transitions that look unusual and ask before proceeding.
 
 ## Invocation
 
@@ -56,33 +56,33 @@ The maintainer invokes `/triage` and describes what they want in natural languag
 
 Query the issue tracker and present three buckets, oldest first:
 
-1. **Unlabeled** — never triaged.
-2. **`needs-triage`** — evaluation in progress.
-3. **`needs-info` with reporter activity since the last triage notes** — needs re-evaluation.
+1. **Unlabeled.** Never triaged.
+2. **`needs-triage`.** Evaluation in progress.
+3. **`needs-info` with reporter activity since the last triage notes.** Needs re-evaluation.
 
-Include external PRs in these buckets and tag each line `[PR]` or `[issue]`. Discovery surfaces only *external* PRs (external = author is not an owner, member, or collaborator) — a collaborator's in-flight PR is not triage work. This filter is discovery-only; an explicitly named PR is always triaged regardless of author.
+Include external PRs in these buckets and tag each line `[PR]` or `[issue]`. Discovery surfaces only *external* PRs (external = author is not an owner, member, or collaborator). A collaborator's in-flight PR is not triage work. This filter is discovery-only; an explicitly named PR is always triaged regardless of author.
 
 Show counts and a one-line summary per item. Let the maintainer pick.
 
 ## Triage a specific issue or PR
 
-1. **Gather context.** Read the full issue or PR (body, comments, labels, author, dates; for a PR, the diff too). Parse any prior triage notes so you don't re-ask resolved questions. Explore the codebase. Run two checks against the codebase: (a) **redundancy** — search for an existing implementation of the requested behavior by domain concept (not just the request's wording), and report where you looked. If found, it's an already-implemented `wontfix` (step 5). (b) **prior rejection** — check if a similar request was previously rejected and surface it.
+1. **Gather context.** Read the full issue or PR (body, comments, labels, author, dates; for a PR, the diff too). Parse any prior triage notes so you don't re-ask resolved questions. Explore the codebase. Run two checks against the codebase: (a) **redundancy.** Search for an existing implementation of the requested behavior by domain concept (not just the request's wording), and report where you looked. If found, it's an already-implemented `wontfix` (step 5). (b) **prior rejection.** Check if a similar request was previously rejected and surface it.
 
-2. **Recommend.** Tell the maintainer your category and state recommendation with reasoning, plus a brief codebase summary relevant to the request — including whether it's already implemented. Wait for direction.
+2. **Recommend.** Tell the maintainer your category and state recommendation with reasoning, plus a brief codebase summary relevant to the request, including whether it's already implemented. Wait for direction.
 
-3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims — check it out, run the relevant tests or commands. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
+3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims. Check it out, run the relevant tests or commands. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
 
 4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
 
 5. **Apply the outcome:**
-   - `ready-for-agent` — post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
-   - `ready-for-human` — same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
-   - `needs-info` — post triage notes (template below).
-   - `wontfix` — close, with the comment depending on *why*:
-     - **Already implemented** — the change already exists in the codebase. Point to where it lives.
-     - **Rejected (bug)** — polite explanation, then close.
-     - **Rejected (enhancement)** — polite explanation with reasoning, then close.
-   - `needs-triage` — apply the role. Optional comment if there's partial progress.
+   - `ready-for-agent`. Post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
+   - `ready-for-human`. Same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
+   - `needs-info`. Post triage notes (template below).
+   - `wontfix`. Close, with the comment depending on *why*:
+     - **Already implemented.** The change already exists in the codebase. Point to where it lives.
+     - **Rejected (bug).** Polite explanation, then close.
+     - **Rejected (enhancement).** Polite explanation with reasoning, then close.
+   - `needs-triage`. Apply the role. Optional comment if there's partial progress.
 
 ## Quick state override
 
