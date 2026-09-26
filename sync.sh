@@ -10,6 +10,11 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 SUMMARY_FILE="${SYNC_SUMMARY:-}"
 SYNC_BODY=""
 
+# One root for all per-skill temp dirs; a trap set inside sync_skill would be
+# replaced on each loop iteration and leak the earlier dirs.
+TMP_ROOT="$(mktemp -d)"
+trap 'rm -rf "$TMP_ROOT"' EXIT
+
 parse_field() {
   local skill="$1" field="$2"
   awk "/^  ${skill}:/{f=1} f && /^    ${field}:/{sub(/^    ${field}: /, \"\"); print; exit}" "$MANIFEST"
@@ -70,9 +75,7 @@ sync_skill() {
   fi
 
   local tmp
-  tmp="$(mktemp -d)"
-  # shellcheck disable=SC2064
-  trap "rm -rf ${tmp}" EXIT
+  tmp="$(mktemp -d "${TMP_ROOT}/${skill}.XXXXXX")"
 
   echo "[$skill] fetching from upstream ${repo}@${ref}..."
 

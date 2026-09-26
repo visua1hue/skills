@@ -33,8 +33,11 @@ for skill in (manifest.get("upstreams") or {}):
     elif not os.path.isfile(f"{skill}/SKILL.md"):
         errors.append(f"missing {skill}/SKILL.md")
 
-skill_dirs = [d for d in sorted(os.listdir("."))
-              if os.path.isdir(d) and not d.startswith(".")]
+# Tracked top-level dirs only, so untracked scratch dirs don't fail the lint
+import subprocess
+tracked = subprocess.run(["git", "ls-files"], capture_output=True, text=True, check=True).stdout.split()
+skill_dirs = sorted({p.split("/")[0] for p in tracked
+                     if "/" in p and not p.startswith(".")})
 seen = {}
 
 for d in skill_dirs:
