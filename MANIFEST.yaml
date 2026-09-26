@@ -9,5 +9,5 @@ upstreams:
     repo: cursor/plugins
     path: pstack/skills/unslop
     ref: main
-    last_synced: 2026-09-20
-    sha: 6ed0f7a9504f577d7529064103cecce9be7dfc5e
+    last_synced: 2026-09-26
+    sha: ecc249f1e306fc64ddf83c7bed16cacf7c2239db
