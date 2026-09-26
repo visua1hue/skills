@@ -39,7 +39,7 @@ The range syntax also removes the classic off-by-one hazard of `max-width: 899px
 }
 ```
 
-`hover: hover`. True when the primary input can hover without the user taking an explicit action (mouse, trackpad). `pointer: fine`. True when the primary input has high precision (mouse, stylus) as opposed to `pointer: coarse` (touch). Gate hover-only affordances behind both; gate press-precision-dependent UI (small drag handles, etc.) behind `pointer: fine` alone. A touchscreen laptop with a mouse plugged in, or a tablet in a keyboard case, are exactly the cases this catches that a bare breakpoint would miss.
+`hover: hover` is true when the primary input can hover without the user taking an explicit action (mouse, trackpad). `pointer: fine` is true when the primary input has high precision (mouse, stylus) as opposed to `pointer: coarse` (touch). Gate hover-only affordances behind both; gate press-precision-dependent UI (small drag handles, etc.) behind `pointer: fine` alone. A touchscreen laptop with a mouse plugged in, or a tablet in a keyboard case, are exactly the cases this catches that a bare breakpoint would miss.
 
 ## Container Queries
 
