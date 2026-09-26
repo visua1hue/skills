@@ -12,6 +12,9 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      # sync.sh writes the PR body here; must be set before the fetch step runs
+      SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
     steps:
       - uses: actions/checkout@v7
 
@@ -29,7 +32,6 @@ jobs:
         if: steps.diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
         run: |
           branch="chore/upstream-sync"
           git config user.name "github-actions[bot]"
