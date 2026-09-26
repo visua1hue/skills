@@ -54,7 +54,7 @@ Hard-cap expensive parameters (raymarch step count, particle/point count, shader
 A decision rule worth applying before any WebGL scene gets built at all: **run it live only when interactivity is worth it.**
 
 - Interactive pieces (responds to scroll position, pointer, or app state) stay in a real-time-rendered engine.
-- Linear, non-interactive motion, atmosphere that just plays the same way every time, should be pre-rendered to video instead, exported across responsive encodes/codecs (WebM, AV1, HEVC, H.264 as a compatibility ladder) rather than simulated live on every visitor's device.
+- Linear, non-interactive motion that plays the same way every time should be pre-rendered to video instead, exported across responsive encodes/codecs (WebM, AV1, HEVC, H.264 as a compatibility ladder) rather than simulated live on every visitor's device.
 
 This cuts real-time rendering cost down to only the pieces that actually need it, and sidesteps the entire device-tiering problem for everything that doesn't.
 

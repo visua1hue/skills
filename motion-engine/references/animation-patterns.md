@@ -137,7 +137,7 @@ Use Motion.dev when you need to coordinate multiple elements, build a preset sys
 
 ### View Transitions with `animateView()`
 
-Motion.dev's wrapper over the browser View Transitions API, same underlying primitive as the native `document.startViewTransition()` pattern (`motion-sense/references/native-transitions.md`), but it removes the manual bookkeeping that makes the raw API painful to ship: naming every layer by hand, writing `::view-transition-*` pseudo-element CSS, transitions snapping when interrupted, morph targets distorting on aspect-ratio mismatch, and no built-in stagger.
+Motion.dev's wrapper over the browser View Transitions API. It uses the same underlying primitive as the native `document.startViewTransition()` pattern (`motion-sense/references/native-transitions.md`), but it removes the manual bookkeeping that makes the raw API painful to ship: naming every layer by hand, writing `::view-transition-*` pseudo-element CSS, transitions snapping when interrupted, morph targets distorting on aspect-ratio mismatch, and no built-in stagger.
 
 **Not compositor `transform` animation.** This is the one exception to the Performance Contract above. View transitions snapshot the old/new DOM state and crossfade between images; only one view transition can run at a time. Motion's separate "layout animations" feature is the transform-based, fully interruptible, many-at-once alternative. Reach for that for responsive in-page UI, and for `animateView` specifically for page transitions or where filesize is constrained (it ships smaller than a full layout-animation setup).
 

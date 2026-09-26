@@ -1,4 +1,4 @@
-# Animation Technique Library, Reference
+# Animation Technique Library Reference
 
 CSS technique patterns for shipping the feel decisions in `animation-decisions.md`. Discrete-property transitions (`allow-discrete` + `@starting-style`) and the `linear()` spring-approximation easing are covered in `native-transitions.md`, not repeated here.
 
@@ -13,11 +13,11 @@ Percentage values in `translate()` are relative to the element's own size, not t
 .toast-enter { transform: translateY(-100%); }   /* works regardless of toast height */
 ```
 
-Prefer percentages over hardcoded pixel values, less error-prone, adapts to content automatically.
+Prefer percentages over hardcoded pixel values. They're less error-prone and adapt to content automatically.
 
 ### `scale()` scales children too
 
-Unlike `width`/`height`, `scale()` scales an element's children along with it. Scaling a button on press scales its font size, icons, and content proportionally, a feature, not a bug, since it reinforces the "this is one physical object being pressed" feeling.
+Unlike `width`/`height`, `scale()` scales an element's children along with it. Scaling a button on press scales its font size, icons, and content proportionally. That's a feature, not a bug: it reinforces the "this is one physical object being pressed" feeling.
 
 ### 3D transforms for depth
 
@@ -40,7 +40,7 @@ SVG elements default to a viewport-relative `transform-origin`, not their own bo
 
 ## `clip-path` for Animation
 
-Not just for shapes, one of the most versatile animation tools in CSS.
+`clip-path` is not just for shapes. It's one of the most versatile animation tools in CSS.
 
 ### The inset shape
 
@@ -78,7 +78,7 @@ Overlay two images. Clip the top one with `clip-path: inset(0 50% 0 0)`, then ad
 
 ## Component Patterns (Animation-Flavored)
 
-Motion-specific component craft, pairs with the non-animation craft in `ui-baseline`'s `component-principles.md`.
+Motion-specific component craft. Pairs with the non-animation craft in `ui-baseline`'s `component-principles.md`.
 
 ### Buttons must feel responsive
 
@@ -127,7 +127,7 @@ Tooltips should delay before appearing (prevents accidental activation on a stra
 
 ### Transitions over keyframes for rapidly-triggered UI
 
-CSS transitions can be interrupted and retargeted mid-flight; keyframes restart from zero. For anything triggered rapidly (adding toasts, toggling states repeatedly), transitions produce smoother results, no visible restart glitch when the user re-triggers before the previous animation finished.
+CSS transitions can be interrupted and retargeted mid-flight; keyframes restart from zero. For anything triggered rapidly (adding toasts, toggling states repeatedly), transitions produce smoother results: no visible restart glitch when the user re-triggers before the previous animation finished.
 
 ### Use blur to mask imperfect transitions
 

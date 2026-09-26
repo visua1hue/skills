@@ -1,4 +1,4 @@
-# Typography & Spacing Token Baseline, Reference
+# Typography & Spacing Token Baseline Reference
 
 Full rationale for the token baseline summarized in SKILL.md. Read this when setting up a new project's type/spacing system or auditing an existing one for gaps.
 
@@ -122,7 +122,7 @@ Near-geometric progression (roughly ×1.5-2 per step) rather than strict doublin
 
 The scale-adherence rule matters more than the specific numbers: an inline `padding: 13px` isn't wrong because 13 is a bad number, it's wrong because it can't be reasoned about relative to anything else in the interface. If a design genuinely needs a value between two steps repeatedly, add the step to the scale. Don't let one-off hardcoded values accumulate.
 
-## Color, explicitly excluded
+## Color is explicitly excluded
 
 Deliberately no color guidance here. Color is the token category where personal/brand taste diverges the most between projects, and baking in a default palette (even a "neutral" one) tends to leak into places it doesn't belong. Every project's color tokens should be read from that project's own file. This skill should never be the source of a color value.
 

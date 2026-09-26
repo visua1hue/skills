@@ -56,4 +56,4 @@ const PRESETS = {
 };
 ```
 
-Every value the preset uses, duration, distance, easing, is read from CSS custom properties first, with sensible defaults as fallback. This ensures the design system (whether in `DESIGN.md`, `motion.css`, or `variables.css`) remains the single source of truth.
+The preset reads duration, distance, and easing from CSS custom properties first, with sensible defaults as fallback. This ensures the design system (whether in `DESIGN.md`, `motion.css`, or `variables.css`) remains the single source of truth.

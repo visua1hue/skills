@@ -1,4 +1,4 @@
-# Component Building Principles, Reference
+# Component Building Principles Reference
 
 Non-animation component patterns. Hit targets, form/field states, density, empty/loading/error states: the parts of a component that are correct or incorrect independent of any animation. Animation-flavored component patterns (button press feedback, popover origin-awareness, transitions) are covered in `motion-sense`'s `animation-techniques.md`, not here.
 
@@ -18,8 +18,8 @@ Non-animation component patterns. Hit targets, form/field states, density, empty
 ## Form and field states
 
 - Validate inline, not just on submit. A field that only reveals it's wrong after a failed submission attempt wastes a full round trip the user could've avoided.
-- Every field needs four visually distinct states at minimum: default, focus, error, disabled. If error and default look the same except for a small text label below, the state isn't visually distinct enough, color/border alone, gated behind `:user-invalid` rather than `:invalid`, so errors don't show before the user has had a chance to type.
-- Disabled fields should look unmistakably inert, reduced contrast, no interactive affordances (no hover states, no focus ring, cursor `not-allowed`). Don't just gray the text slightly; a barely-changed disabled state reads as a bug, not a state.
+- Every field needs four visually distinct states at minimum: default, focus, error, disabled. If error and default look the same except for a small text label below, the state isn't visually distinct enough. Change the field's own color/border too, gated behind `:user-invalid` rather than `:invalid` so errors don't show before the user has had a chance to type.
+- Disabled fields should look unmistakably inert: reduced contrast, no interactive affordances (no hover states, no focus ring, cursor `not-allowed`). Don't just gray the text slightly; a barely-changed disabled state reads as a bug, not a state.
 - Error messages state what's wrong and how to fix it, not just that something is wrong. "Invalid" is not a message. "Must be at least 8 characters" is.
 - Success state matters too, not just error: a field that was wrong and is now correct should visibly confirm that, especially for async validation (username availability, etc.). Otherwise the user can't tell if their fix registered.
 - Focus state means `:focus-visible`, not `:focus`. `:focus` also fires on click, so a bare `:focus` ring flashes on every mouse click, not just keyboard navigation. Never remove the outline (`outline: none`) without shipping a replacement indicator; a compound control (e.g. a labeled input group) gets `:focus-within` so the whole group indicates focus, not just the inner control.

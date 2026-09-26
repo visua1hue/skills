@@ -1,4 +1,4 @@
-# Native Transitions, Reference
+# Native Transitions Reference
 
 Full patterns for exit animations, spring easing, and page transitions using what the platform now handles natively, no JavaScript orchestration required.
 
@@ -35,7 +35,7 @@ Discrete properties (`display`, `content-visibility`, `overlay`) don't interpola
 
 Sequence on open (`.is-open` added): `display` flips to `flex` immediately (so opacity has something to transition on), `@starting-style` supplies the "from" value, opacity transitions 0→1 normally.
 
-Sequence on close (`.is-open` removed): opacity transitions 1→0 normally, `display` only flips to `none` once that transition completes, allow-discrete delays it, so the element stays visible (and in layout) for the full fade-out instead of vanishing at frame one.
+Sequence on close (`.is-open` removed): opacity transitions 1→0 normally, `display` only flips to `none` once that transition completes, because `allow-discrete` delays it, so the element stays visible (and in layout) for the full fade-out instead of vanishing at frame one.
 
 ### Gating by media query
 
@@ -131,7 +131,7 @@ Cross-document (full MPA navigation, no client-side router needed):
 }
 ```
 
-Opting a same-origin navigation into a browser-managed cross-document transition, same pseudo-element model as the same-document version.
+Opting a same-origin navigation into a browser-managed cross-document transition, using the same pseudo-element model as the same-document version.
 
 **Browser support**: same-document transitions ship in Chromium 111+, Safari 18+, and Firefox 144+, safe as a primary code path. Cross-document is narrower: Chromium 126+ and Safari 18.2+ support it, but Firefox doesn't yet (in development, not shipped). Cross-document transitions are a progressive enhancement by design. An unsupported browser just does a normal navigation with no visual transition, not a broken one, so ship it unconditionally rather than feature-detecting around it.
 

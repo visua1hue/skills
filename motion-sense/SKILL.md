@@ -1,6 +1,6 @@
 ---
 name: motion-sense
-description: visua1's animation taste, whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Use when deciding or reviewing how something should animate. Springs and perf live in motion-engine.
+description: visua1's animation taste. Whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Use when deciding or reviewing how something should animate. Springs and perf live in motion-engine.
 ---
 
 # Motion Sense (visua1)
@@ -9,7 +9,7 @@ Personal animation-taste judgment, covering *why* (philosophy, decision framewor
 
 ## Core Philosophy
 
-Taste is trained, not innate, a trained instinct for what elevates, built by studying good work, reverse-engineering why something feels right, and practicing relentlessly. Don't just make something work; study why the best version of it feels the way it does.
+Taste is trained, not innate. It's an instinct for what elevates, built by studying good work, reverse-engineering why something feels right, and practicing relentlessly. Don't just make something work; study why the best version of it feels the way it does.
 
 Most details compound invisibly. A user who never consciously notices a detail is the goal, not a failure to draw attention to it. The aggregate of a hundred small correct decisions is what separates software that feels right from software that merely functions.
 
@@ -36,7 +36,7 @@ CSS technique for shipping the decisions above. Full patterns: `references/anima
 
 - **Transform mastery.** `translateY(%)` for size-independent motion, `scale()` scales children too (a feature, not a bug), 3D transforms (`rotateX`/`rotateY` + `preserve-3d`) for depth, explicit `transform-origin` matching where the interaction actually originates.
 - **`clip-path`.** Inset-shape reveals, tab color transitions via a clipped duplicate layer, hold-to-delete (2s linear press, 200ms ease-out release), scroll reveals, comparison sliders.
-- **Component feel patterns.** Buttons scale `0.97` on `:active`; never animate entry from `scale(0)` (start at `0.95`+opacity instead); popovers scale in from their trigger via `transform-origin` (modals stay centered. They aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with a subtle `filter: blur(2px)`, never above 20px.
+- **Component feel patterns.** Buttons scale `0.97` on `:active`; never animate entry from `scale(0)` (start at `0.95`+opacity instead); popovers scale in from their trigger via `transform-origin` (modals stay centered because they aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with a subtle `filter: blur(2px)`, never above 20px.
 
 ## Native CSS Transitions
 
@@ -57,15 +57,15 @@ The "how do you ship it natively" layer for entry/exit and page-level motion, no
 }
 ```
 
-`motion-engine` covers `@starting-style` for opacity/transform entry; this is the missing half, exit animations and the `display`/`content-visibility` dimension. Full pattern: `references/native-transitions.md`.
+`motion-engine` covers `@starting-style` for opacity/transform entry; this is the missing half: exit animations and the `display`/`content-visibility` dimension. Full pattern: `references/native-transitions.md`.
 
 ### Page transitions
 
-View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or cross-document) for the primitives, same-document via `document.startViewTransition()`, cross-document via `@view-transition { navigation: auto; }`. Full pattern: `references/native-transitions.md`. When the transition needs springs, differentiated enter/exit, or a staggered shared-element morph, Motion.dev's `animateView()` wrapper removes the manual naming/pseudo-element bookkeeping the raw API requires. Execution detail lives in `motion-engine/references/animation-patterns.md`.
+View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or cross-document) for the primitives: same-document via `document.startViewTransition()`, cross-document via `@view-transition { navigation: auto; }`. Full pattern: `references/native-transitions.md`. When the transition needs springs, differentiated enter/exit, or a staggered shared-element morph, Motion.dev's `animateView()` wrapper removes the manual naming/pseudo-element bookkeeping the raw API requires. Execution detail lives in `motion-engine/references/animation-patterns.md`.
 
 ### The `linear()` easing function
 
-CSS-native spring approximation, a piecewise easing function sampled from a real spring simulation, so overshoot-and-settle motion ships as a plain CSS value with no JS. Generate control points from a spring simulator, don't hand-write them. Full detail: `references/native-transitions.md`.
+CSS-native spring approximation: a piecewise easing function sampled from a real spring simulation, so overshoot-and-settle motion ships as a plain CSS value with no JS. Generate control points from a spring simulator, don't hand-write them. Full detail: `references/native-transitions.md`.
 
 ## Review Checklist
 

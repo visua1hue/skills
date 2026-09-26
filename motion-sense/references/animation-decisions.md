@@ -1,4 +1,4 @@
-# Animation Decision Framework, Reference
+# Animation Decision Framework Reference
 
 The "should this animate, and how" taste layer. Springs (JS-based, `useSpring`, physics config) are intentionally out of scope. Execution/performance mechanics (GPU properties, compositor hygiene) stay in `motion-engine`. This file is the decision logic in between: given that something is going to animate, what should it do.
 
@@ -39,7 +39,7 @@ Entering or exiting?
     Default → ease-out
 ```
 
-**Never use `ease-in` for UI animations.** It starts slow, so the interface feels sluggish at the exact moment the user is watching most closely, the start of the motion. A 300ms dropdown with `ease-in` *feels* slower than the same 300ms with `ease-out`, even though the duration is identical.
+**Never use `ease-in` for UI animations.** It starts slow, so the interface feels sluggish at the exact moment the user is watching most closely: the start of the motion. A 300ms dropdown with `ease-in` *feels* slower than the same 300ms with `ease-out`, even though the duration is identical.
 
 Use custom easing curves. The built-in CSS keywords are too weak to feel intentional:
 
@@ -80,7 +80,7 @@ Distilled from what makes small, widely-loved components (toast libraries, drawe
 1. **Developer experience is the product.** No hooks, no context, no setup ceremony. Insert the component once, call it from anywhere. Friction to adopt is friction against ever getting used.
 2. **Good defaults beat more options.** Most people never customize. The default timing, easing, and visual design need to be excellent out of the box, because that's what almost everyone ships with.
 3. **Handle edge cases invisibly.** Pause timers when the tab is hidden. Capture pointer events during drag. Fill visual gaps between stacked elements so hover state doesn't break. Nobody notices these when they're handled. That's the point.
-4. **Transitions over keyframes for anything added rapidly.** Toasts, list items, keyframes restart from zero on interruption; transitions retarget smoothly.
+4. **Transitions over keyframes for anything added rapidly.** For toasts and list items, keyframes restart from zero on interruption; transitions retarget smoothly.
 5. **Cohesion matters more than any single value being "correct."** A slightly slower, `ease`-based (rather than `ease-out`) animation can feel more elegant if it matches the personality of the rest of the component. A playful component can be bouncier, a dashboard should be crisp. Match the motion to the mood, not to a universal rule.
 6. **The opacity + height combination for lists is trial and error.** When items enter/exit a list, getting opacity and height animating in sync has no formula. Adjust until it feels right, then lock it in.
 7. **Review your own work the next day.** Fresh eyes catch imperfections that are invisible mid-build. Play back in slow motion or frame-by-frame to spot timing issues invisible at full speed.
