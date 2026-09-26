@@ -13,7 +13,7 @@ Conventions and playbooks for taking work from a commit to a merged PR, plus rec
   - Types: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `chore`.
 - One logical change per commit.
 - Branches: `<prefix>/<description>`, lowercase, hyphen-separated.
-  - Prefixes: `feature`, `bugfix`, `hotfix`.
+  - Prefixes: `feature`, `bugfix`, `hotfix`, `chore`, `docs`.
 - Rebase over merge. Keep history linear.
 - Keep workflows (CI/CD) modular, single-responsibility.
 
