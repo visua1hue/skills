@@ -18,22 +18,22 @@ Every comment or issue posted to the issue tracker during triage **must** start 
 
 ## Reference docs
 
-- [AGENT-BRIEF.md](AGENT-BRIEF.md). How to write durable agent briefs
+- [AGENT-BRIEF.md](AGENT-BRIEF.md): how to write durable agent briefs
 
 ## Roles
 
 Two **category** roles:
 
-- `bug`. Something is broken
-- `enhancement`. New feature or improvement
+- `bug`: something is broken
+- `enhancement`: new feature or improvement
 
 Five **state** roles:
 
-- `needs-triage`. Maintainer needs to evaluate
-- `needs-info`. Waiting on reporter for more information
-- `ready-for-agent`. Fully specified, ready for an AFK agent
-- `ready-for-human`. Needs human implementation
-- `wontfix`. Will not be actioned
+- `needs-triage`: maintainer needs to evaluate
+- `needs-info`: waiting on reporter for more information
+- `ready-for-agent`: fully specified, ready for an AFK agent
+- `ready-for-human`: needs human implementation
+- `wontfix`: will not be actioned
 
 For a PR, the same states read against the attached code: `ready-for-agent` means a brief is attached and an agent should take the next step on the diff; `ready-for-human` means it's ready for a human to merge.
 
@@ -75,14 +75,14 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
 
 5. **Apply the outcome:**
-   - `ready-for-agent`. Post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
-   - `ready-for-human`. Same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
-   - `needs-info`. Post triage notes (template below).
-   - `wontfix`. Close, with the comment depending on *why*:
+   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
+   - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
+   - `needs-info`: post triage notes (template below).
+   - `wontfix`: close, with the comment depending on *why*:
      - **Already implemented.** The change already exists in the codebase. Point to where it lives.
      - **Rejected (bug).** Polite explanation, then close.
      - **Rejected (enhancement).** Polite explanation with reasoning, then close.
-   - `needs-triage`. Apply the role. Optional comment if there's partial progress.
+   - `needs-triage`: apply the role. Optional comment if there's partial progress.
 
 ## Quick state override
 
