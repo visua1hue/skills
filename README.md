@@ -12,11 +12,11 @@ Skills define how the agent works. MCP servers extend its context on demand with
 
 ## Agent Skills <sup><small>[⌃](#top)</small></sup>
 
-Skills are either **Model-invoked** – Agents auto-activates them when your request matches – or **User-invoked** via a slash command like `/triage`.
+Skills are either **Model-invoked**, where the agent activates them when your request matches, or **User-invoked** via a slash command like `/triage`.
 
 ### Model-invoked
 
-- [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing – by [Matteo Collina](https://github.com/mcollina)
+- [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing, by [Matteo Collina](https://github.com/mcollina)
 - [motion-sense](motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [ui-baseline](ui-baseline/): Type/spacing tokens, component patterns, and adaptive CSS
@@ -25,13 +25,13 @@ Skills are either **Model-invoked** – Agents auto-activates them when your req
 ### User-invoked
 
 - [triage](triage/): GitHub issue and PR triage state machine
-- [unslop](unslop/): Strip AI tells and filler from writing – by [Lauren Tan](https://github.com/poteto)
+- [unslop](unslop/): Strip AI tells and filler from writing, by [Lauren Tan](https://github.com/poteto)
 
 ## Commands <sup><small>[⌃](#top)</small></sup>
 
 ### Validate
 
-`lint.sh` checks every skill against the SKILL.md spec – runs in CI on each PR, or locally:
+`lint.sh` checks every skill against the SKILL.md spec. It runs in CI on each PR, or locally:
 
 ```bash
 ./lint.sh                          # lint all (name, description, format)
@@ -39,11 +39,11 @@ Skills are either **Model-invoked** – Agents auto-activates them when your req
 
 ### Sync Upstream
 
-`MANIFEST.yaml` tracks upstream sources. `sync.sh` overwrites your local copy from them – use `--diff` to review first.
+`MANIFEST.yaml` tracks upstream sources. `sync.sh` overwrites your local copy from them. Use `--diff` to review first.
 
 ```bash
 ./sync.sh                          # sync all upstreams + update MANIFEST
-./sync.sh --diff                   # dry-run all – show what would change (new/changed/removed)
+./sync.sh --diff                   # dry-run all, show what would change (new/changed/removed)
 ./sync.sh <skill>                  # sync a single skill
 ./sync.sh <skill> --diff           # dry-run a single skill
 ```
