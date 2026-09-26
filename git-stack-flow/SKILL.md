@@ -7,6 +7,8 @@ description: Git commit and branch conventions, opening PRs, unblocking a PR sta
 
 Conventions and playbooks for taking work from a commit to a merged PR, plus reclaiming disk from stale worktrees. Agent-agnostic: `git` is the only hard requirement. Use `gh` where noted if it's installed (`command -v gh`); if not, or if the project already relies on a different forge CLI or stacked-PR tool, use that instead. Fall back to the forge's web UI or asking the user to relay status when no CLI is available.
 
+Sister skill to `triage`, which owns intake of issues and external PRs up to a `ready-for-agent` brief. This skill takes it from there.
+
 ## Commit and branch conventions
 
 - Commits: `<type>: <description>`, imperative, under 50 chars, no caps or period after the colon.
