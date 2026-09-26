@@ -22,6 +22,9 @@ trunk="${trunk:-main}"
 git fetch origin "$trunk" --quiet 2>/dev/null || echo "warn: could not fetch origin/$trunk; merged column may be stale" >&2
 
 # PR state by branch, fetched once. Empty if gh is unavailable.
+# Without gh/jq an open-PR worktree can't be detected, so say so loudly.
+command -v gh >/dev/null && command -v jq >/dev/null \
+	|| echo "warn: gh or jq missing; PR column empty, hold-open-pr bucket unreliable" >&2
 prs=$(mktemp)
 gh pr list --author "@me" --state all --limit 1000 \
 	--json number,state,headRefName 2>/dev/null > "$prs" || echo "[]" > "$prs"
