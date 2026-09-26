@@ -1,4 +1,4 @@
-# Layout & Interaction, Reference
+# Layout & Interaction Reference
 
 Full patterns for breakpoints, container queries, `:has()`, and text-wrap. Read when implementing responsive layout.
 
@@ -58,7 +58,7 @@ The range syntax also removes the classic off-by-one hazard of `max-width: 899px
 }
 ```
 
-`container-type: inline-size` establishes a query container along the inline axis (width, in horizontal writing modes), the common case. `container-type: size` queries both axes but requires the container to have an explicit size (it can't size itself based on content that also depends on the query, which is a real constraint, not a bug).
+`container-type: inline-size` establishes a query container along the inline axis (width, in horizontal writing modes). This is the common case. `container-type: size` queries both axes but requires the container to have an explicit size (it can't size itself based on content that also depends on the query, which is a real constraint, not a bug).
 
 ### Container query units
 
@@ -76,7 +76,7 @@ Container query: the component is reused in more than one layout context (sideba
 
 Media query: the concern is genuinely page-level. Overall grid switching from one column to three, nav collapsing to a hamburger menu. These don't have a "container" in any meaningful sense; they're about the page as a whole.
 
-## `:has()`, Parent-Aware Styling
+## `:has()` Parent-Aware Styling
 
 ```css
 /* Style a form group differently when it contains an invalid field */

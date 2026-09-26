@@ -5,7 +5,7 @@ description: Ships performant animation. Compositor-only CSS/WAAPI/Motion.dev, s
 
 # Motion Engine
 
-An animation execution skill. It assumes the design decision has already been made, what to animate, what easing, what duration, and focuses entirely on shipping that animation without blocking the main thread or degrading Core Web Vitals.
+An animation execution skill. It assumes what to animate, which easing, and which duration are already decided. It focuses entirely on shipping that animation without blocking the main thread or degrading Core Web Vitals.
 
 The operating principle is progressive enhancement: CSS handles the default state and scroll-driven animations natively, JavaScript orchestrates load sequencing and provides fallbacks. Every animation runs on the GPU compositor thread. Layout-triggering properties are never animated. The target is 120fps with zero render-blocking.
 
@@ -102,9 +102,9 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 
 ## Device Capability Scaling
 
-Distinct from Execution Tiers above. That table is about which mechanism to use once you know the browser can render it. This is about scaling back decorative load when the device or network can't sustain the full experience, a different axis, and one that applies to CSS/Motion.dev too, not just WebGL.
+Distinct from Execution Tiers above. That table is about which mechanism to use once you know the browser can render it. This is a different axis: scaling back decorative load when the device or network can't sustain the full experience. It applies to CSS/Motion.dev too, not just WebGL.
 
-### CSS/WAAPI/Motion.dev. Complexity budget
+### CSS/WAAPI/Motion.dev complexity budget
 
 "GPU-composited" isn't the same as "free." It holds for a single isolated `transform`/`opacity` transition; it doesn't hold for cumulative decorative load:
 
@@ -114,7 +114,7 @@ Distinct from Execution Tiers above. That table is about which mechanism to use 
 
 Scale down on constrained devices: smaller/fewer stagger groups, skip decorative parallax layers, avoid or shrink blur, cap simultaneous spring count. This is a **different, performance-motivated reason to reduce motion than `prefers-reduced-motion`** (that's about vestibular/motion sensitivity, opt-in by user preference). The two are independent and stack. Use the same policy-cap principle as WebGL below: treat mobile/low-power as a class-level cap, not something to re-benchmark per animation.
 
-### WebGL/Three.js. Survival gate
+### WebGL/Three.js survival gate
 
 Whether the device and network can sustain a WebGL layer at all, not just how much decorative complexity to allow. Only applies when a WebGL/Three.js rendering layer exists. For the full blueprint (resource pooling, guardrails-in-code, detection approach), read `references/webgl-device-tiers.md`.
 
@@ -190,13 +190,13 @@ When asked to review animation code, adopt this posture and output format.
 
 ### Output format
 
-**Part 1. Findings table** (always present):
+**Part 1: findings table** (always present):
 
 | Before | After | Why |
 | --- | --- | --- |
 | `transition: all 300ms` | `transition: transform 200ms ease-out` | `all` animates layout-triggering properties off-GPU |
 
-**Part 2. Verdict**, grouped by impact tier (omit empty tiers):
+**Part 2: verdict**, grouped by impact tier (omit empty tiers):
 
 1. **Feel-breaking regressions.** Sluggish easing, comes-from-nowhere, fires on high-frequency/keyboard actions
 2. **Missed simplifications.** Animations that should be removed or drastically reduced
@@ -276,7 +276,7 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 
 **Real device testing**: for touch gestures, test on physical hardware. Simulators don't replicate gesture latency or frame pacing.
 
-**Automated verification**: Chrome DevTools MCP (`chrome-devtools-mcp`), `performance_start_trace` / `performance_stop_trace` and `lighthouse_audit` to validate compositor-only rendering.
+**Automated verification**: Chrome DevTools MCP (`chrome-devtools-mcp`): run `performance_start_trace` / `performance_stop_trace` and `lighthouse_audit` to validate compositor-only rendering.
 
 ## External References
 

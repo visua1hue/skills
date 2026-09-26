@@ -21,7 +21,7 @@ If the project already defines its own scale (`variables.css`, `DESIGN.md`, or s
 | Ligatures | `common-ligatures contextual` (body), `none` (code), `tabular-nums` (data) | Invisible detail; tabular data without it visibly jitters as digits change |
 | Spacing | `3xs` 2px → `5xl` 128px, near-geometric | Never hardcode a value inline. If something needs a step between two, add the step |
 
-**File organization** (plain-CSS projects only): `variables.css`, tokens only; `motion.css`, motion tokens, owned by `motion-engine`; `global.css`, imports both, plus resets and base element styles. Full detail: `references/token-baseline.md`.
+**File organization** (plain-CSS projects only): `variables.css` holds tokens only; `motion.css` holds motion tokens, owned by `motion-engine`; `global.css` imports both and adds resets and base element styles. Full detail: `references/token-baseline.md`.
 
 ## Component Building Principles
 
