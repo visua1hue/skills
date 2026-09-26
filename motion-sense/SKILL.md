@@ -36,7 +36,7 @@ CSS technique for shipping the decisions above. Full patterns: `references/anima
 
 - **Transform mastery.** `translateY(%)` for size-independent motion, `scale()` scales children too (a feature, not a bug), 3D transforms (`rotateX`/`rotateY` + `preserve-3d`) for depth, explicit `transform-origin` matching where the interaction actually originates.
 - **`clip-path`.** Inset-shape reveals, tab color transitions via a clipped duplicate layer, hold-to-delete (2s linear press, 200ms ease-out release), scroll reveals, comparison sliders.
-- **Component feel patterns.** Buttons scale `0.97` on `:active`; never animate entry from `scale(0)` (start at `0.95`+opacity instead); popovers scale in from their trigger via `transform-origin` (modals stay centered. They aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with `filter: blur(2px)` under 20px.
+- **Component feel patterns.** Buttons scale `0.97` on `:active`; never animate entry from `scale(0)` (start at `0.95`+opacity instead); popovers scale in from their trigger via `transform-origin` (modals stay centered. They aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with a subtle `filter: blur(2px)`, never above 20px.
 
 ## Native CSS Transitions
 
@@ -51,7 +51,7 @@ The "how do you ship it natively" layer for entry/exit and page-level motion, no
   opacity: 0;
   transition: opacity 0.2s, display 0.2s allow-discrete;
 }
-@media (min-width: 1280px) {
+@media (width >= 1280px) {
   .panel { display: flex; opacity: 1; }
   @starting-style { .panel { opacity: 0; } }
 }

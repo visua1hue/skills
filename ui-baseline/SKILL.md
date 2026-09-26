@@ -59,7 +59,7 @@ When reviewing UI code, use a markdown table with Before/After/Why columns, one 
 | Same line-height on headings and body | Tighten line-height as size increases |
 | Tabular data without `tabular-nums` | Add `font-variant-numeric: tabular-nums` |
 | Default color values proposed by the skill | None. Always defer to the project's own tokens |
-| Straight quotes (`"`/`'`) or `...` in rendered UI copy | Curly quotes (`"`/`'`), real ellipsis (`…`). Prose and docs keep straight quotes |
+| Straight quotes (`"`/`'`) or `...` in rendered UI copy | Curly quotes (`“”`/`‘’`), real ellipsis (`…`). Prose and docs keep straight quotes |
 | Number/unit or shortcut pair that can line-wrap apart | Non-breaking space (`&nbsp;`) between them |
 | `min`/`max-width` pair for a single constraint | Range syntax (`width < 900px`) |
 | Hover style with no capability query | Gate behind `(hover: hover) and (pointer: fine)` |

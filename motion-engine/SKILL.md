@@ -25,7 +25,7 @@ These three property groups are composited on the GPU and never trigger layout o
 
 ### Prohibited Properties
 
-Animating any of these triggers layout recalculation and blocks the main thread. Never animate them:
+Animating any of these triggers layout or paint on the main thread every frame. Never animate them:
 
 - Geometry: `width`, `height`, `margin`, `padding`, `border-width`
 - Positioning: `top`, `left`, `bottom`, `right`, `inset`
@@ -53,12 +53,12 @@ Define motion parameters as CSS custom properties so animations read from a sing
   --motion-dur-slow: 300ms;
   --motion-dur-long: 600ms;
 
-  /* Easing. Use custom curves, not built-in keywords */
+  /* Easing. Reference tokens, never inline keywords. `standard` equals the `ease` keyword */
   --motion-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
   --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
-  /* Spring approximations. CSS cubic-bezier curves that mimic spring physics */
+  /* Spring approximations. cubic-bezier overshoots once but can't settle; for real spring motion use `linear()` (motion-sense) */
   --motion-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --motion-spring-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-spring-snappy: cubic-bezier(0.16, 1, 0.3, 1);
@@ -108,7 +108,7 @@ Distinct from Execution Tiers above. That table is about which mechanism to use 
 
 "GPU-composited" isn't the same as "free." It holds for a single isolated `transform`/`opacity` transition; it doesn't hold for cumulative decorative load:
 
-- Heavy `filter`/`backdrop-filter` (blur especially) is real GPU cost. The 20px blur ceiling above should be lower still, or skipped, on a constrained device.
+- Heavy `filter`/`backdrop-filter` (blur especially) is real GPU cost. On a constrained device, stay well under `motion-sense`'s 20px blur ceiling or skip blur.
 - Motion.dev spring physics run on the main thread per frame per element. A large stagger group is real main-thread work that scales with element count, not free just because each spring individually targets `transform`.
 - Motion's shorthand props (`x`/`y`/`scale`) aren't hardware-accelerated. Under main-thread load on a low-power device, this is exactly where frames drop.
 

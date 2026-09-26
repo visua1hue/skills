@@ -47,7 +47,7 @@ The pattern combines cleanly with a breakpoint gate, e.g. a panel that's always 
   transition: opacity 0.2s, display 0.2s allow-discrete;
 }
 
-@media (min-width: 1280px) {
+@media (width >= 1280px) {
   .panel {
     display: flex;
     opacity: 1;
