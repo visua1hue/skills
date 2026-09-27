@@ -16,11 +16,12 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 
 ### Model-invoked
 
+- [git-stack-flow](git-stack-flow/): Commit/branch conventions, PR flow, and worktree audit
+- [eng-principles](eng-principles/): Design and verification principles for code
 - [typescript-magician](typescript-magician/): Complex generics, type guards, and strict typing, by [Matteo Collina](https://github.com/mcollina)
 - [motion-sense](motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [ui-baseline](ui-baseline/): Type/spacing tokens, component patterns, and adaptive CSS
-- [git-stack-flow](git-stack-flow/): Commit/branch conventions, PR flow, and worktree audit
 
 ### User-invoked
 
