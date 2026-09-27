@@ -8,11 +8,11 @@ Pattern distilled from Shopify's Editions Spring 2026 build (Arnaud Tanielian / 
 
 A common variant of this pattern uses four tiers (static / minimal WebGL / reduced textures-effects / full quality). Collapse the two middle tiers: the boundary between "minimal WebGL" and "reduced textures/effects" is a *degree* difference (same code path, different resolution/texture/effect knobs), not a *kind* difference like the Tier 0→1 boundary (no WebGL context at all vs. one exists). Maintaining two separate discrete presets for a knob-only difference is two configs to keep in sync for no real architectural boundary.
 
-```
-Tier 0. Static fallback     : no WebGL context
-Tier 1. Constrained WebGL   : capped resolution, reduced textures, trimmed effects/post-processing
-Tier 2. Full quality        : no caps
-```
+| Tier | Experience | Gate |
+| --- | --- | --- |
+| 0. Static fallback | No WebGL context. Static image/video instead. | Context creation fails, GPU blocklisted, or benchmark below floor |
+| 1. Constrained WebGL | Capped resolution, reduced textures, trimmed effects/post-processing. | Everything else on mobile (policy cap, not a benchmark result) or a low-but-viable desktop GPU |
+| 2. Full quality | No caps. | Capable desktop GPU + fast network |
 
 If finer gradation is ever needed within Tier 1, prefer a continuous "quality budget" scalar (0.0–1.0) driving those same knobs (texture resolution, particle count, post-fx toggles) over adding a 4th named tier. One parametrized preset instead of two hardcoded ones.
 

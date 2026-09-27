@@ -1,11 +1,11 @@
 ---
 name: motion-sense
-description: visua1's animation taste. Whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Use when deciding or reviewing how something should animate. Springs and perf live in motion-engine.
+description: visua1's animation taste. Whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Spring feel and animation review. Use when deciding or reviewing how something should animate. Perf mechanics live in motion-engine.
 ---
 
 # Motion Sense (visua1)
 
-Personal animation-taste judgment, covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating. Spring-physics animation guidance (JS `useSpring`, mass/stiffness/damping config) is intentionally out of scope for this skill.
+Personal animation-taste judgment, covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Also owns spring feel and the animation review verdict. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating, including spring runtime cost.
 
 ## Core Philosophy
 
@@ -38,6 +38,20 @@ CSS technique for shipping the decisions above. Full patterns: `references/anima
 - **`clip-path`.** Inset-shape reveals, tab color transitions via a clipped duplicate layer, hold-to-delete (2s linear press, 200ms ease-out release), scroll reveals, comparison sliders.
 - **Component feel patterns.** Buttons scale `0.97` on `:active`; never animate entry from `scale(0)` (start at `0.95`+opacity instead); popovers scale in from their trigger via `transform-origin` (modals stay centered because they aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with a subtle `filter: blur(2px)`, never above 20px.
 
+## Spring Feel
+
+Springs for anything the user can grab, flick, or interrupt. Duration + easing for everything else. Think in Motion's `{ type: "spring", visualDuration, bounce }`, not mass/stiffness/damping: two numbers that map to what you actually perceive. `visualDuration` is when the element visually arrives; any bounce settles after it, so the UI budget (under 300ms) applies to `visualDuration`.
+
+| Situation | Bounce | Visual duration |
+| --- | --- | --- |
+| Default (move, resize, settle into place) | `0` | 0.2-0.3s |
+| After momentum (flick, throw, drag release) | 0.1-0.3 | 0.2-0.3s |
+| Rare delight moment (the one exception to earned bounce) | up to 0.3 | can be longer |
+
+- **Bounce is earned by momentum.** Overshoot on a card the user flicked feels physical. Overshoot on a menu that just appeared, with no gesture behind it, feels wrong. Rare delight moments are the only exception.
+- **Match personality.** Crisp dashboard: `bounce: 0` everywhere. Playful consumer UI: allow bounce on gestures.
+- **One-shot vs. interruptible.** A spring that runs once with no interruption ships as CSS `linear()`. One that must keep velocity when interrupted needs a JS spring. Detail: `references/native-transitions.md`. Runtime cost and hardware-acceleration caveats: `motion-engine`.
+
 ## Native CSS Transitions
 
 The "how do you ship it natively" layer for entry/exit and page-level motion, no JS orchestration required.
@@ -67,7 +81,48 @@ View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or 
 
 CSS-native spring approximation: a piecewise easing function sampled from a real spring simulation, so overshoot-and-settle motion ships as a plain CSS value with no JS. Generate control points from a spring simulator, don't hand-write them. Full detail: `references/native-transitions.md`.
 
-## Review Checklist
+## Review
+
+When asked to review animation code, this skill owns the verdict. Run `motion-engine`'s Review Checklist for the Performance tier.
+
+**Posture:** default to flagging. Approval is earned, not assumed. A transition that "works" but feels sluggish, fires too often, or drops frames is a regression, not a pass.
+
+### Output
+
+**Part 1: findings table**, one row per issue:
+
+| Before | After | Why |
+| --- | --- | --- |
+| `ease-in` on dropdown | `cubic-bezier(0.23, 1, 0.32, 1)` | `ease-in` delays the moment the user watches most |
+
+**Part 2: verdict**, grouped by impact tier (omit empty tiers):
+
+1. **Feel-breaking regressions.** Sluggish easing, comes-from-nowhere, fires on high-frequency/keyboard actions
+2. **Missed simplifications.** Animations that should be removed or drastically reduced
+3. **Performance.** From `motion-engine`'s checklist
+4. **Interruptibility & timing.** Keyframes where transitions/springs belong; symmetric timing that should be asymmetric
+5. **Origin, physicality & cohesion.** Wrong `transform-origin`, unearned bounce, mismatched personality
+6. **Accessibility.** Missing reduced-motion or hover gating
+
+Close with an explicit decision:
+- **Block.** Any feel-breaking regression, animation on keyboard/high-frequency action, `scale(0)`/`ease-in` on UI, non-GPU animation with an easy fix
+- **Approve.** No feel-breaking regressions, durations and easing within bounds, interruptibility handled, reduced-motion respected
+
+### Remedial hierarchy
+
+Prefer earlier moves:
+
+1. Delete the animation (high-frequency / no purpose / keyboard-triggered)
+2. Reduce it. Shorter duration, smaller transform, fewer properties
+3. Fix the easing. `ease-in` → `ease-out` / custom curve
+4. Fix origin/physicality. Correct `transform-origin`; `scale(0)` → `scale(0.95)` + opacity
+5. Make it interruptible. Keyframes → transitions, or a spring for gesture-driven motion
+6. Move it to the GPU (see `motion-engine`)
+7. Asymmetric timing. Slow the deliberate phase, snap the response
+8. Polish. Blur crossfades, stagger groups, `@starting-style` for entry
+9. Accessibility & cohesion. Reduced-motion + hover gating; tune to component personality
+
+### Checklist
 
 | Issue | Fix |
 | --- | --- |
@@ -76,7 +131,12 @@ CSS-native spring approximation: a piecewise easing function sampled from a real
 | Duration > 300ms on a UI element with no justification | Reduce to 150-250ms |
 | `scale(0)` entry animation | Start from `scale(0.95)` with `opacity: 0` |
 | `transform-origin: center` on a trigger-anchored popover | Set to the trigger location (modals are exempt) |
+| Keyframes on toasts, toggles, or anything triggered rapidly | CSS transitions |
+| Bounce on an element with no gesture behind it | `bounce: 0` |
 | Symmetric enter/exit timing on a press-and-release interaction | Make release/exit faster than press/enter |
+| Everything-at-once entrance | 30-80ms stagger |
+| Movement with no `prefers-reduced-motion` handling | Gentler variant, not zero |
+| Ungated `:hover` motion | `@media (hover: hover) and (pointer: fine)` |
 | Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event |
 | Abrupt state change with no transition where one would aid comprehension (instant visibility toggle, jarring content swap) | Add a purposeful transition, still gated by the Decision Framework above, not a license to animate everything |
 
