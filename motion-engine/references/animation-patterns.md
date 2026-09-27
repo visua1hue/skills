@@ -211,7 +211,7 @@ const springX = useSpring(mouseX, { stiffness: 100, damping: 10 });
 <motion.div animate={{ transform: "translateX(100px)" }} />
 ```
 
-Use springs for drag-to-dismiss, momentum-based interactions, and decorative mouse-tracking. For predetermined UI animations (enter/exit, hover, state change), springs add unnecessary complexity. Use CSS transitions or WAAPI.
+Which bounce/duration to pick is a taste call: see `motion-sense` Spring Feel. Use springs for drag-to-dismiss, momentum-based interactions, and decorative mouse-tracking. For predetermined UI animations (enter/exit, hover, state change), springs add unnecessary complexity. Use CSS transitions or WAAPI.
 
 ## Scroll Fallback Pattern
 

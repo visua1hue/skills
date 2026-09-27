@@ -17,11 +17,19 @@ Animations run on the GPU compositor thread by exclusively using properties that
 
 ### Permitted Properties
 
-These three property groups are composited on the GPU and never trigger layout or paint recalculation:
+These are composited on the GPU and never trigger layout or paint recalculation:
 
 - `transform`. Translate, scale, rotate, skew
 - `opacity`. Fade in/out, crossfade
-- `filter`. Blur, hue-rotate, brightness, contrast
+- `filter` (non-blur). Hue-rotate, brightness, contrast
+
+### Conditional Properties
+
+Cheap enough for short, one-off transitions, but not guaranteed to stay on the compositor:
+
+- `clip-path`. Fine for reveals and state changes. Updating it per frame during a drag (comparison slider) repaints every frame.
+- `filter: blur()` / `backdrop-filter`. Real GPU cost that scales with radius and area. Keep under 20px, skip on constrained devices.
+- Color: `background-color`, `border-color`, `color`. Allowed as a short (≤200ms) state transition on a single element (hover, focus, active). Never for long, looping, or many-element animations. Crossfade two layers with `opacity` instead.
 
 ### Prohibited Properties
 
@@ -29,9 +37,9 @@ Animating any of these triggers layout or paint on the main thread every frame. 
 
 - Geometry: `width`, `height`, `margin`, `padding`, `border-width`
 - Positioning: `top`, `left`, `bottom`, `right`, `inset`
-- Paint: `background-color`, `box-shadow`, `border-color`, `outline`
+- Paint: `box-shadow`, `outline`
 
-To animate size or position changes, use `transform: scale()` and `transform: translate()` instead. To animate color, crossfade two layers with `opacity`.
+To animate size or position changes, use `transform: scale()` and `transform: translate()` instead.
 
 ### Compositor Hygiene
 
@@ -102,36 +110,10 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 
 ## Device Capability Scaling
 
-Distinct from Execution Tiers above. That table is about which mechanism to use once you know the browser can render it. This is a different axis: scaling back decorative load when the device or network can't sustain the full experience. It applies to CSS/Motion.dev too, not just WebGL.
+A separate axis from Execution Tiers and from `prefers-reduced-motion`: scale back decorative load when the device or network can't sustain it. Both stack.
 
-### CSS/WAAPI/Motion.dev complexity budget
-
-"GPU-composited" isn't the same as "free." It holds for a single isolated `transform`/`opacity` transition; it doesn't hold for cumulative decorative load:
-
-- Heavy `filter`/`backdrop-filter` (blur especially) is real GPU cost. On a constrained device, stay well under `motion-sense`'s 20px blur ceiling or skip blur.
-- Motion.dev spring physics run on the main thread per frame per element. A large stagger group is real main-thread work that scales with element count, not free just because each spring individually targets `transform`.
-- Motion's shorthand props (`x`/`y`/`scale`) aren't hardware-accelerated. Under main-thread load on a low-power device, this is exactly where frames drop.
-
-Scale down on constrained devices: smaller/fewer stagger groups, skip decorative parallax layers, avoid or shrink blur, cap simultaneous spring count. This is a **different, performance-motivated reason to reduce motion than `prefers-reduced-motion`** (that's about vestibular/motion sensitivity, opt-in by user preference). The two are independent and stack. Use the same policy-cap principle as WebGL below: treat mobile/low-power as a class-level cap, not something to re-benchmark per animation.
-
-### WebGL/Three.js survival gate
-
-Whether the device and network can sustain a WebGL layer at all, not just how much decorative complexity to allow. Only applies when a WebGL/Three.js rendering layer exists. For the full blueprint (resource pooling, guardrails-in-code, detection approach), read `references/webgl-device-tiers.md`.
-
-Three tiers, gated on GPU benchmark and network capability:
-
-| Tier | Experience | Gate |
-| --- | --- | --- |
-| 0. Static fallback | No WebGL context. Static image/video instead. | Context creation fails, GPU blocklisted, or benchmark below floor |
-| 1. Constrained WebGL | Capped resolution, reduced textures, trimmed effects/post-processing. | Everything else on mobile (policy cap, not a benchmark result) or a low-but-viable desktop GPU |
-| 2. Full quality | No caps. | Capable desktop GPU + fast network |
-
-**Key rules:**
-
-- Mobile is hard-capped to Tier 1 as policy, not re-benchmarked per device. Don't try to detect your way into giving some phones Tier 2.
-- Bake performance ceilings into the code itself (hard caps on shader complexity, particle count, texture resolution), not just review discipline. The goal is that art direction *cannot* accidentally regress performance.
-- Authored motion decision rule: run it live only when interactivity is worth it. Interactive pieces stay in a real-time engine; anything linear/non-interactive should be a pre-rendered video instead.
-- Scope live-render resource usage (VRAM, framebuffers) to what's actually visible, not to everything that exists on the page. Release resources for content that's scrolled off.
+- **CSS/WAAPI/Motion.dev**: composited isn't free. Cap stagger group size and concurrent springs, skip parallax layers, shrink or drop blur on low-power devices. Treat mobile as a class-level cap, not a per-animation benchmark. Full detail: `references/device-scaling.md`.
+- **WebGL/Three.js**: three tiers (0 static fallback, 1 constrained, 2 full), gated on GPU benchmark and network. Mobile is policy-capped to Tier 1. Hard-cap shader/particle/texture budgets in code. Pre-render non-interactive motion to video. Full blueprint: `references/webgl-device-tiers.md`.
 
 ## Paint & Load Strategy
 
@@ -139,10 +121,10 @@ Load animations must not block FCP or degrade LCP. For full implementation detai
 
 The strategy in brief:
 
-1. **CSS initial state**: `[data-motion] { opacity: 0.01; will-change: transform, opacity, filter; }`. Elements are painted but invisible. `0.01` not `0` because Lighthouse ignores `opacity: 0` for FCP.
+1. **CSS initial state**: `[data-motion] { opacity: 0.01; }`. Elements are painted but invisible. `0.01` not `0` because Lighthouse ignores `opacity: 0` for FCP. No `will-change` here: a blanket hint holds GPU layers for every element until JS runs.
 2. **Asset lock**: `await document.fonts.ready`. Prevents FOUT during animation.
 3. **Paint lock**: check `performance.getEntriesByType('paint')` for existing FCP → `PerformanceObserver` fallback → `requestAnimationFrame` fallback.
-4. **Execute**: trigger load animation presets only after both locks clear, then clear `will-change` when each animation finishes.
+4. **Execute**: trigger load animation presets only after both locks clear. Each preset sets `will-change` right before it starts and clears it when it finishes.
 
 **Declarative API**: `data-motion="preset-name"` for load animations, `data-motion-scroll="preset-name"` for scroll animations, `data-motion-delay="0.2"` for timing overrides. Presets are functions in a centralized TypeScript registry that read motion tokens from CSS custom properties at runtime.
 
@@ -165,86 +147,39 @@ Non-negotiable requirements, not optional enhancements.
 
 Respect `prefers-reduced-motion: reduce`. Reduced motion means fewer and gentler animations, not zero. Remove transform-based movement. Keep opacity transitions that aid comprehension.
 
+Two cases, two rules. Load and scroll animations snap to their final state: content must never stay stuck at `opacity: 0.01` waiting for motion that won't run. Interactive transitions keep a short opacity fade and drop movement.
+
 ```css
 @media (prefers-reduced-motion: reduce) {
+  /* Load/scroll: snap to visible, no motion */
   [data-motion],
   [data-motion-scroll] {
     animation: none !important;
-    transition: opacity 0.2s ease !important;
+    transition: none !important;
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;
   }
+
+  /* Interactive, per component: keep the fade, drop the movement */
+  .popover {
+    transition-property: opacity;
+    transition-duration: 0.2s;
+  }
+  .popover[data-starting-style],
+  .popover[data-ending-style] {
+    transform: none;
+  }
 }
 ```
 
-In JavaScript, check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before triggering animations. Skip transform-based presets; allow opacity-only presets to run.
+In JavaScript, check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before triggering animations. Skip load presets entirely (CSS already shows the final state); for interactive animations, run opacity-only variants.
 
 Never block user interaction during stagger animations. Stagger is decorative. All elements must be interactive immediately. Keep stagger delays short (30–80ms between items).
 
-## Review Mode
-
-When asked to review animation code, adopt this posture and output format.
-
-**Posture:** default to flagging. Approval is earned, not assumed. A transition that "works" but feels sluggish, fires too often, or drops frames is a regression, not a pass.
-
-### Output format
-
-**Part 1: findings table** (always present):
-
-| Before | After | Why |
-| --- | --- | --- |
-| `transition: all 300ms` | `transition: transform 200ms ease-out` | `all` animates layout-triggering properties off-GPU |
-
-**Part 2: verdict**, grouped by impact tier (omit empty tiers):
-
-1. **Feel-breaking regressions.** Sluggish easing, comes-from-nowhere, fires on high-frequency/keyboard actions
-2. **Missed simplifications.** Animations that should be removed or drastically reduced
-3. **Performance.** Non-GPU properties, dropped-frame risks, recalc storms
-4. **Interruptibility & timing.** Keyframes where transitions/springs belong; symmetric timing that should be asymmetric
-5. **Origin, physicality & cohesion.** Wrong transform-origin, mismatched personality
-6. **Accessibility.** Missing reduced-motion or hover gating
-
-Close with an explicit decision:
-- **Block.** Any feel-breaking regression, animation on keyboard/high-frequency action, `scale(0)`/`ease-in` on UI, non-GPU animation with an easy fix
-- **Approve.** No feel-breaking regressions, durations and easing within bounds, interruptibility handled, reduced-motion respected
-
-### Remedial hierarchy
-
-When proposing fixes, prefer earlier moves:
-
-1. Delete the animation (high-frequency / no purpose / keyboard-triggered)
-2. Reduce it. Shorter duration, smaller transform, fewer properties
-3. Fix the easing. Swap `ease-in` → `ease-out` / custom curve
-4. Fix origin/physicality. Correct `transform-origin`; replace `scale(0)` with `scale(0.95)` + opacity
-5. Make it interruptible. Keyframes → transitions, or a spring for gesture-driven motion
-6. Move it to the GPU. Layout props → `transform`/`opacity`; WAAPI for programmatic CSS
-7. Asymmetric timing. Slow the deliberate phase, snap the response
-8. Polish. Blur crossfades, stagger groups, `@starting-style` for entry
-9. Accessibility & cohesion. Reduced-motion + hover gating; tune to component personality
-
-### Escalation triggers
-
-Flag these immediately:
-
-- `transition: all`
-- `scale(0)` or pure-fade with no initial transform
-- `ease-in` on any UI interaction
-- Animation on keyboard shortcut or 100+/day action
-- UI duration > 300ms with no justification
-- `transform-origin: center` on a trigger-anchored popover/dropdown/tooltip
-- Keyframes on toasts, toggles, or anything triggered rapidly
-- Animating layout properties (`width`/`height`/`margin`/`padding`/`top`/`left`)
-- Motion `x`/`y`/`scale` props on animation running while the page is busy
-- CSS variable updated on a parent to drive a child transform
-- Missing `prefers-reduced-motion` on movement
-- Ungated `:hover` motion
-- Symmetric enter/exit timing on a press-and-release interaction
-- Everything-at-once entrance where a 30–80ms stagger belongs
-
 ## Review Checklist
 
-Performance-focused. Taste-level checks (easing selection, duration choice, animation purpose) belong to the design taste skill.
+Performance only. Feeds the Performance tier of `motion-sense`'s review, which owns posture, output format, and the verdict.
 
 | Issue                                | Fix                                              | Why                                            |
 | ------------------------------------ | ------------------------------------------------ | ---------------------------------------------- |
@@ -254,12 +189,13 @@ Performance-focused. Taste-level checks (easing selection, duration choice, anim
 | `will-change` missing during animation, or left on after | Set while animating, remove once a one-shot finishes | Hint enables compositor promotion; leaving it wastes GPU memory |
 | `will-change` on disabled elements   | Remove it                                        | Wastes GPU memory on inert elements            |
 | Hardcoded values in JS               | Read from CSS custom properties                  | Design system is the single source of truth    |
-| Missing `prefers-reduced-motion`     | Add media query + JS check                       | Accessibility requirement                      |
-| Hover without `(hover: hover)` query | Gate behind media query                          | False-positive hover on touch devices          |
 | Motion `x`/`y`/`scale` props         | Use `transform: "translateX()"`                  | Shorthand is not hardware-accelerated          |
 | CSS var update during drag           | Set `transform` directly                         | Variable inheritance recalculates all children |
 | `useEffect` + `setMounted` for entry | Use `@starting-style`                            | CSS-native, no extra render cycle              |
 | Focus ring animated                  | Animate element background/shadow instead        | Focus indicator triggers paint                 |
+| Color animated long, looping, or on many elements | Crossfade two layers with `opacity` | Color repaints every frame; only short single-element state transitions are cheap |
+| `clip-path` updated every frame during a drag | `transform` on a clip wrapper | Per-frame clip updates repaint |
+| Load content left at `opacity: 0.01` under reduced motion | Snap to final state in the reduced-motion query | Content must never depend on motion to become visible |
 | Large stagger group or many concurrent springs, unscaled | Cap group size / spring count on low-power devices | Main-thread physics cost scales with element count, not free just because it targets `transform` |
 | Heavy blur/backdrop-filter with no device check | Reduce or skip on constrained devices | Real GPU cost regardless of compositing |
 | Full-quality WebGL served unconditionally | Gate behind device tier (0/1/2), static fallback at Tier 0 | No WebGL context or a weak GPU crashes/thermal-throttles instead of degrading |

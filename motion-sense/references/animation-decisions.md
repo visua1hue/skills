@@ -1,6 +1,6 @@
 # Animation Decision Framework Reference
 
-The "should this animate, and how" taste layer. Springs (JS-based, `useSpring`, physics config) are intentionally out of scope. Execution/performance mechanics (GPU properties, compositor hygiene) stay in `motion-engine`. This file is the decision logic in between: given that something is going to animate, what should it do.
+The "should this animate, and how" taste layer. Spring feel lives in `SKILL.md`. Execution/performance mechanics (GPU properties, compositor hygiene) stay in `motion-engine`. This file is the decision logic in between: given that something is going to animate, what should it do.
 
 ## Should this animate at all?
 

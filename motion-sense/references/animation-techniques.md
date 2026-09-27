@@ -74,7 +74,7 @@ Start at `clip-path: inset(0 0 100% 0)` (hidden from bottom), animate to `inset(
 
 ### Comparison sliders
 
-Overlay two images. Clip the top one with `clip-path: inset(0 50% 0 0)`, then adjust the right-inset value based on drag position. No extra DOM elements, fully hardware-accelerated.
+Overlay two images. Clip the top one with `clip-path: inset(0 50% 0 0)`, then adjust the right-inset value based on drag position. No extra DOM elements. Cheap for occasional updates, but a per-frame drag repaints; for heavy use, `transform` a clip wrapper instead (see `motion-engine`).
 
 ## Component Patterns (Animation-Flavored)
 
