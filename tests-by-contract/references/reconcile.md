@@ -20,10 +20,10 @@ Done when every in-scope test file has a recorded baseline result.
 Split the surface into **lanes** along production owner boundaries, not file
 prefixes. For a messaging plugin these were accounts, commands, context,
 dispatch, inbound, outbound, persistence, transport, shared, harness, and
-live/QA scenarios. Include the subsystem's cases at shared core boundaries and
-its QA and live-proof harness tests.
+end-to-end and manual QA tests. Include the subsystem's cases at shared core
+boundaries and its end-to-end harness tests.
 
-Done when every test file and QA scenario the subsystem owns belongs to exactly
+Done when every test file and end-to-end test the subsystem owns belongs to exactly
 one lane.
 
 ## 3. Read-only ledger per lane
@@ -66,8 +66,8 @@ assertions to carry into keepers, and the test-only production seams unlocked.
 Edit lane by lane. Serialize changes to shared harnesses and support files
 through one owner. With each lane, remove the test-only production seams it
 unlocks: injection parameters, getters, reset exports, and indirection layers.
-Register moved suites in CI routing and test inventories. Update shrink-only
-line-cap baselines. Put durable test-ownership rules in the subsystem's
+Register moved suites in CI routing and test inventories. Update any size or
+coverage baselines CI enforces. Put durable test-ownership rules in the subsystem's
 `AGENTS.md`, drawn from mistakes this reconcile actually found.
 
 Done when every lane plan is applied and each lane's keepers pass.
@@ -103,11 +103,10 @@ Reconciles outlive many `main` commits. Merge `main` rather than rebasing a
 long, many-commit branch. When `main` modified a file the reconcile deleted,
 keep the deletion. Port the new contract into the keeper instead, and confirm
 every new regression `main` added still has a home. Rerun the whole subsystem
-suite and repeat live proof on the merged head.
+suite and repeat proof in the running app (eng-principles P11) on the merged
+head.
 
 Expect review tooling to see a truncated file list on a diff this large.
-Record maintainer decisions for generic compatibility flags in the PR evidence
-rather than editing gates.
 
 Hand off with the [SKILL.md](../SKILL.md) report, plus:
 

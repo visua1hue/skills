@@ -1,6 +1,6 @@
 ---
 name: tests-by-contract
-description: "Invoke whenever writing, changing, reviewing, or sweeping tests. Authoring gate for new tests plus audit workflow for low-value, implementation-coupled, or duplicative tests and the test-only production seams they demand."
+description: Authoring gate, audit, and subsystem reconcile for automated tests. Rejects tests that prove mocks or implementation instead of behavior. Use when writing, changing, reviewing, or pruning tests.
 ---
 
 # Tests by contract
@@ -42,28 +42,29 @@ covers the bug; do not replay the same scenario at every layer it crosses.
 ## Junk patterns
 
 The shared checklist for all modes: the authoring gate rejects a new test that
-matches one, and audits hunt for existing tests that do.
+matches one, and audits hunt for existing tests that do. Numbers are stable ids.
+Cite them in reviews (`T6`). A removed pattern leaves a gap; new ones append.
 
-- assertion-free coverage probes;
-- self-comparisons and identity copiers;
-- copied fixtures, inventories, manifests, or export lists;
-- exact source, import, or string greps;
-- private predicate or call-shape tests duplicated at real boundaries;
-- duplicate invocations of the same contract;
-- provider-local replays of shared helpers;
-- tests whose only purpose is preserving test-only exports, globals, or wrappers;
-- dead production code whose only callers are tests;
-- expected values produced by the helper or renderer under test;
-- mocks that implement the asserted behavior, or one identical mock standing in
-  for different APIs;
-- fixtures that supply the receipt, admission, or callback ordering the owner
-  should produce, or persistence asserted against a store the path never writes;
-- capability tests that restate declared flags instead of exercising the
-  delivery or acknowledgement the flag promises;
-- negative controls that pass for an unrelated reason, such as a denial from a
-  different guard or a rejection the production path never reaches;
-- names or fixtures that promise more than the input exercises, such as a
-  "retires the window" test asserting the window was not cleared.
+1. assertion-free coverage probes;
+2. self-comparisons and identity copiers;
+3. copied fixtures, inventories, manifests, or export lists;
+4. exact source, import, or string greps;
+5. private predicate or call-shape tests duplicated at real boundaries;
+6. duplicate invocations of the same contract;
+7. per-module replays of a shared helper's tests;
+8. tests whose only purpose is preserving test-only exports, globals, or wrappers;
+9. dead production code whose only callers are tests;
+10. expected values produced by the helper or renderer under test;
+11. mocks that implement the asserted behavior, or one identical mock standing in
+    for different APIs;
+12. fixtures that supply the result, state, or event order the code under test
+    should produce, or persistence asserted against a store the path never writes;
+13. capability tests that restate declared flags instead of exercising the
+    delivery or acknowledgement the flag promises;
+14. negative controls that pass for an unrelated reason, such as a denial from a
+    different guard or a rejection the production path never reaches;
+15. names or fixtures that promise more than the input exercises, such as a
+    "retires the window" test asserting the window was not cleared.
 
 ## Value bar
 
@@ -95,8 +96,8 @@ speculative inventory. Hunt for the [junk patterns](#junk-patterns).
 ## Retention bar
 
 Keep a test when it independently enforces a public API, SDK, protocol,
-config, migration, storage, security, platform, default, prompt-byte, generated
-cross-language, package, release, or architecture contract. Also keep:
+config, migration, storage, security, platform, default, exact output format
+(prompt, wire, file), generated cross-language, package, release, or architecture contract. Also keep:
 
 - call ordering when order is observable behavior;
 - regressions with a credible failure mode;
@@ -140,8 +141,8 @@ Follow the repository's testing rules in `AGENTS.md` and CI config.
 
 1. Run the smallest owner and sibling tests with the project's test runner,
    filtered to the changed paths.
-2. For removed source greps or plan assertions, run the executable script or
-   dry-run that owns the real contract.
+2. For removed source greps or output snapshots, run the script or dry-run that
+   owns the real contract.
 3. Run targeted formatting, then `git diff --check`.
 4. Run the changed-files gate the repository requires (lint, typecheck, the
    CI-equivalent test scope).
