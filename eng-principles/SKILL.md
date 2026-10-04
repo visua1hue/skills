@@ -7,7 +7,7 @@ description: Engineering principles for designing, reviewing, and verifying code
 
 Rules for how code gets designed and when work counts as done. Numbers are stable ids. Cite them in replies and reviews (`P6`). A removed rule leaves a gap.
 
-Domain detail lives in sibling skills: types in `typescript-magician`, UI in `ui-baseline`, animation in `motion-sense` and `motion-engine`, commits and PRs in `git-stack-flow`.
+Domain detail lives in sibling skills: types in `typescript-magician`, UI in `ui-baseline`, animation in `motion-sense` and `motion-engine`, tests in `tests-by-contract`, commits and PRs in `git-stack-flow`.
 
 ## Conduct
 
