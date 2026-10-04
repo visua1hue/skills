@@ -55,7 +55,7 @@ Done when each repaired defect has a failing control and a passing candidate on 
 
 ## 8. Merge and hand off
 
-A reconcile branch outlives many `main` commits. Merge `main` into it rather than rebasing a long branch with many commits. When `main` changed a file the reconcile deleted, keep the deletion and port the new contract into the keeper. Confirm every new regression test from `main` still has a home. Rerun the whole subsystem suite and repeat proof in the running app (eng-principles P11) on the merged head.
+A reconcile branch outlives many `main` commits. Merge `main` into it rather than rebasing. This is an exception to the rebase rule in `git-stack-flow`, because a rebase replays conflicts once per commit on a long branch. When `main` changed a file the reconcile deleted, keep the deletion and port the new contract into the keeper. Confirm every new regression test from `main` still has a home. Rerun the whole subsystem suite and repeat proof in the running app (eng-principles P11) on the merged head.
 
 On a diff this large, review tools may see only part of the file list.
 
