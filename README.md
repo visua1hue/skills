@@ -30,6 +30,7 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 
 ## Extended Layer
 
+Recommended, not required. Extra tools for the agent, over MCP.
+
 - Type: **MCP** | [fff](https://github.com/dmtrKovalenko/fff)
 - Type: **MCP** | [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp)
-- Type: **MCP** | [MDN](https://github.com/mdn/mcp)
