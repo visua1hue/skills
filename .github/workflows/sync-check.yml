@@ -18,6 +18,7 @@ jobs:
       # runner context isn't available in job-level env, so each step sets it
       - name: fetch upstream changes
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
         run: ./scripts/sync.sh
 
