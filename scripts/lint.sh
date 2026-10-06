@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Lint skills against the SKILL.md spec. Runs locally and in CI.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 python3 - <<'PY'
 import os, re, sys, yaml

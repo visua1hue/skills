@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MANIFEST="$(dirname "$0")/MANIFEST.yaml"
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+MANIFEST="${REPO_DIR}/MANIFEST.yaml"
 
 # The marker-tree summary always prints to stdout. When SYNC_SUMMARY is set, a
 # plain-language markdown version is also written there (used by CI for the PR
