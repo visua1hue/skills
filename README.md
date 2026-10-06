@@ -4,7 +4,7 @@
 
 Agent Skills, built by you, run by agents. Follows the [Agent Skills](https://agentskills.io/home) open standard.
 
-Context, loaded when it matters. Context engineering, applied.
+Curated Agent Stack, production-tested. Context, loaded when it matters.
 
 </div>
 
