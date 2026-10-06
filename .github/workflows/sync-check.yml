@@ -19,7 +19,7 @@ jobs:
       - name: fetch upstream changes
         env:
           SYNC_SUMMARY: ${{ runner.temp }}/sync-summary.md
-        run: ./sync.sh
+        run: ./scripts/sync.sh
 
       - name: check for changes
         id: diff

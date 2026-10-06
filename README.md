@@ -33,21 +33,21 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 
 ### Validate
 
-`lint.sh` checks every skill against the SKILL.md spec. It runs in CI on each PR, or locally:
+`scripts/lint.sh` checks every skill against the SKILL.md spec. It runs in CI on each PR, or locally:
 
 ```bash
-./lint.sh                          # lint all (name, description, format)
+./scripts/lint.sh                  # lint all (name, description, format)
 ```
 
 ### Sync Upstream
 
-`MANIFEST.yaml` tracks upstream sources. `sync.sh` overwrites your local copy from them. Use `--diff` to review first.
+`MANIFEST.yaml` tracks upstream sources. `scripts/sync.sh` overwrites your local copy from them. Use `--diff` to review first.
 
 ```bash
-./sync.sh                          # sync all upstreams + update MANIFEST
-./sync.sh --diff                   # dry-run all, show what would change (new/changed/removed)
-./sync.sh <skill>                  # sync a single skill
-./sync.sh <skill> --diff           # dry-run a single skill
+./scripts/sync.sh                  # sync all upstreams + update MANIFEST
+./scripts/sync.sh --diff           # dry-run all, show what would change (new/changed/removed)
+./scripts/sync.sh <skill>          # sync a single skill
+./scripts/sync.sh <skill> --diff   # dry-run a single skill
 ```
 
 ## Extended Layer <sup><small>[⌃](#top)</small></sup>
