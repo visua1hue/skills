@@ -41,10 +41,10 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 
 ### Sync Upstream
 
-`MANIFEST.yaml` tracks upstream sources. `scripts/sync.sh` overwrites your local copy from them. Use `--diff` to review first.
+`upstreams.yaml` tracks upstream sources. `scripts/sync.sh` overwrites your local copy from them. Use `--diff` to review first.
 
 ```bash
-./scripts/sync.sh                  # sync all upstreams + update MANIFEST
+./scripts/sync.sh                  # sync all upstreams + update upstreams.yaml
 ./scripts/sync.sh --diff           # dry-run all, show what would change (new/changed/removed)
 ./scripts/sync.sh <skill>          # sync a single skill
 ./scripts/sync.sh <skill> --diff   # dry-run a single skill

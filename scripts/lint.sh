@@ -24,12 +24,12 @@ def frontmatter(path):
     except yaml.YAMLError as e:
         return None, "", f"invalid YAML frontmatter: {e}"
 
-# MANIFEST entries must resolve to a skill dir + SKILL.md
-with open("MANIFEST.yaml", encoding="utf-8") as f:
+# upstreams.yaml entries must resolve to a skill dir + SKILL.md
+with open("upstreams.yaml", encoding="utf-8") as f:
     manifest = yaml.safe_load(f) or {}
 for skill in (manifest.get("upstreams") or {}):
     if not os.path.isdir(f"skills/{skill}"):
-        errors.append(f"MANIFEST entry '{skill}' has no directory skills/{skill}/")
+        errors.append(f"upstreams.yaml entry '{skill}' has no directory skills/{skill}/")
     elif not os.path.isfile(f"skills/{skill}/SKILL.md"):
         errors.append(f"missing skills/{skill}/SKILL.md")
 

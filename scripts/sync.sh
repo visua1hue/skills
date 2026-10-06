@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-MANIFEST="${REPO_DIR}/MANIFEST.yaml"
+MANIFEST="${REPO_DIR}/upstreams.yaml"
 
 # The marker-tree summary always prints to stdout. When SYNC_SUMMARY is set, a
 # plain-language markdown version is also written there (used by CI for the PR
@@ -89,7 +89,7 @@ sync_skill() {
   old_date="$(parse_field "$skill" "last_synced")"
 
   if [[ -z "$repo" || "$repo" == "~" ]]; then
-    echo "[$skill] no repo in MANIFEST — skipping"
+    echo "[$skill] no repo in upstreams.yaml — skipping"
     return
   fi
 
