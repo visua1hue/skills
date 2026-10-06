@@ -26,7 +26,7 @@ The agent activates a skill when your request matches.
 
 ### Workflow
 
-- [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian vaults and plugins via the Obsidian CLI, by [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
+- [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian via CLI, by [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
 
 ## Extended Layer
 
