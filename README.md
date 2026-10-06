@@ -20,6 +20,10 @@ The agent activates a skill when your request matches.
 - [triage](skills/triage/): GitHub issue and PR triage state machine
 - [unslop](skills/unslop/): Strip AI tells and filler from writing, by [Lauren Tan](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop)
 
+### Workflow
+
+- [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian vaults and plugins via the Obsidian CLI, by [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
+
 ## Extended Layer
 
 - Type: **MCP** | [fff](https://github.com/dmtrKovalenko/fff)
