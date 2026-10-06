@@ -10,7 +10,7 @@ Context, loaded when it matters. Context engineering, applied.
 
 ## Agent Skills
 
-The agent activates a skill when your request matches.
+Skills are either **Model-invoked**, where the agent activates them when your request matches, or **User-invoked** via a slash command like `/triage`.
 
 ### Engineering
 
