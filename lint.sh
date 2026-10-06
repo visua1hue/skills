@@ -28,20 +28,19 @@ def frontmatter(path):
 with open("MANIFEST.yaml", encoding="utf-8") as f:
     manifest = yaml.safe_load(f) or {}
 for skill in (manifest.get("upstreams") or {}):
-    if not os.path.isdir(skill):
-        errors.append(f"MANIFEST entry '{skill}' has no directory ./{skill}/")
-    elif not os.path.isfile(f"{skill}/SKILL.md"):
-        errors.append(f"missing {skill}/SKILL.md")
+    if not os.path.isdir(f"skills/{skill}"):
+        errors.append(f"MANIFEST entry '{skill}' has no directory skills/{skill}/")
+    elif not os.path.isfile(f"skills/{skill}/SKILL.md"):
+        errors.append(f"missing skills/{skill}/SKILL.md")
 
-# Tracked top-level dirs only, so untracked scratch dirs don't fail the lint
+# Tracked dirs under skills/ only, so untracked scratch dirs don't fail the lint
 import subprocess
-tracked = subprocess.run(["git", "ls-files"], capture_output=True, text=True, check=True).stdout.split()
-skill_dirs = sorted({p.split("/")[0] for p in tracked
-                     if "/" in p and not p.startswith(".")})
+tracked = subprocess.run(["git", "ls-files", "skills"], capture_output=True, text=True, check=True).stdout.split()
+skill_dirs = sorted({p.split("/")[1] for p in tracked if p.count("/") >= 2})
 seen = {}
 
 for d in skill_dirs:
-    md = f"{d}/SKILL.md"
+    md = f"skills/{d}/SKILL.md"
     if not os.path.isfile(md):
         errors.append(f"directory '{d}/' has no SKILL.md")
         continue
