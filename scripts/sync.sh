@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
+# Mirror upstream skills listed in upstreams.yaml into skills/<name>/.
+#
+# A skill is refetched only when upstream has a new commit under its path, so
+# local edits stay put until upstream moves. When it does, the whole skill is
+# overwritten and the sync PR shows any local edits being reverted.
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-MANIFEST="${REPO_DIR}/upstreams.yaml"
+UPSTREAMS="${REPO_DIR}/upstreams.yaml"
 
 # The marker-tree summary always prints to stdout. When SYNC_SUMMARY is set, a
 # plain-language markdown version is also written there (used by CI for the PR
@@ -16,61 +21,89 @@ SYNC_MD=""
 TMP_ROOT="$(mktemp -d)"
 trap 'rm -rf "$TMP_ROOT"' EXIT
 
-parse_field() {
-  local skill="$1" field="$2"
-  awk "/^  ${skill}:/{f=1} f && /^    ${field}:/{sub(/^    ${field}: /, \"\"); print; exit}" "$MANIFEST"
+# Unauthenticated API calls share a 60/hour limit per IP; CI passes GH_TOKEN.
+TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+AUTH=()
+[[ -n "$TOKEN" ]] && AUTH=(-H "Authorization: Bearer ${TOKEN}")
+
+api() {
+  # ${AUTH[@]+...}: bash 3.2 (macOS) treats an empty array as unbound under set -u
+  curl -fsSL ${AUTH[@]+"${AUTH[@]}"} -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/$1"
 }
 
-update_field() {
-  local skill="$1" field="$2" value="$3"
-  local tmp
-  tmp="$(mktemp)"
-  # avoid `sed -i` — its syntax differs between BSD (macOS) and GNU (Linux/CI)
-  sed "/^  ${skill}:/,/^  [^ ]/ s|^    ${field}: .*|    ${field}: ${value}|" "$MANIFEST" > "$tmp"
-  mv "$tmp" "$MANIFEST"
+get_field() {
+  python3 - "$UPSTREAMS" "$1" "$2" <<'PY'
+import sys, yaml
+entry = yaml.safe_load(open(sys.argv[1]))["upstreams"].get(sys.argv[2]) or {}
+value = entry.get(sys.argv[3])
+print("" if value is None else value)
+PY
+}
+
+# set_synced <skill> <sha>: record the synced commit and today's date
+set_synced() {
+  python3 - "$UPSTREAMS" "$1" "$2" <<'PY'
+import datetime, sys, yaml
+path, skill, sha = sys.argv[1:]
+data = yaml.safe_load(open(path))
+data["upstreams"][skill]["last_synced"] = datetime.date.today()
+data["upstreams"][skill]["sha"] = sha
+with open(path, "w") as f:
+    yaml.safe_dump(data, f, sort_keys=False)
+PY
 }
 
 list_upstreams() {
-  awk '/^  [a-z][a-z-]*:/{gsub(/:/, ""); print $1}' "$MANIFEST"
+  python3 -c 'import sys, yaml; print("\n".join(yaml.safe_load(open(sys.argv[1]))["upstreams"]))' "$UPSTREAMS"
 }
 
-fetch_file_list() {
+# Latest commit touching <path>, so unrelated upstream commits don't trigger a sync.
+fetch_path_sha() {
   local repo="$1" path="$2" ref="$3"
-  curl -fsSL "https://api.github.com/repos/${repo}/git/trees/${ref}?recursive=1" \
-    | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-prefix = '${path}/'
-for item in data.get('tree', []):
-    if item['type'] == 'blob' and item['path'].startswith(prefix) and item['path'].endswith('.md'):
-        print(item['path'][len(prefix):])
-"
+  api "repos/${repo}/commits?path=${path}&sha=${ref}&per_page=1" \
+    | python3 -c 'import json, sys; c = json.load(sys.stdin); print(c[0]["sha"] if c else "")'
 }
 
-fetch_tree_sha() {
-  local repo="$1" ref="$2"
-  curl -fsSL "https://api.github.com/repos/${repo}/git/trees/${ref}?recursive=1" \
-    | python3 -c "import json,sys; print(json.load(sys.stdin).get('sha','~'))"
+# fetch_tree <repo> <sha> <path> <dest>: copy <path> at <sha> into <dest>
+fetch_tree() {
+  local repo="$1" sha="$2" path="$3" dest="$4"
+  local unpack="${dest}.unpack"
+  mkdir -p "$unpack"
+  curl -fsSL "https://codeload.github.com/${repo}/tar.gz/${sha}" | tar -xzf - -C "$unpack"
+  # the archive's single top dir is named <repo>-<sha>
+  local src
+  src="$(find "$unpack" -mindepth 1 -maxdepth 1 -type d)/${path}"
+  [[ -d "$src" ]] || return 1
+  mv "$src" "$dest"
 }
+
+# Markdown list of upstream commits touching <path> after <old> up to <new>.
+fetch_commits() {
+  local repo="$1" path="$2" new="$3" old="$4"
+  api "repos/${repo}/commits?path=${path}&sha=${new}&per_page=30" \
+    | python3 -c '
+import json, sys
+repo, old = sys.argv[1:]
+for c in json.load(sys.stdin):
+    if c["sha"] == old:
+        break
+    sha, msg = c["sha"], c["commit"]["message"].split("\n")[0]
+    print(f"- [{sha[:7]}](https://github.com/{repo}/commit/{sha}) {msg}")
+' "$repo" "$old" || true
+}
+
+# Files git sees in a skill dir (tracked + untracked, minus ignored like .DS_Store)
+local_files() {
+  git -C "$REPO_DIR" ls-files --cached --others --exclude-standard -- "skills/$1" \
+    | sed "s|^skills/$1/||" | sort -u
+}
+
+dir_files() { (cd "$1" && find . -type f | sed 's|^\./||' | sort); }
 
 file_lines() { awk 'END{print NR+0}' "$1"; }
 
 plural_lines() { [[ "$1" == 1 ]] && echo "1 line" || echo "$1 lines"; }
-
-# Markdown list of upstream commits touching <path> since <date>, so the PR
-# links to what actually changed.
-fetch_commits() {
-  local repo="$1" path="$2" ref="$3" since="$4"
-  curl -fsSL "https://api.github.com/repos/${repo}/commits?path=${path}&sha=${ref}&since=${since}T00:00:00Z&per_page=20" \
-    | python3 -c '
-import json, sys
-repo = sys.argv[1]
-for c in json.load(sys.stdin):
-    msg = c["commit"]["message"].split("\n")[0]
-    sha = c["sha"]
-    print(f"- [{sha[:7]}](https://github.com/{repo}/commit/{sha}) {msg}")
-' "$repo" || true
-}
 
 # echoes "<added> <removed>" for two files
 diff_counts() {
@@ -82,105 +115,93 @@ sync_skill() {
   local skill="$1" apply="${2:-}"
 
   local repo path ref old_sha old_date
-  repo="$(parse_field "$skill" "repo")"
-  path="$(parse_field "$skill" "path")"
-  ref="$(parse_field "$skill" "ref")"
-  old_sha="$(parse_field "$skill" "sha")"
-  old_date="$(parse_field "$skill" "last_synced")"
+  repo="$(get_field "$skill" repo)"
+  path="$(get_field "$skill" path)"
+  ref="$(get_field "$skill" ref)"
+  old_sha="$(get_field "$skill" sha)"
+  old_date="$(get_field "$skill" last_synced)"
 
-  if [[ -z "$repo" || "$repo" == "~" ]]; then
-    echo "[$skill] no repo in upstreams.yaml — skipping"
+  # an empty path would mirror the whole upstream repo
+  if [[ -z "$repo" || -z "$path" || -z "$ref" ]]; then
+    echo "[$skill] needs repo, path, and ref in upstreams.yaml — skipping"
+    return
+  fi
+
+  echo "[$skill] checking upstream ${repo}@${ref}..."
+
+  local new_sha
+  new_sha="$(fetch_path_sha "$repo" "$path" "$ref")"
+  if [[ -z "$new_sha" ]]; then
+    echo "[$skill] no commits at ${path}"
+    return
+  fi
+  if [[ "$new_sha" == "$old_sha" ]]; then
+    echo "[$skill] up to date"
     return
   fi
 
   local tmp
   tmp="$(mktemp -d "${TMP_ROOT}/${skill}.XXXXXX")"
-
-  echo "[$skill] fetching from upstream ${repo}@${ref}..."
-
-  local files
-  files="$(fetch_file_list "$repo" "$path" "$ref")"
-
-  if [[ -z "$files" ]]; then
+  if ! fetch_tree "$repo" "$new_sha" "$path" "${tmp}/new"; then
     echo "[$skill] no files found at ${path}"
     return
   fi
 
-  local has_diff=false
+  local skill_dir="${REPO_DIR}/skills/${skill}"
   local entries=""   # accumulated summary lines for this skill
   local md=""        # same, as plain-language markdown
+  local rel
 
   # new / changed: walk upstream files
   while IFS= read -r rel; do
-    local raw_url="https://raw.githubusercontent.com/${repo}/${ref}/${path}/${rel}"
-    local local_file="${REPO_DIR}/skills/${skill}/${rel}"
-    local tmp_file="${tmp}/${rel}"
-
-    mkdir -p "$(dirname "$tmp_file")"
-    curl -fsSL "$raw_url" -o "$tmp_file"
-
+    local upstream_file="${tmp}/new/${rel}" local_file="${skill_dir}/${rel}"
     if [[ ! -f "$local_file" ]]; then
       echo "  [new]     ${rel}"
-      entries+="$(printf '  +  %-28s +%-4s -%s' "$rel" "$(file_lines "$tmp_file")" 0)"$'\n'
-      md+="- \`${rel}\` added upstream ($(plural_lines "$(file_lines "$tmp_file")"))"$'\n'
-      has_diff=true
-      if [[ "$apply" == "--apply" ]]; then
-        mkdir -p "$(dirname "$local_file")"
-        cp "$tmp_file" "$local_file"
-      fi
-    elif ! diff -q "$local_file" "$tmp_file" > /dev/null 2>&1; then
+      entries+="$(printf '  +  %-28s +%-4s -%s' "$rel" "$(file_lines "$upstream_file")" 0)"$'\n'
+      md+="- \`${rel}\` added upstream ($(plural_lines "$(file_lines "$upstream_file")"))"$'\n'
+    elif ! cmp -s "$local_file" "$upstream_file"; then
       echo "  [changed] ${rel}"
-      diff -u "$local_file" "$tmp_file" || true
-      read -r added removed < <(diff_counts "$local_file" "$tmp_file")
+      diff -u "$local_file" "$upstream_file" || true
+      local added removed
+      read -r added removed < <(diff_counts "$local_file" "$upstream_file")
       entries+="$(printf '  ~  %-28s +%-4s -%s' "$rel" "$added" "$removed")"$'\n'
       md+="- \`${rel}\` changed: $(plural_lines "$added") added, $(plural_lines "$removed") removed"$'\n'
-      has_diff=true
-      if [[ "$apply" == "--apply" ]]; then
-        cp "$tmp_file" "$local_file"
-      fi
+    else
+      continue
     fi
-  done <<< "$files"
+    if [[ "$apply" == "--apply" ]]; then
+      mkdir -p "$(dirname "$local_file")"
+      cp "$upstream_file" "$local_file"
+    fi
+  done < <(dir_files "${tmp}/new")
 
-  # removed: local .md files no longer present upstream
-  if [[ -d "${REPO_DIR}/skills/${skill}" ]]; then
-    while IFS= read -r local_file; do
-      local rel="${local_file#"${REPO_DIR}/skills/${skill}/"}"
-      if ! grep -Fxq "$rel" <<< "$files"; then
-        echo "  [removed] ${rel}"
-        entries+="$(printf '  -  %-28s +%-4s -%s' "$rel" 0 "$(file_lines "$local_file")")"$'\n'
-        md+="- \`${rel}\` removed upstream ($(plural_lines "$(file_lines "$local_file")"))"$'\n'
-        has_diff=true
-        if [[ "$apply" == "--apply" ]]; then
-          rm -f "$local_file"
-        fi
-      fi
-    done < <(find "${REPO_DIR}/skills/${skill}" -type f -name '*.md')
-  fi
+  # removed: local files no longer present upstream
+  while IFS= read -r rel; do
+    echo "  [removed] ${rel}"
+    entries+="$(printf '  -  %-28s +%-4s -%s' "$rel" 0 "$(file_lines "${skill_dir}/${rel}")")"$'\n'
+    md+="- \`${rel}\` removed upstream ($(plural_lines "$(file_lines "${skill_dir}/${rel}")"))"$'\n'
+    if [[ "$apply" == "--apply" ]]; then
+      rm -f "${skill_dir}/${rel}"
+    fi
+  done < <(comm -23 <(local_files "$skill") <(dir_files "${tmp}/new"))
 
-  if ! $has_diff; then
-    echo "[$skill] up to date"
-    return
-  fi
-
-  local new_sha
-  new_sha="$(fetch_tree_sha "$repo" "$ref")"
+  [[ -n "$md" ]] || md="- no file changes"$'\n'
 
   SYNC_BODY+="$(printf '%s  [%s -> %s]' "$skill" "${old_sha:0:7}" "${new_sha:0:7}")"$'\n'
   SYNC_BODY+="$entries"$'\n'
 
   SYNC_MD+="### ${skill}"$'\n\n'
-  SYNC_MD+="Source: [${repo}/${path}](https://github.com/${repo}/tree/${ref}/${path})"$'\n\n'
+  SYNC_MD+="Source: [${repo}/${path}](https://github.com/${repo}/tree/${new_sha}/${path})"$'\n\n'
   SYNC_MD+="${md}"$'\n'
-  if [[ -n "$old_date" && "$old_date" != "~" ]]; then
+  if [[ -n "$old_sha" ]]; then
     local commits
-    commits="$(fetch_commits "$repo" "$path" "$ref" "$old_date")"
-    [[ -n "$commits" ]] && SYNC_MD+="Upstream commits since ${old_date}:"$'\n\n'"${commits}"$'\n\n'
+    commits="$(fetch_commits "$repo" "$path" "$new_sha" "$old_sha")"
+    [[ -n "$commits" ]] && SYNC_MD+="Upstream commits since ${old_date:-${old_sha:0:7}}:"$'\n\n'"${commits}"$'\n\n'
   fi
 
   if [[ "$apply" == "--apply" ]]; then
-    update_field "$skill" "last_synced" "$(date +%Y-%m-%d)"
-    update_field "$skill" "sha" "$new_sha"
-    echo "[$skill] synced"
+    set_synced "$skill" "$new_sha"
+    echo "[$skill] synced to ${new_sha:0:7}"
   fi
 }
 
@@ -191,6 +212,7 @@ write_summary() {
   {                                     # markdown copy for the CI PR body
     printf '## Upstream sync, %s\n\n' "$(date +%Y-%m-%d)"
     printf '%s' "$SYNC_MD"
+    printf 'Sync overwrites the whole skill, so local edits show up here as reverted.\n'
     printf 'Review the diff, then merge to take the upstream changes or close to keep the current version.\n'
   } > "$SUMMARY_FILE"
 }
