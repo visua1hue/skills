@@ -3,11 +3,11 @@ upstreams:
     repo: mcollina/skills
     path: skills/typescript-magician
     ref: main
-    last_synced: 2026-06-20
-    sha: 5b2a81354b6d10325da0db9decc9ce5ecc714138
+    last_synced: 2026-10-06
+    sha: 3e2ffbb90fda9e31d84011c765252b00bfc2d4d6
   unslop:
     repo: cursor/plugins
     path: pstack/skills/unslop
     ref: main
-    last_synced: 2026-09-26
-    sha: ecc249f1e306fc64ddf83c7bed16cacf7c2239db
+    last_synced: 2026-10-06
+    sha: 70b2dc8b4b85c8d5648624ca40d692c421fff32f
