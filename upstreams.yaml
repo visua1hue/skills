@@ -17,3 +17,9 @@ upstreams:
     ref: main
     last_synced: 2026-10-06
     sha: 5a557ceba792fcb4c58591f3117c6887810d8df1
+  security-audit:
+    repo: cloudflare/security-audit-skill
+    path: skills/security-audit
+    ref: main
+    last_synced: 2026-10-06
+    sha: c1c8a8c1471069fb0e188eeaff69b8e8db6564a8

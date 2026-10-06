@@ -19,6 +19,7 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 - [git-stack-flow](skills/git-stack-flow/): Commit/branch conventions, PR flow, and worktree audit
 - [eng-principles](skills/eng-principles/): Design and verification principles for code
 - [tests-by-contract](skills/tests-by-contract/): Authoring gate and audit for test value
+- [security-audit](skills/security-audit/): Source-first security audits with independently verified findings. **Upstream**, Author: [Cloudflare](https://github.com/cloudflare/security-audit-skill/tree/main/skills/security-audit)
 - [typescript-magician](skills/typescript-magician/): Complex generics, type guards, and strict typing. **Upstream**, Author: [Matteo Collina](https://github.com/mcollina/skills/tree/main/skills/typescript-magician)
 - [motion-sense](skills/motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](skills/motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
