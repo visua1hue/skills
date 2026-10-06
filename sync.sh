@@ -113,7 +113,7 @@ sync_skill() {
   # new / changed: walk upstream files
   while IFS= read -r rel; do
     local raw_url="https://raw.githubusercontent.com/${repo}/${ref}/${path}/${rel}"
-    local local_file="${REPO_DIR}/${skill}/${rel}"
+    local local_file="${REPO_DIR}/skills/${skill}/${rel}"
     local tmp_file="${tmp}/${rel}"
 
     mkdir -p "$(dirname "$tmp_file")"
@@ -142,9 +142,9 @@ sync_skill() {
   done <<< "$files"
 
   # removed: local .md files no longer present upstream
-  if [[ -d "${REPO_DIR}/${skill}" ]]; then
+  if [[ -d "${REPO_DIR}/skills/${skill}" ]]; then
     while IFS= read -r local_file; do
-      local rel="${local_file#"${REPO_DIR}/${skill}/"}"
+      local rel="${local_file#"${REPO_DIR}/skills/${skill}/"}"
       if ! grep -Fxq "$rel" <<< "$files"; then
         echo "  [removed] ${rel}"
         entries+="$(printf '  -  %-28s +%-4s -%s' "$rel" 0 "$(file_lines "$local_file")")"$'\n'
@@ -154,7 +154,7 @@ sync_skill() {
           rm -f "$local_file"
         fi
       fi
-    done < <(find "${REPO_DIR}/${skill}" -type f -name '*.md')
+    done < <(find "${REPO_DIR}/skills/${skill}" -type f -name '*.md')
   fi
 
   if ! $has_diff; then
