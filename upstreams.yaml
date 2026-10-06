@@ -11,3 +11,9 @@ upstreams:
     ref: main
     last_synced: 2026-10-06
     sha: 70b2dc8b4b85c8d5648624ca40d692c421fff32f
+  obsidian-cli:
+    repo: kepano/obsidian-skills
+    path: skills/obsidian-cli
+    ref: main
+    last_synced: 2026-10-06
+    sha: 5a557ceba792fcb4c58591f3117c6887810d8df1
