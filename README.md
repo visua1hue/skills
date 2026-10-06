@@ -1,8 +1,12 @@
 ![Agent Skills](.github/assets/preview.png)
 
+<div align="center">
+
 Agent Skills, built by you, run by agents. Follows the [Agent Skills](https://agentskills.io/home) open standard.
 
-Skills define how the agent works. MCP servers add tools and live data on demand.
+Context, loaded when it matters. Context engineering, applied.
+
+</div>
 
 ## Agent Skills
 
