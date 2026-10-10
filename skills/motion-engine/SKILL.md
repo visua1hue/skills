@@ -37,23 +37,17 @@ Animating any of these triggers layout or paint on the main thread every frame. 
 
 - Geometry: `width`, `height`, `margin`, `padding`, `border-width` (`height` is allowed for accordions only, see Compositor Hygiene)
 - Positioning: `top`, `left`, `bottom`, `right`, `inset`
-- Paint: `box-shadow`, `outline`
+- Paint: `box-shadow`, `outline`. These repaint every frame without touching layout. For a shadow change, pre-render the second shadow on a pseudo-element and animate its `opacity`.
 
-To animate size or position changes, use `transform: scale()` and `transform: translate()` instead.
+To animate size or position changes, use `transform: scale()` and `transform: translate()` instead. Where the end size or position is only known after layout, measure once before and once after, then animate the difference with `transform` (FLIP): one layout read, not one per frame.
 
-### Differences from Motion's tier list (to be reviewed)
-
-The three lists above simplify Motion's six tiers (S to F). Four points from the article are not folded in yet:
-
-- **`box-shadow` is paint, not layout.** It sits under Prohibited with the layout properties. The usual fix is a pre-rendered shadow on a pseudo-element with animated `opacity`.
-- **CSS variables.** The article ranks an animated custom property as paint-triggering even when it only feeds `opacity` or `transform`, and an inherited one as the worst case. `@property` with `inherits: false` limits the recalculation to the element. MDN confirms the recalculation scope; the paint claim has no second source.
-- **Measure, then animate (FLIP).** One upfront layout read, then a `transform` animation. Its own tier in the article, not represented here.
-- **Layout thrashing.** Interleaved DOM reads and writes in one frame. The lowest tier in the article, not represented here.
+The three lists condense the six tiers (S to F) of Motion's performance tier list, linked under External References.
 
 ### Compositor Hygiene
 
 - **`will-change`**: a fix for a problem you have observed, never a default. A CSS or WAAPI animation of `transform`/`opacity` gets its own layer without it. Add it for per-frame JS style writes, or after you see first-frame stutter or a 1px shift at the start or end. Name the animated property, set it when the animation starts, remove it when it ends. Each layer costs GPU memory. On a transform or `filter` it also makes the element the containing block for `position: fixed` descendants and creates a stacking context.
-- **CSS variable caveat**: updating a custom property on a parent recalculates styles for all children. During active animation (drag, scroll-linked), set `transform` directly on the element.
+- **CSS variable caveat**: updating a custom property recalculates styles for every element that inherits it, and Motion's tier list ranks an animated variable as paint-triggering even when it only feeds `transform` or `opacity`. During active animation (drag, scroll-linked), set `transform` directly on the element. Where a variable is needed, set it on the nearest element and register it with `@property` and `inherits: false`, which limits the recalculation to that element.
+- **Layout thrashing**: never interleave DOM reads and writes in one frame. Reading layout (`offsetWidth`, `getBoundingClientRect`) after a style write forces a synchronous layout, and in a loop it is the most expensive pattern there is. Batch every read, then every write.
 - **Height animation**: animating `height` or `max-height` triggers layout every frame. Use `transform: scaleY()` with `transform-origin: top`, `clip-path: inset()`, or measure once then animate `translateY` on a clip wrapper. Never animate `height: 0` to `height: auto`. The one exception is an accordion, where no transform equivalent exists: animate to a measured height and keep it short (about 200ms), since it costs layout on every frame.
 - **Focus rings**: never animate the focus indicator itself. It triggers paint. Animate the element's background or shadow via opacity crossfade instead.
 - **Disabled elements**: remove all transition and `will-change` declarations. They waste compositor layers on elements that can't be interacted with.
@@ -220,6 +214,9 @@ Performance only. Feeds the Performance tier of `motion-sense`'s review, which o
 | Hardcoded values in JS               | Read from CSS custom properties                  | Design system is the single source of truth    |
 | Motion `x`/`y`/`scale` props         | Use `transform: "translateX()"`                  | Shorthand is not hardware-accelerated          |
 | CSS var update during drag           | Set `transform` directly                         | Variable inheritance recalculates all children |
+| Animated custom property set on an ancestor, or registered as inherited | Set it on the nearest element; `@property` with `inherits: false` | Every inheriting element recalculates each frame |
+| `box-shadow` animated | Second shadow on a pseudo-element, animate its `opacity` | Shadow repaints every frame |
+| Layout read after a style write inside an animation or loop | Batch reads, then writes; measure once and animate `transform` | Each read forces a synchronous layout |
 | `useEffect` + `setMounted` for entry | Use `@starting-style`                            | CSS-native, no extra render cycle              |
 | Focus ring animated                  | Animate element background/shadow instead        | Focus indicator triggers paint                 |
 | Color animated long, looping, or on many elements | Crossfade two layers with `opacity` | Color repaints every frame; only short single-element state transitions are cheap |
