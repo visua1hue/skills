@@ -70,7 +70,7 @@ Colored overlay starts at `clip-path: inset(0 100% 0 0)`. On `:active`, transiti
 
 ### Image reveals on scroll
 
-Start at `clip-path: inset(0 0 100% 0)` (hidden from bottom), animate to `inset(0 0 0 0)` when the element enters the viewport. Use `IntersectionObserver` or a scroll-triggered animation library with `{ once: true, margin: "-100px" }` so it only fires once, slightly before the element is fully in view.
+Start at `clip-path: inset(0 0 100% 0)` (hidden from bottom), animate to `inset(0 0 0 0)` when the element enters the viewport. Use a CSS view timeline first (`animation-timeline: view()`, see `motion-engine` Tier 2), with `IntersectionObserver` as the fallback where scroll timelines are missing. A view timeline follows the scroll position, so the reveal reverses on the way back up. Where it must play once and stay, trigger it with `IntersectionObserver` instead and stop observing after the first hit, slightly before the element is fully in view.
 
 ### Comparison sliders
 
