@@ -80,9 +80,19 @@ The "how do you ship it natively" layer for entry/exit and page-level motion, no
 
 Entry and exit both live here, and `motion-engine` links to this. Full pattern: `references/native-transitions.md`.
 
-### Page transitions
+### View transitions
 
-View Transitions API (`::view-transition-old`/`::view-transition-new`, same- or cross-document) for the primitives: same-document via `document.startViewTransition()`, cross-document via `@view-transition { navigation: auto; }`. Full pattern: `references/native-transitions.md`. When the transition needs springs, differentiated enter/exit, or a staggered shared-element morph, Motion.dev's `animateView()` wrapper removes the manual naming/pseudo-element bookkeeping the raw API requires. Execution detail lives in `motion-engine/references/animation-patterns.md`.
+Same-document `document.startViewTransition()` works in all three engines. Cross-document `@view-transition { navigation: auto; }` works in Chromium and Safari and falls back to a normal navigation. Full reference: `references/native-transitions.md`.
+
+- **Navigation-level only.** Route changes, list to detail, a list that reorders. A view transition can't be interrupted, so it is wrong for anything hovered, dragged or toggled rapidly.
+- **Slides need a direction.** Hierarchy and ordered sequences slide. Tab to tab crossfades.
+- **Morph what the user tracks**, a hero image or a title, not everything present on both sides.
+- **Lists and grids:** `view-transition-name: match-element` plus `view-transition-class`, no per-item names.
+- **Direction:** transition types and `:active-view-transition-type()`, not classes swapped from script.
+- **Reduced motion:** the crossfade stays; names, types and custom keyframes go inside `no-preference`.
+- **Focus** moves to the new view when the transition finishes. The API doesn't do it.
+
+For springs, separate enter and exit, or a staggered shared-element morph, Motion's `animateView()` removes the naming and pseudo-element bookkeeping. Detail: `motion-engine/references/animation-patterns.md`.
 
 ### The `linear()` easing function
 
@@ -152,13 +162,20 @@ Prefer earlier moves:
 | Toggle, tab or icon animating into its default state on page load | Render the state before first paint; `initial={false}` on the Motion presence wrapper |
 | Every color transition firing at once on theme switch | Disable transitions for the swap, restore after the next frame |
 | Ungated `:hover` motion | `@media (hover: hover) and (pointer: fine)` |
+| View transition on hover, drag or a rapidly toggled control | CSS transition or spring that can retarget |
+| Directional slide between sibling tabs or other lateral views | Crossfade, or no transition |
+| Per-item `view-transition-name` written by hand for a list | `match-element` + `view-transition-class` |
+| View transition names or slides outside `no-preference` | Move them inside the query; the crossfade stays |
+| Focus left on a removed element after a view transition | Focus the new view's heading when `finished` resolves |
 | Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event |
 | Abrupt state change with no transition where one would aid comprehension (instant visibility toggle, jarring content swap) | Add a purposeful transition, still gated by the Decision Framework above, not a license to animate everything |
 
 ## External References
 
 - [`@starting-style`](https://developer.mozilla.org/en-US/docs/Web/CSS/@starting-style) / [`transition-behavior`](https://developer.mozilla.org/en-US/docs/Web/CSS/transition-behavior), MDN
-- [View Transitions API](https://developer.chrome.com/docs/web-platform/view-transitions), Chrome for Developers
+- [View Transitions API](https://developer.chrome.com/docs/web-platform/view-transitions) / [What's new in view transitions (2025)](https://developer.chrome.com/blog/view-transitions-in-2025), Chrome for Developers
+- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance), Chrome. Source of the cross-document render-blocking, focus and partial-page rules
+- [react-view-transitions](https://github.com/vercel-labs/agent-skills/tree/main/skills/react-view-transitions), Vercel. React `<ViewTransition>`
 - [`animateView()`](https://motion.dev/docs/animate-view), Motion.dev docs
 - [`linear()` easing function](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/linear), MDN
 - [easing.dev](https://easing.dev/) / [easings.co](https://easings.co/), custom easing curve playgrounds

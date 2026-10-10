@@ -1,6 +1,6 @@
 # Native Transitions Reference
 
-Full patterns for exit animations, spring easing, and page transitions using what the platform now handles natively, no JavaScript orchestration required.
+Full patterns for exit animations, spring easing, and view transitions using what the platform now handles natively.
 
 ## `allow-discrete` + `@starting-style`
 
@@ -101,29 +101,40 @@ Don't hand-write control points. Generate them from an actual spring simulation:
 
 Use `linear()` when the spring only needs to run once, on a state change, with no interruption mid-animation (e.g. a toast entrance, a button's settle-after-press). Use an actual JS spring (Motion.dev's `useSpring`, etc.) when the animation needs to be interruptible mid-flight with velocity preserved. A `linear()` curve is a fixed, precomputed timeline; it doesn't know about the current velocity if something interrupts it partway through, the same limitation as `@keyframes`.
 
-## Page Transitions
+## View transitions
 
-Same-document (SPA-style):
+The browser snapshots the old and new state and animates between them through `::view-transition-*` pseudo-elements, in the top layer. Snapshots are images, not live DOM. Cost and interruption limits: `motion-engine`.
+
+### When to use one
+
+A view transition cannot be interrupted. A second one skips the first, and the snapshots block clicks while it runs. So:
+
+- **Use for navigation-level changes.** A route change, list to detail, a list that reorders or filters.
+- **Not for interaction-heavy UI.** Anything hovered, dragged or toggled rapidly needs transitions or springs that retarget.
+- **Name what the change says.** A shared element says "same thing, going deeper". Reordered items say "same items, new arrangement". A page crossfade says "a new place". If it says nothing, skip it.
+- **Directional slides only where there is a direction.** Hierarchy (list to detail) and ordered sequences (previous, next). Lateral navigation such as tab to tab gets a crossfade or nothing. A slide there implies depth that isn't real.
+- **Morph only what the user is tracking.** A hero image, a title. Not every element that exists on both sides.
+- **Set the duration from the tokens.** Page-level transitions use `--motion-dur-slow` and `--motion-ease-in-out`.
+
+### Same-document
 
 ```js
-document.startViewTransition(() => {
-  // DOM update that should be visually transitioned
-  updateContent();
-});
-```
-
-The browser snapshots the before/after state and exposes them as pseudo-elements to animate:
-
-```css
-::view-transition-old(root) {
-  animation: fade-out 0.2s ease both;
-}
-::view-transition-new(root) {
-  animation: fade-in 0.2s ease both;
+function navigate(update, type) {
+  if (!document.startViewTransition) return update();
+  if (!type) return document.startViewTransition(update);
+  try {
+    return document.startViewTransition({ update, types: [type] });
+  } catch {
+    return document.startViewTransition(update); // callback-only browsers
+  }
 }
 ```
 
-Cross-document (full MPA navigation, no client-side router needed):
+The DOM update must run either way. The object form with `types` is newer than the callback form (see the support table), and an older browser throws on it before anything runs, so the fallback is safe. The default animation is a crossfade on `root`.
+
+### Cross-document
+
+Same-origin navigations between real pages, no client router:
 
 ```css
 @view-transition {
@@ -131,8 +142,119 @@ Cross-document (full MPA navigation, no client-side router needed):
 }
 ```
 
-Opting a same-origin navigation into a browser-managed cross-document transition, using the same pseudo-element model as the same-document version.
+- Both pages need the rule.
+- `pageswap` fires on the old page and `pagereveal` on the new one. Each exposes `event.viewTransition` (null when no transition runs). Use them to set types or names that depend on where the user came from (`navigation.activation`). Register the listener in a render-blocking script, or the event has already fired.
+- The new page is snapshotted as soon as it can render. If above-the-fold content isn't parsed yet, the transition lands on a blank page. `<link rel="expect" href="#main" blocking="render">` holds rendering until that element is parsed. Block only on what the first viewport needs: past about 4 seconds the browser skips the transition.
+- `rel="expect"` waits for the element, not for its image. An uncached image in a morph is snapshotted as an empty box. Preload the image and give it `width` and `height`.
+- An unsupported browser navigates normally. Ship it unconditionally.
 
-**Browser support**: same-document transitions ship in Chromium 111+, Safari 18+, and Firefox 144+, safe as a primary code path. Cross-document is narrower: Chromium 126+ and Safari 18.2+ support it, but Firefox doesn't yet (in development, not shipped). Cross-document transitions are a progressive enhancement by design. An unsupported browser just does a normal navigation with no visual transition, not a broken one, so ship it unconditionally rather than feature-detecting around it.
+### Naming elements
 
-For springs, differentiated enter/exit, or staggered shared-element morphs beyond this raw pattern, see Motion.dev's `animateView()` in `motion-engine/references/animation-patterns.md`.
+An element with a `view-transition-name` gets its own layer and morphs from its old box to its new one. A name must be unique in the document at snapshot time, or the whole transition is skipped.
+
+For lists and grids, let the browser name by element identity and style the group through a class:
+
+```css
+.card {
+  view-transition-name: match-element;
+  view-transition-class: card;
+}
+::view-transition-group(.card) {
+  animation-duration: var(--motion-dur-slow);
+}
+```
+
+- `match-element` works same-document only. Two documents share no element identity, so cross-document morphs need explicit names.
+- A list-to-detail morph needs one shared name on two different elements. Set it on the clicked item just before the transition and clear it when `finished` resolves. A stale name joins every later transition and keeps the page out of the back/forward cache.
+- `::view-transition-new(.card):only-child` targets an element that enters with no counterpart, `::view-transition-old(.card):only-child` one that leaves.
+
+### Direction
+
+Types label a transition so CSS can pick the animation:
+
+```css
+html:active-view-transition-type(forward) {
+  &::view-transition-old(root) { animation-name: slide-to-left; }
+  &::view-transition-new(root) { animation-name: slide-from-right; }
+}
+html:active-view-transition-type(back) {
+  &::view-transition-old(root) { animation-name: slide-to-right; }
+  &::view-transition-new(root) { animation-name: slide-from-left; }
+}
+```
+
+Set the type through `startViewTransition({ update, types })`, `event.viewTransition.types.add()` in `pagereveal`, or `types:` inside `@view-transition`.
+
+### Morph quality
+
+- **Aspect ratio changes stretch the snapshot.** Give old and new `height: 100%` and an `object-fit`, the same as fitting an image.
+- **Text morphs ghost when the size differs.** The old snapshot is a raster that gets scaled. Set `width: fit-content` on both text elements so the box matches the glyphs. For a large size jump, hide the old snapshot and switch off the new one's fade: `::view-transition-old(title) { display: none; }` and `::view-transition-new(title) { animation: none; }`.
+- **Running animations freeze.** A snapshot is a still image, so an element with an active animation looks paused for the duration.
+
+### Keeping the page usable
+
+- **Only part of the page changes.** Switch off the root crossfade and let clicks through to what isn't moving:
+
+  ```css
+  :root { view-transition-name: none; }
+  ::view-transition { pointer-events: none; }
+  ```
+
+- **Persistent chrome** (a sticky header, a toolbar) otherwise crossfades with the page. Give it a name and `::view-transition-group(site-header) { animation: none; }`.
+- **Focus.** A view transition does not move focus. If the focused element is gone after the update, send focus to the new view's heading when `finished` resolves.
+
+### Reduced motion
+
+The crossfade is a fade and stays. Movement is opt-in, as everywhere else: put names, types and custom keyframes inside the query, so under `reduce` only the crossfade is left.
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+  .card { view-transition-name: match-element; view-transition-class: card; }
+  html:active-view-transition-type(forward) { /* slides */ }
+}
+
+/* Names set from script can't sit inside the query: stop their movement here */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) { animation: none; }
+}
+```
+
+### Lifecycle
+
+`startViewTransition` returns a `ViewTransition`:
+
+- `updateCallbackDone`: the DOM update ran.
+- `ready`: the pseudo-elements exist. Start WAAPI animations on them here.
+- `finished`: the new view is live. Clear temporary names and move focus here.
+- `skipTransition()`: jump to the end state.
+- `waitUntil(promise)`: hold `finished` until the promise settles. Chromium only.
+
+`document.activeViewTransition` is the running transition or `null`.
+
+### Chromium-only refinements
+
+Both degrade to the standard behavior elsewhere.
+
+- **Scoped transitions.** `element.startViewTransition()` limits the transition to a subtree, so several can run at once and the rest of the page stays interactive. Feature-detect and fall back to the document.
+- **Nested groups.** By default every group is a flat child of `::view-transition`, so a child escapes its parent's clip and rounded corners mid-transition. `view-transition-group: contain` on the parent keeps its descendants inside.
+
+### Browser support (MDN data, 2026-10-08)
+
+| Feature | Chromium | Firefox | Safari |
+| --- | --- | --- | --- |
+| `document.startViewTransition`, `view-transition-name` | 111 | 144 | 18 |
+| `view-transition-class` | 125 | 144 | 18.2 |
+| Types: `{ update, types }`, `:active-view-transition-type()` | 125 | 147 | 18.2 |
+| `match-element` | 137 | 144 | 18.4 |
+| `document.activeViewTransition` | 142 | 147 | 26.2 |
+| Cross-document: `@view-transition`, `pagereveal`, `rel="expect"` | 126 | no | 18.2 |
+| `view-transition-group` (nesting) | 140 | no | no |
+| `ViewTransition.waitUntil()` | 144 | no | no |
+| `element.startViewTransition` (scoped) | 147 | no | no |
+
+Same-document transitions work in all three engines: use them as a primary code path. Everything marked "no" is progressive enhancement. Recheck this table before relying on a row that is older than six months.
+
+### Frameworks
+
+- **React.** `<ViewTransition>` wraps content and is triggered by `startTransition` or Suspense. It shipped in React's canary channel and comes bundled with the Next.js App Router; check react.dev for its current status. Vercel's `react-view-transitions` skill covers it.
+- **Motion.** `animateView()` adds springs, enter and exit, stagger and automatic naming. See `motion-engine/references/animation-patterns.md`. A plain crossfade doesn't need it.

@@ -158,7 +158,7 @@ Defining `.exit()` also sets the `.enter()` animation's initial keyframe from it
 
 Degrades gracefully: on a browser without View Transition API support, the DOM update still runs, just without the animation.
 
-**Browser support**: needs the View Transition API at all (Chromium, Safari 18+). Group-nesting and crop specifically need Chromium 140+. On older Chromium/Safari the transition still runs, just without that refinement. Doesn't yet cancel in-flight scroll-position animations.
+**Browser support**: needs the View Transition API at all (Chromium 111+, Safari 18+, Firefox 144+). Group-nesting and crop specifically need Chromium 140+. On older Chromium/Safari the transition still runs, just without that refinement. Doesn't yet cancel in-flight scroll-position animations.
 
 Reach for this over raw `document.startViewTransition()` when the transition needs springs, differentiated enter/exit, shared-element morphing, or stagger. A simple crossfade doesn't need it. The raw API (`motion-sense/references/native-transitions.md`) is enough and avoids the added dependency.
 
