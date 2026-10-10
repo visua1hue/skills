@@ -21,12 +21,19 @@ Beauty is leverage. People choose tools based on the whole experience, not just 
 
 Before writing animation code, work through these in order. Full rationale, curves, and duration tables: `references/animation-decisions.md`.
 
+Three rules hold for every step:
+
+- **No approximated values.** Curves, durations and spring settings come from the tables here. Never substitute a familiar-looking guess.
+- **Extend the project's motion tokens.** If the project has easing or duration tokens, use them. A parallel set is a defect.
+- **Make the call.** Pick one answer, give the reason in one line, write the code. No menu of options.
+
 | Question | Rule |
 | --- | --- |
 | Should this animate at all? | Never for 100+/day actions (keyboard shortcuts); standard for occasional UI (modals, toasts); delight is fine for rare/first-time moments |
-| What's the purpose? | Spatial consistency, state indication, explanation, feedback, or preventing a jarring change. "Looks cool" alone doesn't qualify for frequent UI |
+| What's the purpose? | Spatial consistency, state indication, explanation, feedback, or preventing a jarring change. Delight only for rare/first-time moments. "Looks cool" alone doesn't qualify for frequent UI, and data the user reads or acts on never moves for style |
 | What easing? | Entering/exiting → `ease-out`; on-screen movement → `ease-in-out`; hover/color → `ease`; constant motion → `linear`. Never `ease-in` on UI. |
-| How fast? | Button feedback 100-160ms, tooltips/popovers 125-200ms, dropdowns 150-250ms, modals 200-500ms. UI stays under 300ms |
+| How fast? | Button feedback 100-160ms, tooltips/popovers 125-200ms, dropdowns 150-250ms, modals 200-500ms. UI stays under 300ms. The 500ms end is the drawer on `--motion-ease-drawer`, whose steep start keeps it from reading as slow |
+| How does it leave? | The way it entered, same edge and path. Shorter and smaller than the enter: about half to three quarters of the duration, a small fixed offset. Slide fully out only where the destination means something (a drawer closing, a card returning to its list) |
 
 Also in the reference: perceived-performance notes (fast spinners, instant subsequent tooltips) and a distilled set of principles for building components people actually reach for (DX-first, good defaults over options, invisible edge-case handling, cohesion over isolated "correct" values, asymmetric enter/exit timing).
 
@@ -36,7 +43,7 @@ CSS technique for shipping the decisions above. Full patterns: `references/anima
 
 - **Transform mastery.** `translateY(%)` for size-independent motion, `scale()` scales children too (a feature, not a bug), 3D transforms (`rotateX`/`rotateY` + `preserve-3d`) for depth, explicit `transform-origin` matching where the interaction actually originates.
 - **`clip-path`.** Inset-shape reveals, tab color transitions via a clipped duplicate layer, hold-to-delete (2s linear press, 200ms ease-out release), scroll reveals, comparison sliders.
-- **Component feel patterns.** Buttons scale `0.97` on `:active`; never animate entry from `scale(0)` (start at `0.95`+opacity instead); popovers scale in from their trigger via `transform-origin` (modals stay centered because they aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with a subtle `filter: blur(2px)`, never above 20px.
+- **Component feel patterns.** Buttons scale `0.97` on `:active`, and a disabled button never scales; never animate entry from `scale(0)` (start from opacity plus popover `0.95`, tooltip `0.97`, modal `0.96`); popovers scale in from their trigger via `transform-origin` (modals stay centered because they aren't trigger-anchored); tooltips skip delay/animation on hovers after the first is open; prefer transitions over keyframes for anything triggered rapidly; mask an imperfect crossfade with a subtle `filter: blur(2px)`, never above 20px; a toggle, tab or icon never animates into its default state on first render; where colors have transitions, switch them off for the moment the theme flips.
 
 ## Spring Feel
 
@@ -71,7 +78,7 @@ The "how do you ship it natively" layer for entry/exit and page-level motion, no
 }
 ```
 
-`motion-engine` covers `@starting-style` for opacity/transform entry; this is the missing half: exit animations and the `display`/`content-visibility` dimension. Full pattern: `references/native-transitions.md`.
+Entry and exit both live here, and `motion-engine` links to this. Full pattern: `references/native-transitions.md`.
 
 ### Page transitions
 
@@ -108,6 +115,10 @@ Close with an explicit decision:
 - **Block.** Any feel-breaking regression, animation on keyboard/high-frequency action, `scale(0)`/`ease-in` on UI, non-GPU animation with an easy fix
 - **Approve.** No feel-breaking regressions, durations and easing within bounds, interruptibility handled, reduced-motion respected
 
+### When asked what could animate
+
+Report candidates, don't implement them. Each one must pass the Decision Framework: frequency, a named purpose, a duration inside budget, and no motion on data the user is reading. Cap the list at 5-7 for a whole app, fewer for one view, ordered by impact. Give exact values for each. Also list 2-5 places considered and rejected, with the question that ruled each out. If nothing passes, say so. That is a valid result.
+
 ### Remedial hierarchy
 
 Prefer earlier moves:
@@ -134,8 +145,12 @@ Prefer earlier moves:
 | Keyframes on toasts, toggles, or anything triggered rapidly | CSS transitions |
 | Bounce on an element with no gesture behind it | `bounce: 0` |
 | Symmetric enter/exit timing on a press-and-release interaction | Make release/exit faster than press/enter |
-| Everything-at-once entrance | 30-80ms stagger |
-| Movement with no `prefers-reduced-motion` handling | Gentler variant, not zero |
+| Everything-at-once entrance | 30-80ms stagger, capped at 6-8 items; the rest enter together |
+| Movement, scale or blur outside `@media (prefers-reduced-motion: no-preference)` | Move it inside the query; the opacity fade stays for everyone. Gentler, not zero |
+| `:active` scale that also fires on a disabled button | `:not(:disabled):active` |
+| Exit as long or as large as the enter, or leaving by a different edge | Same path, about half to three quarters of the duration, small offset |
+| Toggle, tab or icon animating into its default state on page load | Render the state before first paint; `initial={false}` on the Motion presence wrapper |
+| Every color transition firing at once on theme switch | Disable transitions for the swap, restore after the next frame |
 | Ungated `:hover` motion | `@media (hover: hover) and (pointer: fine)` |
 | Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event |
 | Abrupt state change with no transition where one would aid comprehension (instant visibility toggle, jarring content swap) | Add a purposeful transition, still gated by the Decision Framework above, not a license to animate everything |
@@ -147,3 +162,5 @@ Prefer earlier moves:
 - [`animateView()`](https://motion.dev/docs/animate-view), Motion.dev docs
 - [`linear()` easing function](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/linear), MDN
 - [easing.dev](https://easing.dev/) / [easings.co](https://easings.co/), custom easing curve playgrounds
+- [emilkowalski/skills](https://github.com/emilkowalski/skills), Emil Kowalski. Source of the decision framework, curves, durations and component patterns
+- [jakubkrehel/skills](https://github.com/jakubkrehel/skills), Jakub Krehel. Source of the exit-size, first-render and theme-switch rules
