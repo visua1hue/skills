@@ -15,34 +15,13 @@ For predetermined, non-interactive state changes. Hover effects, color transitio
 }
 ```
 
-Use when the animation is a direct response to a state change (hover, focus, active, class toggle). Avoid `transition: all`. Always specify exact properties.
+Use when the animation is a direct response to a state change (hover, focus, active, class toggle).
 
-### Interaction State Performance Rules
+Focus, disabled and hover rules for interaction states are in SKILL.md, under Compositor Hygiene and the key rules below the tier table.
 
-These rules exist for performance reasons, not aesthetics:
+### Entry animations
 
-- **Focus**: never animate the focus ring itself. Focus indicators trigger paint. Animate the element's `background` or `box-shadow` via opacity crossfade instead.
-- **Disabled**: remove all transition and `will-change` declarations. Disabled elements with animation properties waste compositor layers on elements that can't be interacted with.
-- **Hover**: gate behind `@media (hover: hover) and (pointer: fine)` to avoid false-positive hover states on touch devices that waste compositor work.
-
-### `@starting-style` for Entry Animations
-
-The modern CSS way to animate element entry without JavaScript. Replaces the common React pattern of `useEffect(() => setMounted(true))` which requires an extra render cycle. Use when browser support allows; fall back to a `data-mounted` attribute pattern otherwise.
-
-```css
-.toast {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 400ms ease,
-    transform 400ms ease;
-
-  @starting-style {
-    opacity: 0;
-    transform: translateY(100%);
-  }
-}
-```
+`@starting-style` animates an element's entry without JavaScript. The full entry and exit pattern, with support notes, is in `motion-sense/references/native-transitions.md`.
 
 ## Tier 2: CSS Keyframes + Scroll Timeline
 
@@ -123,7 +102,7 @@ import { animate, stagger, inView } from "motion";
 // Staggered entrance
 animate(
   "[data-motion='fade-up']",
-  { opacity: [0.01, 1], transform: ["translateY(30px)", "translateY(0)"] },
+  { opacity: [0, 1], transform: ["translateY(30px)", "translateY(0)"] },
   { duration: 0.18, delay: stagger(0.05) },
 );
 
@@ -181,14 +160,14 @@ Degrades gracefully: on a browser without View Transition API support, the DOM u
 
 **Browser support**: needs the View Transition API at all (Chromium, Safari 18+). Group-nesting and crop specifically need Chromium 140+. On older Chromium/Safari the transition still runs, just without that refinement. Doesn't yet cancel in-flight scroll-position animations.
 
-Reach for this over raw `document.startViewTransition()` when the transition needs springs, differentiated enter/exit, shared-element morphing, or stagger. A simple crossfade doesn't need it. The raw API (Tier 2/`native-transitions.md`) is enough and avoids the added dependency.
+Reach for this over raw `document.startViewTransition()` when the transition needs springs, differentiated enter/exit, shared-element morphing, or stagger. A simple crossfade doesn't need it. The raw API (`motion-sense/references/native-transitions.md`) is enough and avoids the added dependency.
 
 ## Tier 5: Spring Physics (Motion)
 
 For drag interactions, gesture-driven animation, and elements that need to feel physically alive. Springs don't have fixed durations. They settle based on physical parameters, making them ideal for interruptible gestures.
 
 ```tsx
-import { motion, useSpring } from "motion";
+import { motion, useSpring } from "motion/react";
 
 // Spring-based drag
 <motion.div
