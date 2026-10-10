@@ -24,8 +24,11 @@ Every animation needs a clear answer to "why does this animate?" Valid purposes:
 - **Explanation.** A marketing animation shows how a feature works
 - **Feedback.** A button scales down on press, confirming the interface heard the input
 - **Preventing jarring changes.** Elements popping in/out without transition feel broken
+- **Delight.** Only at the rare/first-time tier of the table above
 
 If the only answer is "it looks cool" and the user will see it often, don't animate.
+
+Check function too. Data the user is reading or acting on does not move for style. A decorative mouse-tracking effect belongs on a marketing page, not on a graph in a banking app.
 
 ## What easing should it use?
 
@@ -41,12 +44,12 @@ Entering or exiting?
 
 **Never use `ease-in` for UI animations.** It starts slow, so the interface feels sluggish at the exact moment the user is watching most closely: the start of the motion. A 300ms dropdown with `ease-in` *feels* slower than the same 300ms with `ease-out`, even though the duration is identical.
 
-Use custom easing curves. The built-in CSS keywords are too weak to feel intentional:
+Use custom easing curves. The built-in CSS keywords are too weak to feel intentional. The tokens are defined once, in `motion-engine` (Motion Tokens):
 
 ```css
---ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* strong ease-out for UI */
---ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* on-screen movement */
---ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* iOS-like drawer curve */
+--motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* strong ease-out for UI */
+--motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* on-screen movement */
+--motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* iOS-like drawer curve */
 ```
 
 Don't hand-derive curves. Pull stronger variants of standard easings from [easing.dev](https://easing.dev/) or [easings.co](https://easings.co/).
@@ -61,7 +64,16 @@ Don't hand-derive curves. Pull stronger variants of standard easings from [easin
 | Modals, drawers | 200-500ms |
 | Marketing/explanatory | Can be longer |
 
-**UI animations stay under 300ms.** A 180ms dropdown feels more responsive than a 400ms one at the same easing.
+**UI animations stay under 300ms.** A 180ms dropdown feels more responsive than a 400ms one at the same easing. The 500ms end of the modal/drawer row is the drawer on `--motion-ease-drawer`. That curve starts so steeply that most of the travel is done in the first third, which is why 500ms does not read as slow.
+
+## How should it leave?
+
+- **Exit the way it entered.** A toast that slides in from the bottom leaves through the bottom. The shared path is what makes swipe-to-dismiss feel obvious.
+- **Shorter and smaller than the enter.** About half to three quarters of the enter duration (a 300ms enter pairs with a 150-200ms exit), and a small fixed offset such as 12px, not the element's full height.
+- **Slide fully out only where the destination means something.** A drawer closing, a card returning to its list.
+- **Sometimes no exit.** Remove the element at once when the motion adds no information.
+
+Exits still use `ease-out`. Other guides pair exits with `ease-in`; that convention is not used here.
 
 ## Perceived performance
 

@@ -52,7 +52,7 @@ SVG elements default to a viewport-relative `transform-origin`, not their own bo
 
 .overlay {
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 200ms ease-out;
+  transition: clip-path 200ms var(--motion-ease-out);
 }
 .button:active .overlay {
   clip-path: inset(0 0 0 0);
@@ -83,11 +83,11 @@ Motion-specific component craft. Pairs with the non-animation craft in `ui-basel
 ### Buttons must feel responsive
 
 ```css
-.button { transition: transform 160ms ease-out; }
-.button:active { transform: scale(0.97); }
+.button { transition: transform 160ms var(--motion-ease-out); }
+.button:not(:disabled):active { transform: scale(0.97); }
 ```
 
-Instant feedback on `:active` makes the UI feel like it's actually listening. Applies to any pressable element; keep the scale subtle (0.95-0.98).
+Instant feedback on `:active` makes the UI feel like it's actually listening. Applies to any pressable element; keep the scale subtle (0.95-0.98). A disabled button never scales. One that still presses reads as a bug.
 
 ### Never animate from `scale(0)`
 
@@ -99,6 +99,8 @@ Nothing in the real world disappears and reappears from nothing. Start from `sca
 /* Good */
 .entering { transform: scale(0.95); opacity: 0; }
 ```
+
+Per component: popover, dropdown and menu `0.95`, tooltip `0.97`, modal `0.96`. A large surface already travels far in pixels, so it starts closer to `1`.
 
 ### Make popovers origin-aware
 
@@ -115,7 +117,7 @@ Tooltips should delay before appearing (prevents accidental activation on a stra
 
 ```css
 .tooltip {
-  transition: transform 125ms ease-out, opacity 125ms ease-out;
+  transition: transform 125ms var(--motion-ease-out), opacity 125ms var(--motion-ease-out);
 }
 .tooltip[data-starting-style],
 .tooltip[data-ending-style] {
@@ -137,3 +139,30 @@ When a crossfade between two states looks off no matter what easing/duration is 
 .button-content { transition: filter 200ms ease, opacity 200ms ease; }
 .button-content.transitioning { filter: blur(2px); opacity: 0.7; }
 ```
+
+### Skip state animations on first render
+
+A toggle, tab, segmented control or swapped icon shows its default state on page load without animating into it. Motion on load is reserved for intentional entrances.
+
+- CSS transitions don't fire on first render, as long as the state is in the initial HTML. Setting it in an effect after mount triggers the transition, so render the state on the server or before first paint.
+- `@starting-style` and keyframe animations do run on first render. Don't use them for a control's default state.
+- In Motion, set `initial={false}` on the `AnimatePresence` that wraps a state swap. Never set it around an intentional entrance such as a staggered hero: it skips that entrance too.
+
+### Suppress transitions on theme switch
+
+Only where colors have transitions and the fade is unwanted. Without this, every color transition fires at once and the switch smears.
+
+```js
+function switchTheme(apply) {
+  const style = document.createElement("style");
+  style.textContent = "*,*::before,*::after{transition:none !important}";
+  document.head.append(style);
+
+  apply();                         // flip the theme class or attribute
+  void document.body.offsetHeight; // commit the new colors while transitions are off
+
+  requestAnimationFrame(() => requestAnimationFrame(() => style.remove()));
+}
+```
+
+The new colors resolve while the override is in the document, so no transition starts. The nested `requestAnimationFrame` removes the override only after that paint. An OS-level change needs the same steps on the `prefers-color-scheme` change event. `next-themes` ships this as `disableTransitionOnChange`.
