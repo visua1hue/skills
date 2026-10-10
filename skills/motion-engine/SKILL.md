@@ -35,17 +35,26 @@ Cheap enough for short, one-off transitions, but not guaranteed to stay on the c
 
 Animating any of these triggers layout or paint on the main thread every frame. Never animate them:
 
-- Geometry: `width`, `height`, `margin`, `padding`, `border-width`
+- Geometry: `width`, `height`, `margin`, `padding`, `border-width` (`height` is allowed for accordions only, see Compositor Hygiene)
 - Positioning: `top`, `left`, `bottom`, `right`, `inset`
 - Paint: `box-shadow`, `outline`
 
 To animate size or position changes, use `transform: scale()` and `transform: translate()` instead.
 
+### Differences from Motion's tier list (to be reviewed)
+
+The three lists above simplify Motion's six tiers (S to F). Four points from the article are not folded in yet:
+
+- **`box-shadow` is paint, not layout.** It sits under Prohibited with the layout properties. The usual fix is a pre-rendered shadow on a pseudo-element with animated `opacity`.
+- **CSS variables.** The article ranks an animated custom property as paint-triggering even when it only feeds `opacity` or `transform`, and an inherited one as the worst case. `@property` with `inherits: false` limits the recalculation to the element. MDN confirms the recalculation scope; the paint claim has no second source.
+- **Measure, then animate (FLIP).** One upfront layout read, then a `transform` animation. Its own tier in the article, not represented here.
+- **Layout thrashing.** Interleaved DOM reads and writes in one frame. The lowest tier in the article, not represented here.
+
 ### Compositor Hygiene
 
-- **`will-change`**: declare on elements that will animate. Only apply to active animations. Overuse wastes GPU memory. Remove after one-shot animations complete.
+- **`will-change`**: a fix for a problem you have observed, never a default. A CSS or WAAPI animation of `transform`/`opacity` gets its own layer without it. Add it for per-frame JS style writes, or after you see first-frame stutter or a 1px shift at the start or end. Name the animated property, set it when the animation starts, remove it when it ends. Each layer costs GPU memory. On a transform or `filter` it also makes the element the containing block for `position: fixed` descendants and creates a stacking context.
 - **CSS variable caveat**: updating a custom property on a parent recalculates styles for all children. During active animation (drag, scroll-linked), set `transform` directly on the element.
-- **Height animation**: animating `height` or `max-height` triggers layout every frame. Use `transform: scaleY()` with `transform-origin: top`, `clip-path: inset()`, or measure once then animate `translateY` on a clip wrapper. Never animate `height: 0` to `height: auto`.
+- **Height animation**: animating `height` or `max-height` triggers layout every frame. Use `transform: scaleY()` with `transform-origin: top`, `clip-path: inset()`, or measure once then animate `translateY` on a clip wrapper. Never animate `height: 0` to `height: auto`. The one exception is an accordion, where no transform equivalent exists: animate to a measured height and keep it short (about 200ms), since it costs layout on every frame.
 - **Focus rings**: never animate the focus indicator itself. It triggers paint. Animate the element's background or shadow via opacity crossfade instead.
 - **Disabled elements**: remove all transition and `will-change` declarations. They waste compositor layers on elements that can't be interacted with.
 
@@ -65,9 +74,10 @@ Define motion parameters as CSS custom properties so animations read from a sing
   --motion-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
   --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1); /* iOS-like drawer curve */
 
   /* Spring approximations. cubic-bezier overshoots once but can't settle; for real spring motion use `linear()` (motion-sense) */
-  --motion-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --motion-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1); /* overshoots: only after a gesture (flick, drag release), see motion-sense Spring Feel */
   --motion-spring-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-spring-snappy: cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -104,8 +114,8 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 **Key rules across all tiers:**
 
 - Avoid `transition: all`. Always specify exact properties.
-- `@starting-style` replaces the React `useEffect(() => setMounted(true))` pattern for CSS-native entry animations.
-- Gate hover animations behind `@media (hover: hover) and (pointer: fine)` to prevent false-positive touch hover states.
+- `@starting-style` replaces the React `useEffect(() => setMounted(true))` pattern for CSS-native entry animations. Pattern: `motion-sense/references/native-transitions.md`.
+- Gate hover animations behind `@media (hover: hover) and (pointer: fine)`. The rule and its reasoning live in `ui-baseline`.
 - CSS animations run off the main thread and remain smooth when the browser is busy. Prefer CSS for predetermined animations; JS for dynamic, interruptible ones.
 
 ## Device Capability Scaling
@@ -117,16 +127,29 @@ A separate axis from Execution Tiers and from `prefers-reduced-motion`: scale ba
 
 ## Paint & Load Strategy
 
-Load animations must not block FCP or degrade LCP. For full implementation detail, read `references/load-orchestration.md`.
+Load animations must not block FCP, delay LCP, or hide content when something fails. For full implementation detail, read `references/load-orchestration.md`.
 
-The strategy in brief:
+1. **Hidden state in the keyframe.** The starting state lives in the `from` keyframe, never in a base rule. If the animation never runs (reduced motion, an unsupported browser, a failed script), the element is visible.
+2. **CSS first.** A load preset is a CSS keyframe animation that starts at first paint. No script, no wait.
+3. **Never animate the LCP element.** Chrome ignores paints at `opacity: 0` when it picks the LCP candidate, so a hero image or headline that fades in records its LCP when the fade shows it, not when it loaded. Keep the largest above-the-fold element static.
+4. **JavaScript only where CSS can't express it.** Sequences computed at runtime wait for `document.fonts.ready` and first contentful paint, then run through WAAPI. Use them for content that is not visible at first paint. Anything above the fold takes the CSS path.
 
-1. **CSS initial state**: `[data-motion] { opacity: 0.01; }`. Elements are painted but invisible. `0.01` not `0` because Lighthouse ignores `opacity: 0` for FCP. No `will-change` here: a blanket hint holds GPU layers for every element until JS runs.
-2. **Asset lock**: `await document.fonts.ready`. Prevents FOUT during animation.
-3. **Paint lock**: check `performance.getEntriesByType('paint')` for existing FCP → `PerformanceObserver` fallback → `requestAnimationFrame` fallback.
-4. **Execute**: trigger load animation presets only after both locks clear. Each preset sets `will-change` right before it starts and clears it when it finishes.
+```css
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion="fade-up"] {
+    animation: motion-fade-up var(--motion-dur-slow) var(--motion-ease-out) both;
+  }
+}
 
-**Declarative API**: `data-motion="preset-name"` for load animations, `data-motion-scroll="preset-name"` for scroll animations, `data-motion-delay="0.2"` for timing overrides. Presets are functions in a centralized TypeScript registry that read motion tokens from CSS custom properties at runtime.
+@keyframes motion-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-dist-md));
+  }
+}
+```
+
+**Declarative API**: `data-motion="preset-name"` for load animations, `data-motion-scroll="preset-name"` for scroll animations, `data-motion-delay="0.2"` for timing overrides on JavaScript presets. JavaScript presets are functions in a centralized TypeScript registry that read motion tokens from CSS custom properties at runtime.
 
 ## Gesture Best Practices
 
@@ -145,37 +168,43 @@ Non-negotiable requirements, not optional enhancements.
 
 ### Reduced Motion
 
-Respect `prefers-reduced-motion: reduce`. Reduced motion means fewer and gentler animations, not zero. Remove transform-based movement. Keep opacity transitions that aid comprehension.
+Reduced motion means fewer and gentler animations, not zero. Keep opacity and color changes that aid comprehension. Remove movement, scale and blur.
 
-Two cases, two rules. Load and scroll animations snap to their final state: content must never stay stuck at `opacity: 0.01` waiting for motion that won't run. Interactive transitions keep a short opacity fade and drop movement.
+Author it opt-in. The fade applies to everyone, and movement is added inside `prefers-reduced-motion: no-preference`. Nothing has to be undone under `reduce`, and a browser that doesn't know the query gets the static version.
 
 ```css
-@media (prefers-reduced-motion: reduce) {
-  /* Load/scroll: snap to visible, no motion */
-  [data-motion],
-  [data-motion-scroll] {
-    animation: none !important;
-    transition: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-    filter: none !important;
-  }
+/* Component transition: fade for everyone, movement is opt-in */
+.popover {
+  transition: opacity var(--motion-dur-base) var(--motion-ease-out);
+}
+.popover[data-starting-style],
+.popover[data-ending-style] {
+  opacity: 0;
+}
 
-  /* Interactive, per component: keep the fade, drop the movement */
+@media (prefers-reduced-motion: no-preference) {
   .popover {
-    transition-property: opacity;
-    transition-duration: 0.2s;
+    transition-property: opacity, transform;
   }
   .popover[data-starting-style],
   .popover[data-ending-style] {
-    transform: none;
+    transform: scale(var(--motion-scale-sm));
+  }
+}
+
+/* Scroll presets declared outside the query: switch them off */
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-scroll] {
+    animation: none !important;
   }
 }
 ```
 
-In JavaScript, check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before triggering animations. Skip load presets entirely (CSS already shows the final state); for interactive animations, run opacity-only variants.
+Load presets sit inside the `no-preference` query (see Paint & Load Strategy). Their hidden state is in the keyframe, so under `reduce` they don't run and the content is in its final state.
 
-Never block user interaction during stagger animations. Stagger is decorative. All elements must be interactive immediately. Keep stagger delays short (30–80ms between items).
+A JavaScript animation ignores the CSS query. Check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before triggering it, or use the library's own setting (`<MotionConfig reducedMotion="user">` in Motion). Skip load presets entirely; for interactive animations, run opacity-only variants.
+
+Never block user interaction during stagger animations. Stagger is decorative. All elements must be interactive immediately. Keep stagger delays short (30–80ms between items) and cap the group at 6-8 items; the rest enter together.
 
 ## Review Checklist
 
@@ -185,8 +214,8 @@ Performance only. Feeds the Performance tier of `motion-sense`'s review, which o
 | ------------------------------------ | ------------------------------------------------ | ---------------------------------------------- |
 | `transition: all`                    | Specify exact properties                         | Transitions layout-triggering properties       |
 | Layout property animated             | Use `transform` equivalent                       | Triggers layout recalculation on every frame   |
-| Animating `height`/`max-height`      | `scaleY`, `clip-path`, or measure + `translateY` | Layout on every frame                          |
-| `will-change` missing during animation, or left on after | Set while animating, remove once a one-shot finishes | Hint enables compositor promotion; leaving it wastes GPU memory |
+| Animating `height`/`max-height` outside an accordion | `scaleY`, `clip-path`, or measure + `translateY` | Layout on every frame |
+| `will-change` set preemptively, left on after, or naming a property that never composites | Add only for observed first-frame stutter or a 1px shift, or for per-frame JS style writes; remove when the animation ends | Each layer costs GPU memory; CSS and WAAPI `transform`/`opacity` animations get a layer without it |
 | `will-change` on disabled elements   | Remove it                                        | Wastes GPU memory on inert elements            |
 | Hardcoded values in JS               | Read from CSS custom properties                  | Design system is the single source of truth    |
 | Motion `x`/`y`/`scale` props         | Use `transform: "translateX()"`                  | Shorthand is not hardware-accelerated          |
@@ -195,7 +224,8 @@ Performance only. Feeds the Performance tier of `motion-sense`'s review, which o
 | Focus ring animated                  | Animate element background/shadow instead        | Focus indicator triggers paint                 |
 | Color animated long, looping, or on many elements | Crossfade two layers with `opacity` | Color repaints every frame; only short single-element state transitions are cheap |
 | `clip-path` updated every frame during a drag | `transform` on a clip wrapper | Per-frame clip updates repaint |
-| Load content left at `opacity: 0.01` under reduced motion | Snap to final state in the reduced-motion query | Content must never depend on motion to become visible |
+| Hidden state in a base rule that only an animation or script reveals | Move it into the `from` keyframe | Content must never depend on motion to become visible |
+| Entrance animation on the LCP element (hero image, headline) | Leave it static | Chrome ignores `opacity: 0` paints for LCP, so the fade delays the metric and the content |
 | Large stagger group or many concurrent springs, unscaled | Cap group size / spring count on low-power devices | Main-thread physics cost scales with element count, not free just because it targets `transform` |
 | Heavy blur/backdrop-filter with no device check | Reduce or skip on constrained devices | Real GPU cost regardless of compositing |
 | Full-quality WebGL served unconditionally | Gate behind device tier (0/1/2), static fallback at Tier 0 | No WebGL context or a weak GPU crashes/thermal-throttles instead of degrading |
@@ -222,3 +252,6 @@ Performance only. Feeds the Performance tier of `motion-sense`'s review, which o
 - [easing.dev](https://easing.dev/). Custom easing curve playground
 - [detect-gpu](https://github.com/pmndrs/detect-gpu). GPU benchmark/tier classification, pmndrs
 - [Scaling performance](https://r3f.docs.pmnd.rs/advanced/scaling-performance). React Three Fiber
+- [`will-change`](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change). MDN
+- [Don't hide the LCP image behind animations](https://shopify.dev/docs/storefronts/themes/best-practices/performance/dont-hide-lcp-image-behind-animations). Shopify
+- [jakubkrehel/skills](https://github.com/jakubkrehel/skills). Jakub Krehel. Source of the keyframe hidden-state pattern and the `will-change` side effects
