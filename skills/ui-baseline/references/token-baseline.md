@@ -45,6 +45,8 @@ Steps `-1`, `1`, and `2` are intentionally left unassigned in the semantic layer
 
 `clamp(min, preferred, max)`. The preferred value should be a `rem + vw` mix so it scales with both the root font-size and the viewport. Tune the `vw` coefficient by checking the size at your narrowest and widest supported viewport, not by formula alone.
 
+Keep the maximum at or below 2.5 times the minimum. The `vw` part does not grow with browser zoom, so past that ratio 500% zoom can no longer double the text, which fails WCAG 1.4.4. Steps `5` and `6` above sit at 1.33× and 1.45×.
+
 ## Line-height
 
 ```css
@@ -66,14 +68,11 @@ The relationship is inverse to font-size: as text gets bigger, lines need to sit
 
 Tracking runs inverse to size, same direction as line-height: big text tightens (negative tracking keeps large glyphs from looking loosely spaced), small or all-caps text loosens (positive tracking keeps small/uppercase glyphs from crowding into each other. Uppercase letters have no ascenders/descenders to create visual separation, so they need the extra room).
 
-## font-feature-settings / ligature checklist
+## Font feature checklist
+
+Body and UI text keep the browser default (`font-variant-ligatures: normal`), which already turns on common ligatures and contextual forms. Set a feature only where it differs.
 
 ```css
-/* Body and UI text */
-body {
-  font-variant-ligatures: common-ligatures contextual;
-}
-
 /* Tabular data, tables, stats, prices, timers, anything with columns of digits */
 .tabular {
   font-variant-numeric: tabular-nums;
