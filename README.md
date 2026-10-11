@@ -23,7 +23,7 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 - [typescript-magician](skills/typescript-magician/): Complex generics, type guards, and strict typing. **Upstream**, Author: [Matteo Collina](https://github.com/mcollina/skills/tree/main/skills/typescript-magician)
 - [motion-sense](skills/motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](skills/motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
-- [ui-baseline](skills/ui-baseline/): Type/spacing tokens, component patterns, and adaptive CSS
+- [ui-baseline](skills/ui-baseline/): Type/spacing tokens, component patterns, adaptive CSS, and current platform features with browser support
 - [triage](skills/triage/): GitHub issue and PR triage state machine
 - [unslop](skills/unslop/): Strip AI tells and filler from writing. **Upstream**, Author: [Lauren Tan](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop)
 
