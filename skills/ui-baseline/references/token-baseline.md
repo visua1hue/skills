@@ -58,6 +58,10 @@ Keep the maximum at or below 2.5 times the minimum. The `vw` part does not grow 
 
 The relationship is inverse to font-size: as text gets bigger, lines need to sit closer together, because the eye already has more visual anchor per line. A 48px heading at `1.5` looks like it's floating; a 16px paragraph at `1.1` looks cramped and hard to scan. If a project has only one `--line-height-base` for everything, that's the single most common line-height gap.
 
+Tight line-height is for short text. Anything that can wrap to three or more lines (a card description, a long heading) needs `1.4` or more.
+
+Cap long-form text at about 65 characters per line (`max-inline-size: 65ch`).
+
 ## Letter-spacing
 
 ```css
@@ -90,7 +94,7 @@ code, pre {
 ```
 
 Two failure modes to watch for:
-- **Tabular data without `tabular-nums`**: proportional digits have different widths per glyph (`1` is narrower than `8`), so a column of changing numbers visibly jitters as digits change. This is especially noticeable in live-updating UI (timers, live stock prices, counters).
+- **Tabular data without `tabular-nums`**: proportional digits have different widths per glyph (`1` is narrower than `8`), so a column of changing numbers visibly jitters as digits change. This is especially noticeable in live-updating UI (timers, live stock prices, counters). Don't set it globally, since proportional digits read better in prose, and check that the font ships tabular figures.
 - **Programming ligatures on by default**: fonts like Fira Code or Cascadia Code render `=>`, `!=`, `>=` as single glyphs. This is a legitimate personal preference, not a default. Some people read code faster with them, some find they obscure the actual characters being typed (which matters when debugging or teaching). Default off, let it be an explicit choice.
 
 ## Typographic characters
@@ -121,9 +125,17 @@ Near-geometric progression (roughly ×1.5-2 per step) rather than strict doublin
 
 The scale-adherence rule matters more than the specific numbers: an inline `padding: 13px` isn't wrong because 13 is a bad number, it's wrong because it can't be reasoned about relative to anything else in the interface. If a design genuinely needs a value between two steps repeatedly, add the step to the scale. Don't let one-off hardcoded values accumulate.
 
-## Color is explicitly excluded
+Group with space before lines or boxes: the gap between groups is at least twice the gap inside one (`--space-xs` within a field, `--space-md` or more between fields). The parent sets the space with `gap`; children carry no block margins of their own.
 
-Deliberately no color guidance here. Color is the token category where personal/brand taste diverges the most between projects, and baking in a default palette (even a "neutral" one) tends to leak into places it doesn't belong. Every project's color tokens should be read from that project's own file. This skill should never be the source of a color value.
+## Color
+
+This skill never invents a color. No default palette, no "neutral" gray ramp, no suggested accent. Color is where taste differs most between projects, and a baked-in value leaks into places it doesn't belong. Values come from the project's own tokens or from the user.
+
+When you write down colors someone else chose:
+
+- **Existing project.** Match the notation it already uses. A consistent hex system is better than hex with `oklch()` scattered through it. Never convert existing values as a side effect of other work.
+- **New color system.** Write it in `oklch()`. Put light and dark values in one token with `light-dark()`, and set `color-scheme: light dark` on the root. Derive hover, tint and transparent versions from the base with `color-mix()`; don't hardcode a second value.
+- Write grays in `oklch()` with `none` as the hue (`oklch(98% 0 none)`). A hue of `0` is red and pulls mixes toward it.
 
 ## File organization
 
