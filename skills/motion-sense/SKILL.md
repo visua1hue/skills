@@ -1,11 +1,11 @@
 ---
 name: motion-sense
-description: visua1's animation taste. Whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Spring feel and animation review. Use when deciding or reviewing how something should animate. Perf mechanics live in motion-engine.
+description: Animation taste. Whether/how to animate, easing and duration, transform/clip-path technique, press/popover/tooltip feel, native CSS entry/exit and View Transitions. Spring feel and animation review. Use when deciding or reviewing how something should animate. Perf mechanics live in motion-engine.
 ---
 
-# Motion Sense (visua1)
+# Motion Sense
 
-Personal animation-taste judgment, covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Also owns spring feel and the animation review verdict. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating, including spring runtime cost.
+Animation-taste judgment, covering *why* (philosophy, decision framework), *how* (CSS transform/clip-path technique, animation-flavored component patterns), and native CSS entry/exit and page transitions. Also owns spring feel and the animation review verdict. Pairs with `motion-engine`, which owns compositor/perf execution once something is animating, including spring runtime cost.
 
 ## Core Philosophy
 
