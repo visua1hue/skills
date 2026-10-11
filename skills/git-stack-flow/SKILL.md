@@ -1,6 +1,6 @@
 ---
 name: git-stack-flow
-description: Git commit and branch conventions, opening PRs, unblocking a PR stack to merge-readiness, and worktree cleanup. Use when committing, branching, opening a PR, checking PR or CI status, resolving review threads, or pruning stale worktrees.
+description: Git commit and branch conventions, opening PRs, unblocking a PR stack to merge-readiness, branch deletion after merge, and worktree cleanup. Use when committing, branching, opening a PR, checking PR or CI status, resolving review threads, cleaning up after a PR merges, or pruning stale worktrees.
 ---
 
 # Git stack flow
@@ -70,6 +70,17 @@ Report back: mode, frontier status, what got fixed vs. dismissed (with reasons),
 | "This bot finding looks like the same noise from last time" | A familiar pattern touching security, auth, billing, data, or migrations still gets escalated, not self-dismissed. |
 | "Retargeting this one branch just fixes the immediate conflict" | Still a topology change. Report it upward instead, except the one sanctioned merged-owner follow-up. |
 
+## After a merge
+
+Delete the branch once its PR merges, local and remote, without asking. This applies to every merged PR, with or without a worktree, whoever merged it. The commits now live on trunk, and the forge keeps the PR's own ref, so nothing is lost. Never delete a long-lived branch such as trunk, a release branch, or a protected branch, even when a PR from it merged.
+
+When merging on an explicit request, `gh pr merge <pr> --delete-branch` merges and deletes both copies in one command. Check step 2 first in a stack. Otherwise:
+
+1. **Confirm the merge on the forge.** `gh pr view <pr> --json state,headRefOid`. Only `MERGED` counts. A closed, unmerged PR keeps its branch until the user says to drop it.
+2. **Move open children first.** `gh pr list --base <branch> --state open`. Deleting the base of an open PR can close it. Retarget each child onto the merged PR's base with `gh pr edit <child> --base <base>`, then delete.
+3. **Delete the remote branch.** `git push origin --delete <branch>`. Skip it if the forge already deleted the branch on merge, which `git ls-remote --exit-code --heads origin <branch>` shows by failing. Then `git fetch --prune`.
+4. **Delete the local branch.** Switch to trunk and pull. If a worktree still holds the branch, remove the worktree first (see Worktree cleanup). `git branch -d <branch>` refuses after a squash or rebase merge, because the branch is not an ancestor of trunk. Use `-D` when the local head equals the `headRefOid` from step 1. If they differ, the branch has commits the PR never saw, so report them instead of deleting.
+
 ## Worktree cleanup
 
 Reclaims disk from abandoned worktrees. Deletion of uncommitted work is irreversible, so every step below is a proposal until confirmed.
@@ -82,5 +93,5 @@ Reclaims disk from abandoned worktrees. Deletion of uncommitted work is irrevers
    - `safe` (merged, or has a non-open PR): batch these into one approval pass before removing; don't auto-prune silently.
    - `review` (unmerged, no PR, otherwise clean): ambiguous, not safe by default. Ask what it's for before proposing removal.
    - Untracked-only files (`scratch`) inside a `safe` or `review` worktree: list the files, get explicit approval before removing, same as any other deletion here.
-4. **Remove** confirmed paths: `git worktree remove --force <path>`. If the directory survives because of build artifacts, `rm -rf` it, then `git worktree prune`. Branch refs and commits survive worktree removal.
+4. **Remove** confirmed paths: `git worktree remove --force <path>`. If the directory survives because of build artifacts, `rm -rf` it, then `git worktree prune`. Branch refs and commits survive worktree removal. If the branch's PR merged, delete the branch too (see After a merge).
 5. **Confirm** by re-running `git worktree list`, and report disk reclaimed if that was the goal (`df -h` or the platform equivalent, before/after).
