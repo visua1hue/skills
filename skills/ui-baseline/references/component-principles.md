@@ -4,14 +4,14 @@ Non-animation component patterns. Hit targets, form/field states, density, empty
 
 ## Hit targets
 
-- Minimum interactive target: 44×44px on touch, 24×24px on pointer-only surfaces with adequate spacing between adjacent targets (WCAG 2.5.8 Target Size, Level AA).
+- Minimum interactive target: 44×44px on touch, 24×24px on pointer-only surfaces. 24×24 is the WCAG 2.5.8 floor (Level AA). 44×44 is this baseline's convention, taken from WCAG 2.5.5 (Level AAA) and Apple's HIG.
 - A visually small icon button (16-20px glyph) still needs a 44px tap area. Pad the hit area, don't scale up the icon to compensate.
-- Adjacent small targets (icon toolbars, table row actions) need at least 8px of gutter between hit areas even if the visible icons sit closer. Otherwise mis-taps become a real failure mode on touch, not just a theoretical one.
+- Hit areas of adjacent targets (icon toolbars, table row actions) never overlap, even when the visible icons sit close. Where two padded areas would collide, shrink the padding to the largest size that doesn't.
 - Don't shrink hit targets to fit a dense layout. Increase spacing between components instead. The token scale in `token-baseline.md` exists precisely so "needs more room" has an answer that isn't an arbitrary pixel value.
 
 ## Touch & interaction
 
-- `touch-action: manipulation` on tappable elements. Removes the ~300ms double-tap-to-zoom delay browsers otherwise wait out on every tap.
+- `touch-action: manipulation` on tappable elements. It turns off double-tap zoom on the control, so the browser never waits to see if a second tap follows. Pages with a `width=device-width` viewport already get this at initial zoom; this keeps taps fast when the user has zoomed in.
 - Set `-webkit-tap-highlight-color` intentionally (usually `transparent`, paired with a real `:active` state) rather than leaving the browser default flash.
 - `overscroll-behavior: contain` on modals, drawers, and sheets. Stops a scroll gesture inside them from bleeding into a scroll/bounce on the page behind.
 
