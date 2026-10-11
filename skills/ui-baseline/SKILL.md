@@ -1,11 +1,11 @@
 ---
 name: ui-baseline
-description: visua1's UI baseline. Type/spacing tokens, component states (hit targets, fields, focus, density, empty/loading/error), and layout that adapts without breakpoint ladders (intrinsic sizing, container queries), and current platform features with browser support (anchor positioning, popover, invoker commands, field-sizing, text-box, @scope, style queries). Use when building or reviewing components, forms, tooltips, menus or dialogs, setting up type/spacing scales, or writing responsive layout. Never invents colors. Animation lives in motion-sense and motion-engine.
+description: UI baseline. Type/spacing tokens, component states (hit targets, fields, focus, density, empty/loading/error), and layout that adapts without breakpoint ladders (intrinsic sizing, container queries), and current platform features with browser support (anchor positioning, popover, invoker commands, field-sizing, text-box, @scope, style queries). Use when building or reviewing components, forms, tooltips, menus or dialogs, setting up type/spacing scales, or writing responsive layout. Never invents colors. Animation lives in motion-sense and motion-engine.
 ---
 
-# UI Baseline (visua1)
+# UI Baseline
 
-Personal baseline for type/spacing tokens, component patterns, adaptive CSS, and which current platform features are safe to use. Animation taste lives in `motion-sense`; compositor/perf execution lives in `motion-engine`.
+Baseline for type/spacing tokens, component patterns, adaptive CSS, and which current platform features are safe to use. Animation taste lives in `motion-sense`; compositor/perf execution lives in `motion-engine`.
 
 **This skill never invents a color.** No default palette, ever. Values come from the project's own tokens or the user. When writing them down: match an existing project's notation; for a new color system use `oklch()`, `light-dark()` and `color-mix()`. Detail: `references/token-baseline.md`.
 

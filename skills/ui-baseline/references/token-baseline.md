@@ -95,7 +95,7 @@ code, pre {
 
 Two failure modes to watch for:
 - **Tabular data without `tabular-nums`**: proportional digits have different widths per glyph (`1` is narrower than `8`), so a column of changing numbers visibly jitters as digits change. This is especially noticeable in live-updating UI (timers, live stock prices, counters). Don't set it globally, since proportional digits read better in prose, and check that the font ships tabular figures.
-- **Programming ligatures on by default**: fonts like Fira Code or Cascadia Code render `=>`, `!=`, `>=` as single glyphs. This is a legitimate personal preference, not a default. Some people read code faster with them, some find they obscure the actual characters being typed (which matters when debugging or teaching). Default off, let it be an explicit choice.
+- **Programming ligatures on by default**: fonts like Fira Code or Cascadia Code render `=>`, `!=`, `>=` as single glyphs. This is a legitimate preference, not a default. Some people read code faster with them, some find they obscure the actual characters being typed (which matters when debugging or teaching). Default off, let it be an explicit choice.
 
 ## Typographic characters
 
