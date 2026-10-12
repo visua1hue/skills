@@ -5,12 +5,6 @@ upstreams:
     ref: main
     last_synced: 2026-10-06
     sha: 3e2ffbb90fda9e31d84011c765252b00bfc2d4d6
-  unslop:
-    repo: cursor/plugins
-    path: pstack/skills/unslop
-    ref: main
-    last_synced: 2026-10-06
-    sha: 70b2dc8b4b85c8d5648624ca40d692c421fff32f
   obsidian-cli:
     repo: kepano/obsidian-skills
     path: skills/obsidian-cli

@@ -25,7 +25,7 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 - [motion-engine](skills/motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [ui-baseline](skills/ui-baseline/): Type/spacing tokens, component patterns, adaptive CSS, and current platform features with browser support
 - [triage](skills/triage/): GitHub issue and PR triage state machine
-- [unslop](skills/unslop/): Strip AI tells and filler from writing. **Upstream**, Author: [Lauren Tan](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop)
+- [neural-antipattern](skills/neural-antipattern/): Plain, concise prose for docs, commits, and PRs
 
 ### Workflow
 
