@@ -30,7 +30,7 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 ### Workflow
 
 - [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian via CLI. **Upstream**, Author: [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
-- [anatomy](skills/anatomy/): Interactive isometric SVG figures that explain a technical idea as a physical object. **Upstream**, Author: [Ryan](https://github.com/wheresryan22/anatomy)
+- [anatomy](skills/anatomy/): Animated isometric SVG illustrations. **Upstream**, Author: [Ryan](https://github.com/wheresryan22/anatomy)
 
 ## Extended Layer
 
