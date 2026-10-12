@@ -9,8 +9,8 @@ upstreams:
     repo: cursor/plugins
     path: pstack/skills/unslop
     ref: main
-    last_synced: 2026-10-06
-    sha: 70b2dc8b4b85c8d5648624ca40d692c421fff32f
+    last_synced: 2026-10-12
+    sha: bc697d0a5a163cec979e362b601e36f5616083fd
   obsidian-cli:
     repo: kepano/obsidian-skills
     path: skills/obsidian-cli
