@@ -10,7 +10,7 @@
 
 ## Sync Upstream
 
-`upstreams.yaml` tracks upstream sources. `scripts/sync.sh` overwrites the whole skill once upstream has a new commit under its path, local edits included. Until then local edits stay. A weekly CI job opens the sync as a PR. Use `--diff` to review first. To mirror a new skill, add an entry with `repo`, `path`, and `ref`, then run the sync.
+`upstreams.yaml` tracks upstream sources. `scripts/sync.sh` overwrites the whole skill once upstream has a new commit under its path, local edits included. Until then local edits stay. A weekly CI job opens the sync as a PR. Use `--diff` to review first. To mirror a new skill, add an entry with `repo`, `path`, and `ref`, then run the sync. Set `path: .` when the skill is the upstream repo root, and list the files and dirs to keep under `include` so the rest of that repo stays out.
 
 ```bash
 ./scripts/sync.sh                  # sync all upstreams + update upstreams.yaml

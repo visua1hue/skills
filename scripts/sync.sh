@@ -54,34 +54,58 @@ with open(path, "w") as f:
 PY
 }
 
+# Entries of a skill's optional include list, one per line.
+get_include() {
+  python3 - "$UPSTREAMS" "$1" <<'PY'
+import sys, yaml
+entry = yaml.safe_load(open(sys.argv[1]))["upstreams"].get(sys.argv[2]) or {}
+print("\n".join(entry.get("include") or []))
+PY
+}
+
 list_upstreams() {
   python3 -c 'import sys, yaml; print("\n".join(yaml.safe_load(open(sys.argv[1]))["upstreams"]))' "$UPSTREAMS"
 }
 
+# "." is the upstream repo root, which the commits API takes as no path filter.
+path_query() { [[ "$1" == "." ]] || printf 'path=%s&' "$1"; }
+
 # Latest commit touching <path>, so unrelated upstream commits don't trigger a sync.
 fetch_path_sha() {
   local repo="$1" path="$2" ref="$3"
-  api "repos/${repo}/commits?path=${path}&sha=${ref}&per_page=1" \
+  api "repos/${repo}/commits?$(path_query "$path")sha=${ref}&per_page=1" \
     | python3 -c 'import json, sys; c = json.load(sys.stdin); print(c[0]["sha"] if c else "")'
 }
 
-# fetch_tree <repo> <sha> <path> <dest>: copy <path> at <sha> into <dest>
+# fetch_tree <repo> <sha> <path> <dest> [include...]: copy <path> at <sha> into
+# <dest>. With include entries, only those files and dirs under <path> are kept.
 fetch_tree() {
   local repo="$1" sha="$2" path="$3" dest="$4"
+  shift 4
   local unpack="${dest}.unpack"
   mkdir -p "$unpack"
   curl -fsSL "https://codeload.github.com/${repo}/tar.gz/${sha}" | tar -xzf - -C "$unpack"
   # the archive's single top dir is named <repo>-<sha>
   local src
-  src="$(find "$unpack" -mindepth 1 -maxdepth 1 -type d)/${path}"
+  src="$(find "$unpack" -mindepth 1 -maxdepth 1 -type d)"
+  [[ "$path" == "." ]] || src+="/${path}"
   [[ -d "$src" ]] || return 1
-  mv "$src" "$dest"
+  if [[ $# -eq 0 ]]; then
+    mv "$src" "$dest"
+    return
+  fi
+  local item
+  for item in "$@"; do
+    [[ -e "${src}/${item}" ]] || { echo "include entry not found upstream: ${item}" >&2; return 1; }
+    mkdir -p "$(dirname "${dest}/${item}")"
+    mv "${src}/${item}" "${dest}/${item}"
+  done
 }
 
 # Markdown list of upstream commits touching <path> after <old> up to <new>.
 fetch_commits() {
   local repo="$1" path="$2" new="$3" old="$4"
-  api "repos/${repo}/commits?path=${path}&sha=${new}&per_page=30" \
+  api "repos/${repo}/commits?$(path_query "$path")sha=${new}&per_page=30" \
     | python3 -c '
 import json, sys
 repo, old = sys.argv[1:]
@@ -121,7 +145,7 @@ sync_skill() {
   old_sha="$(get_field "$skill" sha)"
   old_date="$(get_field "$skill" last_synced)"
 
-  # an empty path would mirror the whole upstream repo
+  # the repo root has to be spelled "." so a missing path can't mirror a whole repo
   if [[ -z "$repo" || -z "$path" || -z "$ref" ]]; then
     echo "[$skill] needs repo, path, and ref in upstreams.yaml — skipping"
     return
@@ -140,9 +164,14 @@ sync_skill() {
     return
   fi
 
+  local include=() item
+  while IFS= read -r item; do
+    [[ -n "$item" ]] && include+=("$item")
+  done < <(get_include "$skill")
+
   local tmp
   tmp="$(mktemp -d "${TMP_ROOT}/${skill}.XXXXXX")"
-  if ! fetch_tree "$repo" "$new_sha" "$path" "${tmp}/new"; then
+  if ! fetch_tree "$repo" "$new_sha" "$path" "${tmp}/new" ${include[@]+"${include[@]}"}; then
     echo "[$skill] no files found at ${path}"
     return
   fi
@@ -185,7 +214,12 @@ sync_skill() {
     fi
   done < <(comm -23 <(local_files "$skill") <(dir_files "${tmp}/new"))
 
-  [[ -n "$md" ]] || md="- no file changes"$'\n'
+  # Upstream moved but none of the mirrored files did, which an include list
+  # makes common. Leave the recorded sha alone so the run opens no PR.
+  if [[ -z "$md" ]]; then
+    echo "[$skill] no file changes at ${new_sha:0:7}"
+    return
+  fi
 
   SYNC_BODY+="$(printf '%s  [%s -> %s]' "$skill" "${old_sha:0:7}" "${new_sha:0:7}")"$'\n'
   SYNC_BODY+="$entries"$'\n'
