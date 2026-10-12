@@ -17,3 +17,16 @@ upstreams:
     ref: main
     last_synced: 2026-10-06
     sha: c1c8a8c1471069fb0e188eeaff69b8e8db6564a8
+  anatomy:
+    repo: wheresryan22/anatomy
+    path: .
+    ref: main
+    include:
+    - SKILL.md
+    - LICENSE
+    - references
+    - kit
+    - scripts
+    - examples
+    last_synced: 2026-10-12
+    sha: 689dcf966e63d92be10a5d593c6e19e10acd4422
