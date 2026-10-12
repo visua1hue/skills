@@ -19,7 +19,7 @@ Patterns that mark text as machine-written, and the fix for each. Numbers are st
 2. **No apologies, hedging, or meta-commentary.** Cut "Sorry for the confusion", "I should note that", "Let me explain". "could potentially possibly be argued that it might" becomes "may".
 3. **Chatbot phrases.** "I hope this helps!", "Let me know if...", "Of course!", "Certainly!", "Found the smoking gun!" Remove.
 4. **Sycophantic tone.** "Great question! You're absolutely right!" Respond directly.
-5. **Filler phrases.** "In order to" becomes "To". "Due to the fact that" becomes "Because". "It is important to note that" gets deleted.
+5. **Filler phrases.** "In order to" becomes "To". "Due to the fact that" becomes "Because". Delete "It is important to note that".
 6. **Trailing clauses that add no fact.** "going forward", "at this point", "when all is said and done". Cut them.
 7. **Generic conclusions.** "The future looks bright." State specific plans or facts.
 
@@ -34,9 +34,9 @@ Patterns that mark text as machine-written, and the fix for each. Numbers are st
 11. **AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, interplay, intricate, landscape (abstract), pivotal, robust, showcase, tapestry (abstract), testament, underscore, vibrant. Replace with plain words.
 12. **Puffery.** Words that add emphasis and no information, such as "really", "truly", "matters", "worth noting", "carries weight", "quietly". State the fact or cut the sentence. "This change really matters for startup" becomes "The change cuts cold start from 900 ms to 300 ms."
 13. **Fancy ways to say "is".** "serves as", "stands as", "boasts", "features". Say "is" or "has".
-14. **Prefer the plain word.** "utilize" becomes "use", "leverage" becomes "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if".
+14. **Prefer the plain word.** "utilize" and "leverage" become "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if".
 15. **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number. "significantly improves" becomes the measured delta.
-16. **Abstract metaphor nouns.** Substrate, wedge, vector, locus, vantage, nexus, primitive (as noun), harness (as metaphor), surface (as in "API surface"), bedrock, scaffolding (as metaphor), modality, paradigm, gold-plating, ratchet (as metaphor), evacuate (for moving code), endgame, north star, flywheel. "Substrate" becomes "base". "Wedge in" becomes "add". "Vector" becomes "way" or "method". "Gold-plating" becomes "more than the job needs". "Endgame" becomes "the last phase".
+16. **Abstract metaphor nouns.** The plainer word is in parentheses. Substrate (base), wedge, wedge in (add), vector (way, method), locus, vantage, nexus, primitive as a noun, harness as a metaphor, surface as in "API surface", bedrock, scaffolding as a metaphor, modality, paradigm, gold-plating (more than the job needs), ratchet as a metaphor (the mechanism's real name, or a limit that only tightens), evacuate for moving code (move out), endgame (the last phase), north star, flywheel.
 17. **Invented shorthand.** Don't coin terms or labels the reader has to decode. Use an established technical term when it is the most precise one. "The flag is a soft gate on writes" becomes "The flag makes the server log a warning before each write."
 18. **Invented hyphenated adjectives.** Words joined with a hyphen to sound compact. "a fail-loud parser" becomes "a parser that exits on the first error". Compounds already in common use, such as "well-known", are fine.
 19. **Synonym cycling.** Protagonist, main character, central figure, hero all in one paragraph. Pick one term and repeat it.
@@ -44,7 +44,7 @@ Patterns that mark text as machine-written, and the fix for each. Numbers are st
 ## Sentences
 
 20. **"Not just X, but Y."** State what the thing is. "It's not just a linter, it's a whole workflow" becomes "It lints and formats." A plain correction is fine.
-21. **Rule of three.** Forcing ideas into groups of three. Use the natural number.
+21. **Rule of three.** Don't force ideas into groups of three. Use the natural number.
 22. **False ranges.** "from X to Y" where X and Y aren't on a meaningful scale. List the topics directly.
 23. **Stacked rhetorical questions.** "Is the cache stale? Is the key wrong?" becomes "The cause is unknown. It may be a stale cache or a wrong key."
 24. **Count openers.** "Two caveats.", "Three things to know." State the first point.
@@ -61,4 +61,4 @@ Patterns that mark text as machine-written, and the fix for each. Numbers are st
 32. **Inline-header lists.** The tell is a bold label and colon that restates the line, as in "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by new detail is fine.
 33. **Title case headings.** Use sentence case.
 34. **Decorative emojis.** Remove from headings and bullets.
-35. **Curly quotes.** Replace with straight quotes.
+35. **Curly quotes.** Use straight quotes.
