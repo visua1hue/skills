@@ -14,12 +14,16 @@ cd "$repo" || exit 1
 # Main worktree is the first entry; everything else is a candidate.
 main_wt=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
 
-# Trunk drives the merge check. Detect the remote's default branch instead
-# of assuming "main", since plenty of repos still use "master" or something
-# else. Best-effort; stale is fine for a first pass.
-trunk=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
-trunk="${trunk:-main}"
-git fetch origin "$trunk" --quiet 2>/dev/null || echo "warn: could not fetch origin/$trunk; merged column may be stale" >&2
+# The base drives the merge check. origin/HEAD is unset in repos that were
+# never cloned (git before 2.48), so fall back to the common names and exit
+# if none exists. A missing base would print MERGED=no for every row.
+base=""
+for cand in "$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null)" origin/main origin/master; do
+	[ -n "$cand" ] && git rev-parse --verify --quiet "$cand^{commit}" >/dev/null && { base="$cand"; break; }
+done
+[ -z "$base" ] && { echo "error: no base ref (origin/HEAD, origin/main, origin/master all missing); if origin exists, run: git remote set-head origin -a" >&2; exit 1; }
+# Best-effort; stale is fine for a first pass.
+git fetch origin "${base#origin/}" --quiet 2>/dev/null || echo "warn: could not fetch $base; merged column may be stale" >&2
 
 # PR state by branch, fetched once. Empty if gh is unavailable.
 # Without gh/jq an open-PR worktree can't be detected, so say so loudly.
@@ -41,9 +45,9 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 	head_ts=$(git -C "$wt" log -1 --format='%ct' HEAD 2>/dev/null || echo 0)
 	age=$([ "$head_ts" -gt 0 ] 2>/dev/null && echo "$(( (now - head_ts) / 86400 ))d" || echo "?")
 
-	# Squash-merged branches are not ancestors of trunk, so PR state is the
+	# Squash-merged branches are not ancestors of the base, so PR state is the
 	# real signal; merge-base only catches fast-forward/rebase merges.
-	git merge-base --is-ancestor "$head" "origin/$trunk" 2>/dev/null && merged=YES || merged=no
+	git merge-base --is-ancestor "$head" "$base" 2>/dev/null && merged=YES || merged=no
 
 	# Distinguish real WIP (tracked edits) from disposable untracked scratch.
 	porcelain=$(git -C "$wt" status --porcelain 2>/dev/null)
