@@ -15,11 +15,9 @@ Most details compound invisibly. A user who never consciously notices a detail i
 
 Beauty is leverage. People choose tools based on the whole experience, not just the feature list. Good defaults and a considered feel are real, underused differentiators.
 
-*Starting point, not final. Update this section directly as your own opinions solidify or diverge from the above.*
-
 ## Animation Decision Framework
 
-Before writing animation code, work through these in order. Full rationale, curves, and duration tables: `references/animation-decisions.md`.
+Before writing animation code, work through these in order. Full rationale: `references/animation-decisions.md`. Curve, duration, distance and scale tokens: `references/easing-and-duration-values.md`.
 
 Three rules hold for every step:
 
@@ -32,7 +30,7 @@ Three rules hold for every step:
 | Should this animate at all? | Never for 100+/day actions (keyboard shortcuts); standard for occasional UI (modals, toasts); delight is fine for rare/first-time moments |
 | What's the purpose? | Spatial consistency, state indication, explanation, feedback, or preventing a jarring change. Delight only for rare/first-time moments. "Looks cool" alone doesn't qualify for frequent UI, and data the user reads or acts on never moves for style |
 | What easing? | Entering/exiting → `ease-out`; on-screen movement → `ease-in-out`; hover/color → `ease`; constant motion → `linear`. Never `ease-in` on UI. |
-| How fast? | Button feedback 100-160ms, tooltips/popovers 125-200ms, dropdowns 150-250ms, modals 200-500ms. UI stays under 300ms. The 500ms end is the drawer on `--motion-ease-drawer`, whose steep start keeps it from reading as slow |
+| How fast? | By distance and frequency: the user waits through every UI animation. Button feedback 100-160ms, tooltips/popovers 125-200ms, dropdowns 150-250ms, modals 200-300ms. Product UI stays under 300ms. Two exceptions: a drawer up to 500ms on `--motion-ease-drawer`, whose steep start keeps it from reading as slow; a page or full-view change 250-400ms, because it moves the whole view |
 | How does it leave? | The way it entered, same edge and path. Shorter and smaller than the enter: about half to three quarters of the duration, a small fixed offset. Slide fully out only where the destination means something (a drawer closing, a card returning to its list) |
 
 Also in the reference: perceived-performance notes (fast spinners, instant subsequent tooltips) and a distilled set of principles for building components people actually reach for (DX-first, good defaults over options, invisible edge-case handling, cohesion over isolated "correct" values, asymmetric enter/exit timing).
@@ -148,6 +146,7 @@ Prefer earlier moves:
 | Issue | Fix |
 | --- | --- |
 | Animation on a keyboard-triggered or 100+/day action | Remove it entirely |
+| Entrance animation on items the system inserts several times a second (live log, feed) | Insert without motion; keep the rows being read in place (hold scroll position, or a static "N new" control) |
 | `ease-in` on a UI animation | Switch to `ease-out` or a custom curve |
 | Duration > 300ms on a UI element with no justification | Reduce to 150-250ms |
 | `scale(0)` entry animation | Start from `scale(0.95)` with `opacity: 0` |
@@ -167,7 +166,7 @@ Prefer earlier moves:
 | Per-item `view-transition-name` written by hand for a list | `match-element` + `view-transition-class` |
 | View transition names or slides outside `no-preference` | Move them inside the query; the crossfade stays |
 | Focus left on a removed element after a view transition | Focus the new view's heading when `finished` resolves |
-| Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event |
+| Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event (load presets: `motion-engine` Paint & Load). A view the user returns to many times a day shows its final state instead; frequency still decides |
 | Abrupt state change with no transition where one would aid comprehension (instant visibility toggle, jarring content swap) | Add a purposeful transition, still gated by the Decision Framework above, not a license to animate everything |
 
 ## External References

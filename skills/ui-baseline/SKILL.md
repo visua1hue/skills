@@ -21,7 +21,7 @@ If the project already defines its own scale (`variables.css`, `DESIGN.md`, or s
 | Font features | `font-variant-ligatures: none` (code), `tabular-nums` (data) | Body text keeps the browser default. Tabular data without `tabular-nums` visibly jitters as digits change |
 | Spacing | `3xs` 2px → `5xl` 128px, near-geometric | Never hardcode a value inline. If something needs a step between two, add the step |
 
-**File organization** (plain-CSS projects only): `variables.css` holds tokens only; `motion.css` holds motion tokens, owned by `motion-engine`; `global.css` imports both and adds resets and base element styles. Full detail: `references/token-baseline.md`.
+**File organization** (plain-CSS projects only): `variables.css` holds tokens only; `motion.css` holds motion tokens, owned by `motion-sense`; `global.css` imports both and adds resets and base element styles. Full detail: `references/token-baseline.md`.
 
 ## Component Building Principles
 

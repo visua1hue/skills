@@ -81,7 +81,7 @@ linear(<value> <percentage>?, ...)
 Each entry is an output value (0 = start, 1 = end, values outside that range are allowed and represent overshoot); the optional percentage pins that value to a specific point along the duration. Omitted percentages are spaced evenly between their neighbors.
 
 ```css
---ease-spring: linear(
+--motion-ease-spring: linear(
   0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%,
   1.026, 1.089 22.3%, 1.102, 1.099 24.4%, 1.09 25.9%, 1.035 31.3%,
   1.007 36.2%, 0.999 40.5%, 0.995 44.1%, 0.998 52.8%, 1
@@ -114,7 +114,7 @@ A view transition cannot be interrupted. A second one skips the first, and the s
 - **Name what the change says.** A shared element says "same thing, going deeper". Reordered items say "same items, new arrangement". A page crossfade says "a new place". If it says nothing, skip it.
 - **Directional slides only where there is a direction.** Hierarchy (list to detail) and ordered sequences (previous, next). Lateral navigation such as tab to tab gets a crossfade or nothing. A slide there implies depth that isn't real.
 - **Morph only what the user is tracking.** A hero image, a title. Not every element that exists on both sides.
-- **Set the duration from the tokens.** Page-level transitions use `--motion-dur-slow` and `--motion-ease-in-out`.
+- **Set the duration from the tokens.** Page-level transitions use `--motion-dur-slow` and `--motion-ease-in-out`. The range is 250-400ms, an exception to the 300ms UI limit; the reason is in `animation-decisions.md` (How fast).
 
 ### Same-document
 
