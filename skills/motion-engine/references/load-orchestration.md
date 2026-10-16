@@ -61,8 +61,9 @@ const PRESETS = {
       ],
     },
     options: {
-      duration: parseDuration(getCSSVar(el, "--motion-dur-base")) || 0.18,
-      easing: [0.25, 0.1, 0.25, 1],
+      // WAAPI options: milliseconds and a CSS easing string, same tokens as the CSS preset
+      duration: parseFloat(getCSSVar(el, "--motion-dur-slow")) || 300,
+      easing: getCSSVar(el, "--motion-ease-out") || "cubic-bezier(0.23, 1, 0.32, 1)",
     },
   }),
 };
