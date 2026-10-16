@@ -15,6 +15,8 @@ The "should this animate, and how" taste layer. Spring feel lives in `SKILL.md`.
 
 Never animate keyboard-initiated actions. They're repeated hundreds of times a day, and animation makes them feel slow and disconnected from the action that triggered them. Raycast has no open/close animation; for something used hundreds of times a day, that absence is the correct choice, not an oversight.
 
+Count events the system produces too, not only user actions. A live log or feed that inserts several items a second is past the top tier within a minute, and the user did nothing to cause the motion. Insert those items without animation.
+
 ## What is the purpose?
 
 Every animation needs a clear answer to "why does this animate?" Valid purposes:
@@ -30,6 +32,8 @@ If the only answer is "it looks cool" and the user will see it often, don't anim
 
 Check function too. Data the user is reading or acting on does not move for style. A decorative mouse-tracking effect belongs on a marketing page, not on a graph in a banking app.
 
+The same holds for layout. New content inserted above what the user is reading pushes their line out from under them, with or without animation. Keep the visible rows in place: hold the scroll position, or collect new items behind a static "N new" control the user opens.
+
 ## What easing should it use?
 
 ```
@@ -44,27 +48,26 @@ Entering or exiting?
 
 **Never use `ease-in` for UI animations.** It starts slow, so the interface feels sluggish at the exact moment the user is watching most closely: the start of the motion. A 300ms dropdown with `ease-in` *feels* slower than the same 300ms with `ease-out`, even though the duration is identical.
 
-Use custom easing curves. The built-in CSS keywords are too weak to feel intentional. The tokens are defined once, in `motion-engine` (Motion Tokens):
-
-```css
---motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);       /* strong ease-out for UI */
---motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);   /* on-screen movement */
---motion-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);    /* iOS-like drawer curve */
-```
+Use custom easing curves. The built-in CSS keywords are too weak to feel intentional. The tokens (`--motion-ease-out`, `--motion-ease-in-out`, `--motion-ease-drawer`) and their values are in `easing-and-duration-values.md`.
 
 Don't hand-derive curves. Pull stronger variants of standard easings from [easing.dev](https://easing.dev/) or [easings.co](https://easings.co/).
 
 ## How fast should it be?
 
-| Element | Duration |
-| --- | --- |
-| Button press feedback | 100-160ms |
-| Tooltips, small popovers | 125-200ms |
-| Dropdowns, selects | 150-250ms |
-| Modals, drawers | 200-500ms |
-| Marketing/explanatory | Can be longer |
+**Ask:** how far does it travel, and how often does the user wait through it?
 
-**UI animations stay under 300ms.** A 180ms dropdown feels more responsive than a 400ms one at the same easing. The 500ms end of the modal/drawer row is the drawer on `--motion-ease-drawer`. That curve starts so steeply that most of the travel is done in the first third, which is why 500ms does not read as slow.
+The user waits through every UI animation, because it sits between an action and its result. So the shorter duration wins, unless the motion needs time to be seen as motion. A press moves nothing and only has to be noticed. A dropdown travels a few dozen pixels. A drawer or a full-view change moves a whole surface, and at dropdown speed it reads as a jump.
+
+Values per element: `easing-and-duration-values.md` (Durations).
+
+**Product UI stays under 300ms.** A 180ms dropdown feels more responsive than a 400ms one at the same easing. Two cases go longer, each for a stated reason:
+
+- **Drawers, up to 500ms, only on `--motion-ease-drawer`.** That curve starts so steeply that most of the travel is done in the first third. The response is visible at once and the rest is settling, so 500ms does not read as slow. On any other curve a drawer stays under 300ms.
+- **Page and full-view changes, 250-400ms.** A route change or a full-screen step moves the whole view, which needs more time to read as movement. It is a navigation, not a control the user repeats many times a minute. Use the long end for rare, large moves and the short end for navigation the user repeats all day.
+
+Marketing and explanatory motion is watched, not waited through, so it can run longer.
+
+A value outside the table needs the same reasoning: name the distance and the frequency, then place it next to the row it is closest to.
 
 ## How should it leave?
 

@@ -144,7 +144,7 @@ Where these tokens actually live, for a plain-CSS project (no CSS-in-JS, no util
 Three files, one import chain:
 
 - **`variables.css`.** Tokens only, no selectors. Both layers live here: raw (`--color-primary-100`, `--font-size-0`) and semantic (`--color-text-default`, `--text-body`).
-- **`motion.css`.** Motion tokens (durations, easings) and their load/accessibility contract; owned by `motion-engine`, not repeated here.
+- **`motion.css`.** Motion tokens (durations, easings), owned by `motion-sense`; their load and accessibility contract, owned by `motion-engine`. Not repeated here.
 - **`global.css`.** Imports both of the above, then universal resets and base element styles (box-sizing, `html`/`body` defaults). The only file with page-wide selectors that aren't scoped to a specific feature.
 
 Not a strict rule for every setup. A project using CSS-in-JS or a utility framework (Tailwind, etc.) won't have a `variables.css` in this shape at all. It's the convention specifically for "plain CSS custom properties, no framework."
