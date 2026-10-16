@@ -28,27 +28,20 @@ Focus, disabled and hover rules for interaction states are in SKILL.md, under Co
 For scroll-driven animations with zero JavaScript. Native compositor performance. Gate behind `@supports` so non-supporting browsers get a graceful fallback.
 
 ```css
-@supports (animation-timeline: view()) {
-  [data-motion-scroll="fade-up"] {
-    animation-name: motion-fade-up;
-    animation-timeline: view();
-    animation-range: var(--motion-range-default);
-    animation-fill-mode: both;
-    animation-timing-function: linear;
-  }
-}
-
-@keyframes motion-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(var(--motion-dist-md));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-motion-scroll="fade-up"] {
+      animation-name: motion-fade-up; /* keyframes: SKILL.md, Paint & Load Strategy */
+      animation-timeline: view();
+      animation-range: var(--motion-range-default);
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+    }
   }
 }
 ```
+
+Scroll progress maps to animation progress, so the timing function is `linear`. The user's scroll speed sets the pace.
 
 Use `animation-timeline: view()` for viewport-entry animations. Use `animation-timeline: scroll()` for scroll-progress effects:
 
@@ -77,18 +70,22 @@ Read scroll ranges from motion tokens. Define keyframes that are shared between 
 For programmatic control with CSS-level performance. Hardware-accelerated, interruptible, no library needed. Use when you need JavaScript control over a single animation but don't need orchestration.
 
 ```javascript
+const token = (el, name) => getComputedStyle(el).getPropertyValue(name).trim();
+
 element.animate(
   [
-    { opacity: 0, transform: "translateY(30px)" },
+    { opacity: 0, transform: `translateY(${token(element, "--motion-dist-md")})` },
     { opacity: 1, transform: "translateY(0)" },
   ],
   {
-    duration: 180,
-    easing: "cubic-bezier(0.25, 0.1, 0.25, 1)",
-    fill: "forwards",
+    duration: parseFloat(token(element, "--motion-dur-base")), // token is in ms
+    easing: token(element, "--motion-ease-out"), // WAAPI takes the cubic-bezier() string
+    fill: "backwards",
   },
 );
 ```
+
+`fill: "backwards"` holds the hidden first frame through any delay. After the animation the element's own styles apply, so nothing stays held by `fill`.
 
 WAAPI runs on the compositor thread like CSS animations but provides JavaScript handles for play/pause/cancel/reverse and finish promises.
 
@@ -99,16 +96,21 @@ For orchestration, sequencing, stagger, and scroll fallbacks. Motion.dev is a th
 ```typescript
 import { animate, stagger, inView } from "motion";
 
+const root = getComputedStyle(document.documentElement);
+const token = (name) => root.getPropertyValue(name).trim();
+const seconds = (name) => parseFloat(token(name)) / 1000; // Motion takes seconds
+const bezier = (name) => token(name).match(/-?\d*\.?\d+/g).map(Number); // Motion takes [x1, y1, x2, y2]
+
 // Staggered entrance
 animate(
   "[data-motion='fade-up']",
-  { opacity: [0, 1], transform: ["translateY(30px)", "translateY(0)"] },
-  { duration: 0.18, delay: stagger(0.05) },
+  { opacity: [0, 1], transform: [`translateY(${token("--motion-dist-md")})`, "translateY(0)"] },
+  { duration: seconds("--motion-dur-base"), ease: bezier("--motion-ease-out"), delay: stagger(0.05) },
 );
 
 // Scroll-triggered (WAAPI fallback for browsers without animation-timeline)
 inView("[data-motion-scroll]", (el) => {
-  animate(el, { opacity: [0, 1] }, { duration: 0.3 });
+  animate(el, { opacity: [0, 1] }, { duration: seconds("--motion-dur-slow"), ease: bezier("--motion-ease-out") });
 });
 ```
 
@@ -126,8 +128,8 @@ import { animateView, spring, stagger } from "motion";
 // Basic. Auto-generates and cleans up view-transition-name
 animateView(() => updateDOM()).add(".card");
 
-// Spring-based instead of a fixed duration
-animateView(updateDOM, { type: spring, bounce: 0.3 });
+// Spring-based instead of a fixed duration. No bounce: no gesture drives a view change
+animateView(updateDOM, { type: spring, visualDuration: 0.3, bounce: 0 });
 
 // Differentiated enter/exit, not just an old/new crossfade
 animateView(updateDOM)
@@ -138,7 +140,7 @@ animateView(updateDOM)
 // Staggered shared-element transition across a list
 animateView(updateDOM)
   .add(".item")
-  .enter({ opacity: [0, 1], scale: [0.6, 1] }, { delay: stagger(0.05) });
+  .enter({ opacity: [0, 1], scale: [0.95, 1] }, { delay: stagger(0.05) });
 ```
 
 What it solves, concretely:
@@ -176,19 +178,13 @@ import { motion, useSpring } from "motion/react";
   animate={{ transform: "translateY(0px)" }}
 />;
 
-// Mouse-tracking with spring interpolation
-const springX = useSpring(mouseX, { stiffness: 100, damping: 10 });
+// Mouse-tracking with spring interpolation. Pointer movement is not a throw, so no bounce
+const springX = useSpring(mouseX, { visualDuration: 0.2, bounce: 0 });
 ```
 
-**Critical caveat:** Motion's shorthand properties (`x`, `y`, `scale`) use `requestAnimationFrame` on the main thread and are NOT hardware-accelerated. Under load (page transitions, heavy rendering), they drop frames. Use the full `transform` string for hardware acceleration:
+Motion's docs state that independent transforms (`x`, `y`, `scale`) and a full `transform` string are both hardware accelerated. A CSS variable is not, even when it feeds `transform`. Animate the transform itself (see the CSS variable caveat in SKILL.md).
 
-```tsx
-// Drops frames under load
-<motion.div animate={{ x: 100 }} />
-
-// Hardware accelerated
-<motion.div animate={{ transform: "translateX(100px)" }} />
-```
+A spring that follows a motion value (`useSpring`, drag) is computed on the main thread every frame, because each frame depends on the live input.
 
 Which bounce/duration to pick is a taste call: see `motion-sense` Spring Feel. Use springs for drag-to-dismiss, momentum-based interactions, and decorative mouse-tracking. For predetermined UI animations (enter/exit, hover, state change), springs add unnecessary complexity. Use CSS transitions or WAAPI.
 

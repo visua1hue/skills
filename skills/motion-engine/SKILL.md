@@ -68,7 +68,7 @@ Use the simplest tool that meets the requirement. Each tier adds capability at t
 | 2    | CSS Keyframes + `animation-timeline` | Scroll-driven animations. Zero JS, full compositor. Gate with `@supports`.                                                    |
 | 3    | WAAPI                                | Programmatic control, single element. Hardware-accelerated, no library needed.                                                |
 | 4    | Motion.dev                           | Orchestration, stagger, sequencing, scroll fallbacks, View Transitions orchestration (`animateView()`). Thin WAAPI wrapper.   |
-| 5    | Motion springs                       | Drag, gesture, interruptible physics. Shorthand props (`x`, `y`) are NOT hardware-accelerated. Use full `transform` strings. |
+| 5    | Motion springs                       | Drag, gesture, interruptible physics. Springs that follow live input compute on the main thread each frame.                |
 
 **Key rules across all tiers:**
 
@@ -150,16 +150,9 @@ Author it opt-in. The fade applies to everyone, and movement is added inside `pr
     transform: scale(var(--motion-scale-sm));
   }
 }
-
-/* Scroll presets declared outside the query: switch them off */
-@media (prefers-reduced-motion: reduce) {
-  [data-motion-scroll] {
-    animation: none !important;
-  }
-}
 ```
 
-Load presets sit inside the `no-preference` query (see Paint & Load Strategy). Their hidden state is in the keyframe, so under `reduce` they don't run and the content is in its final state.
+Load and scroll presets sit inside the `no-preference` query (see Paint & Load Strategy and `references/animation-patterns.md` Tier 2). Their hidden state is in the keyframe, so under `reduce` they don't run and the content is in its final state.
 
 A JavaScript animation ignores the CSS query. Check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before triggering it, or use the library's own setting (`<MotionConfig reducedMotion="user">` in Motion). Skip load presets entirely; for interactive animations, run opacity-only variants.
 
@@ -177,7 +170,6 @@ Performance only. Feeds the Performance tier of `motion-sense`'s review, which o
 | `will-change` set preemptively, left on after, or naming a property that never composites | Add only for observed first-frame stutter or a 1px shift, or for per-frame JS style writes; remove when the animation ends | Each layer costs GPU memory; CSS and WAAPI `transform`/`opacity` animations get a layer without it |
 | `will-change` on disabled elements   | Remove it                                        | Wastes GPU memory on inert elements            |
 | Hardcoded values in JS               | Read from CSS custom properties                  | Design system is the single source of truth    |
-| Motion `x`/`y`/`scale` props         | Use `transform: "translateX()"`                  | Shorthand is not hardware-accelerated          |
 | CSS var update during drag           | Set `transform` directly                         | Variable inheritance recalculates all children |
 | Animated custom property set on an ancestor, or registered as inherited | Set it on the nearest element; `@property` with `inherits: false` | Every inheriting element recalculates each frame |
 | `box-shadow` animated | Second shadow on a pseudo-element, animate its `opacity` | Shadow repaints every frame |
