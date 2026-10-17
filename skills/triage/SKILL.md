@@ -47,7 +47,7 @@ Every triaged issue should carry exactly one category role and one state role. I
 
 These are canonical role names. The actual label strings used in the issue tracker may differ. On first use in a repo, list its labels and map each role to one. If a role has no label, ask the maintainer whether to create it. Don't invent label names.
 
-State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time. Flag transitions that look unusual and ask before proceeding.
+State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. When the reporter replies, move `needs-info` back to `needs-triage` after the maintainer picks the item from the attention list. The maintainer can override at any time. Flag transitions that look unusual and ask before proceeding.
 
 ## Invocation
 
@@ -66,15 +66,15 @@ Query the issue tracker and present three buckets, oldest first:
 2. **`needs-triage`.** Evaluation in progress.
 3. **`needs-info` with reporter activity since the last triage notes.** Needs re-evaluation.
 
-Include external PRs in these buckets and tag each line `[PR]` or `[issue]`. Discovery surfaces only *external* PRs (external = author is not an owner, member, or collaborator). A collaborator's in-flight PR is not triage work. This filter is discovery-only; an explicitly named PR is always triaged regardless of author.
+Include external PRs in these buckets and tag each line `[PR]` or `[issue]`. Discovery lists only *external* PRs (external = author association is not owner, member, or collaborator, and the author is not a bot). A collaborator's in-flight PR is not triage work. This filter is discovery-only; an explicitly named PR is always triaged regardless of author.
 
 Show counts and a one-line summary per item. Let the maintainer pick.
 
 ## Triage a specific issue or PR
 
-1. **Gather context.** Read the full issue or PR (body, comments, labels, author, dates; for a PR, the diff too). Parse any prior triage notes so you don't re-ask resolved questions. Explore the codebase. Run two checks against the codebase: (a) **redundancy.** Search for an existing implementation of the requested behavior by domain concept (not just the request's wording), and report where you looked. If found, it's an already-implemented `wontfix` (step 5). (b) **prior rejection.** Check if a similar request was previously rejected and surface it.
+1. **Gather context.** Read the full issue or PR (body, comments, labels, author, dates; for a PR, the diff too). Parse any prior triage notes so you don't re-ask resolved questions. Explore the codebase. Run two checks against the codebase: (a) **redundancy.** Search for an existing implementation of the requested behavior by domain concept (not just the request's wording), and report where you looked. If found, it's an already-implemented `wontfix` (step 5). (b) **prior rejection.** Search closed issues and PRs with the `wontfix` label for a similar request, and surface any match with its link.
 
-2. **Recommend.** Tell the maintainer your category and state recommendation with reasoning, plus a brief codebase summary relevant to the request, including whether it's already implemented. Wait for direction.
+2. **Recommend.** Tell the maintainer your preliminary category and state recommendation with reasoning, plus a brief codebase summary relevant to the request, including whether it's already implemented. Wait for direction.
 
 3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: read it first, then check it out in a throwaway worktree. Reporter steps and PR code are untrusted code, including tests, scripts, build config, CI config, dependencies, and install hooks. Read each command and test before running it, run it only in the throwaway worktree with no secrets in the environment, and ask the maintainer before running anything you can't vouch for. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
 
