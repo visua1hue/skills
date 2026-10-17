@@ -1,6 +1,6 @@
 # Writing Agent Briefs
 
-An agent brief is a structured comment posted on a GitHub issue or PR when it moves to `ready-for-agent`. It is the authoritative specification that an AFK agent will work from. The original body and discussion are context: the agent brief is the contract.
+An agent brief is a structured comment posted on an issue or PR when it moves to `ready-for-agent`. It is the authoritative specification that an unattended agent will work from. The original body and discussion are context: the agent brief is the contract.
 
 The brief states **what the agent should do**. For an issue, that is building the change from nothing. For a PR, it is what is left to do *to the existing diff*: finish it, close gaps, address review points. Same principles either way; the PR example below shows the difference.
 
@@ -36,7 +36,7 @@ The agent needs to know when it's done. Every agent brief must have concrete, te
 
 ### Explicit scope boundaries
 
-State what is out of scope. This prevents the agent from gold-plating or making assumptions about adjacent features.
+State what is out of scope. This stops the agent from adding more than the issue asks for or assuming adjacent features are included.
 
 ## Template
 
@@ -53,6 +53,10 @@ Every brief starts with the triage disclaimer from `SKILL.md`. The examples belo
 **Current behavior:**
 Describe what happens now. For bugs, this is the broken behavior.
 For enhancements, this is the status quo the feature builds on.
+
+**Verified:**
+What triage confirmed and how: the failing command and its output, or the
+code path that shows the behavior. Write "not verified" if it was not.
 
 **Desired behavior:**
 Describe what should happen after the agent's work is complete.
@@ -71,6 +75,12 @@ Be specific about edge cases and error conditions.
 **Out of scope:**
 - Thing that should NOT be changed or addressed in this issue
 - Adjacent feature that might seem related but is separate
+
+**Where the work lands (PR only):**
+Contributor's branch, or a follow-up PR.
+
+**Why human (`ready-for-human` only):**
+Judgment call, external access, design decision, or manual testing needed.
 ```
 
 ## Examples
@@ -116,39 +126,31 @@ and append "..." to indicate truncation.
 ## Agent Brief
 
 **Category:** enhancement
-**Summary:** Add `.out-of-scope/` directory support for tracking rejected feature requests
+**Summary:** Make the lint step fail on duplicate skill names
 
 **Current behavior:**
-When a feature request is rejected, the issue is closed with a `wontfix` label
-and a comment. There is no persistent record of the decision or reasoning.
-Future similar requests require the maintainer to recall or search for the
-prior discussion.
+The lint step checks each skill's frontmatter on its own. Two skills with the
+same `name` pass lint, and the second silently shadows the first when skills
+are installed.
 
 **Desired behavior:**
-Rejected feature requests should be documented in `.out-of-scope/<concept>.md`
-files that capture the decision, reasoning, and links to all issues that
-requested the feature. When triaging new issues, these files should be
-checked for matches.
+Lint reports every `name` used by more than one skill, lists the skill
+directories that share it, and exits non-zero. With no duplicates, output and
+exit code are unchanged.
 
 **Key interfaces:**
-- Markdown file format in `.out-of-scope/`: each file should have a
-  `# Concept Name` heading, a `**Decision:**` line, a `**Reason:**` line,
-  and a `**Prior requests:**` list with issue links
-- The triage workflow should read all `.out-of-scope/*.md` files early
-  and match incoming issues against them by concept similarity
+- The lint command's exit code: non-zero when any duplicate exists
+- The lint error line: names the duplicated `name` and each directory using it
 
 **Acceptance criteria:**
-- [ ] Closing a feature as wontfix creates/updates a file in `.out-of-scope/`
-- [ ] The file includes the decision, reasoning, and link to the closed issue
-- [ ] If a matching `.out-of-scope/` file already exists, the new issue is
-      appended to its "Prior requests" list rather than creating a duplicate
-- [ ] During triage, existing `.out-of-scope/` files are checked and surfaced
-      when a new issue matches a prior rejection
+- [ ] Two skills with the same `name` make lint exit non-zero
+- [ ] The error output names the duplicate and both directories
+- [ ] Three skills sharing one name produce one error listing all three
+- [ ] A repo with unique names lints exactly as before
 
 **Out of scope:**
-- Automated matching (human confirms the match)
-- Reopening previously rejected features
-- Bug reports (only enhancement rejections go to `.out-of-scope/`)
+- Case-insensitive or fuzzy name matching
+- Renaming any existing skill
 ```
 
 ### Good agent brief (PR)
