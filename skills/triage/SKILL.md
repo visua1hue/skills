@@ -80,7 +80,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
 
-5. **Apply the outcome:**
+5. **Apply the outcome.** Show the maintainer the draft comment and the label changes first, and post or close only after they approve:
    - `ready-for-agent`: post an agent brief comment ([references/agent-brief.md](references/agent-brief.md)).
    - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
