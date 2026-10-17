@@ -2,7 +2,9 @@
 
 An agent brief is a structured comment posted on a GitHub issue or PR when it moves to `ready-for-agent`. It is the authoritative specification that an AFK agent will work from. The original body and discussion are context: the agent brief is the contract.
 
-The brief states **what the agent should do**, which stretches to both surfaces: for an issue, that's building the change from nothing; for a PR, it's what's left to do *to the existing diff*: finish it, close gaps, address review points. Same principles either way; the PR example below shows the difference.
+The brief states **what the agent should do**. For an issue, that is building the change from nothing. For a PR, it is what is left to do *to the existing diff*: finish it, close gaps, address review points. Same principles either way; the PR example below shows the difference.
+
+A PR brief also has a **Where the work lands** line, which the maintainer confirms during triage: the contributor's branch (needs maintainer edits enabled on the PR) or a follow-up PR that credits the contributor. Issue briefs omit it.
 
 ## Principles
 
@@ -174,6 +176,9 @@ is untouched when the flag is absent.
 - The command's error path should emit `{ "error": string }` under `--json`
   instead of the plain-text error
 - Reuse the existing serializer the PR already added; don't introduce a second
+
+**Where the work lands:**
+Push to the contributor's branch (maintainer edits are enabled on the PR).
 
 **Acceptance criteria:**
 - [ ] `triage list --json` emits valid JSON for both success and error cases

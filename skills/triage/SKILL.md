@@ -45,7 +45,7 @@ For a PR, the same states read against the attached code: `ready-for-agent` mean
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names. The actual label strings used in the issue tracker may differ.
+These are canonical role names. The actual label strings used in the issue tracker may differ. On first use in a repo, list its labels and map each role to one. If a role has no label, ask the maintainer whether to create it. Don't invent label names.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time. Flag transitions that look unusual and ask before proceeding.
 
@@ -81,7 +81,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
 
 5. **Apply the outcome.** Show the maintainer the draft comment and the label changes first, and post or close only after they approve:
-   - `ready-for-agent`: post an agent brief comment ([references/agent-brief.md](references/agent-brief.md)).
+   - `ready-for-agent`: post an agent brief comment ([references/agent-brief.md](references/agent-brief.md)). For a PR, ask the maintainer where the work lands first.
    - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
    - `wontfix`: close, with the comment depending on *why*:
