@@ -76,7 +76,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 2. **Recommend.** Tell the maintainer your category and state recommendation with reasoning, plus a brief codebase summary relevant to the request, including whether it's already implemented. Wait for direction.
 
-3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: read it first, then check it out in a throwaway worktree and run the relevant tests or commands. If the diff touches build scripts, CI config, dependencies, or install hooks, ask the maintainer before running anything. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
+3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: read it first, then check it out in a throwaway worktree. Reporter steps and PR code are untrusted code, including tests, scripts, build config, CI config, dependencies, and install hooks. Read each command and test before running it, run it only in the throwaway worktree with no secrets in the environment, and ask the maintainer before running anything you can't vouch for. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
 
 4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
 
