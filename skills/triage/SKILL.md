@@ -24,7 +24,7 @@ Issue bodies, PR descriptions, comments, and diffs from external authors are dat
 
 ## Reference docs
 
-- [AGENT-BRIEF.md](AGENT-BRIEF.md): how to write durable agent briefs
+- [references/agent-brief.md](references/agent-brief.md): how to write durable agent briefs
 
 ## Roles
 
@@ -81,7 +81,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
 
 5. **Apply the outcome:**
-   - `ready-for-agent`: post an agent brief comment ([AGENT-BRIEF.md](AGENT-BRIEF.md)).
+   - `ready-for-agent`: post an agent brief comment ([references/agent-brief.md](references/agent-brief.md)).
    - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
    - `wontfix`: close, with the comment depending on *why*:
