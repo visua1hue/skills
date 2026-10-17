@@ -1,18 +1,20 @@
-![Agent Skills](.github/assets/preview.png)
+![Agent Skills](.github/assets/preview-animated.svg)
 
-<div align="center">
+The agent stack, or profile, is a curated selection of what an agent works with: the skills it follows, the MCP servers it calls, and the scripts it runs.
 
-Agent Skills, built by you, run by agents. Follows the [Agent Skills](https://agentskills.io/home) open standard.
+## The Concept
 
-Curated Agent Stack, production-tested. Context, loaded when it matters.
+Context, loaded when it matters. [`AGENTS.md`](AGENTS.md) stays short and redirects the agent to a skill. The skill references a playbook, and the playbook loads further skills on demand. The concept builds on the [Agent Skills](https://agentskills.io/home) open standard.
 
-</div>
+![AGENTS.md redirects to a skill, the skill references a playbook, and the playbook loads another skill. A skill may call an optional MCP server.](.github/assets/concept@2x.png)
 
-## Agent Skills
+MCP servers are optional, and this repo only links them. The [Agent Plugins specification](https://agent-plugins.org/specification) describes skills and MCP servers as the two parts of a plugin. This repo ships no `plugin.json` or `mcp.json`, so it follows the idea but not the format.
+
+## Skills
 
 Skills are either **Model-invoked**, where the agent activates them when your request matches, or **User-invoked** via a slash command like `/triage`.
 
-**Upstream** skills are mirrored, not forked. Their authors own them; a weekly sync keeps them updated.
+A few skills come from **Upstream** authors, mirrored and not forked. A weekly sync keeps them updated.
 
 ### Engineering
 
@@ -32,9 +34,9 @@ Skills are either **Model-invoked**, where the agent activates them when your re
 - [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian via CLI. **Upstream**, Author: [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
 - [anatomy](skills/anatomy/): Animated isometric SVG illustrations. **Upstream**, Author: [Ryan](https://github.com/wheresryan22/anatomy)
 
-## Extended Layer
+## MCP Servers
 
-Recommended, not required. Extra tools for the agent, over MCP.
+Optional, not required. Extra tools for the agent, over MCP.
 
-- Type: **MCP** | [fff](https://github.com/dmtrKovalenko/fff)
-- Type: **MCP** | [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- [fff](https://github.com/dmtrKovalenko/fff): Fast file and content search, with recent and changed files ranked first
+- [Chrome DevTools](https://github.com/ChromeDevTools/chrome-devtools-mcp): Browser debugging, automation, and performance analysis
