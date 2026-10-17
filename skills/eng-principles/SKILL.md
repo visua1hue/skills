@@ -1,6 +1,6 @@
 ---
 name: eng-principles
-description: Engineering principles for designing, reviewing, and verifying code. Smallest diff, data shape first, separation of concerns, hot-path discipline, low reader load, root-cause fixes, and proof in the running app, command, or endpoint before work counts as done. Use when writing, reviewing, or refactoring code, fixing a bug, or before claiming a change works.
+description: Engineering principles for designing, reviewing, and verifying code. Smallest diff, data shape first, separation of concerns, hot-path discipline, low reader load, root-cause fixes, and proof in the running app, command, or endpoint before work counts as done. Playbooks give step lists for investigation, bug fix, feature, refactor, UI change, and skill change. Use when writing, reviewing, or refactoring code, fixing a bug, or before claiming a change works.
 ---
 
 # Eng principles
@@ -39,3 +39,22 @@ Detail and what counts as proof per change type: `references/verification.md`.
 - Before claiming done: P11, with the evidence in the reply.
 - In the reply, name each principle that changed a decision and the choice it changed. For P6 to P11, read the detail file before citing it.
 - A project's own rules (`AGENTS.md`, `CLAUDE.md`, lint config) win over this skill where they conflict.
+
+## Playbooks
+
+Step lists for common task types. Each step names the rule or skill it uses.
+
+| Task | Playbook |
+| --- | --- |
+| Question about how or why code works, no change | `playbooks/investigation.md` |
+| Reported defect | `playbooks/bug-fix.md` |
+| New or changed behavior | `playbooks/feature.md` |
+| Structure changes, behavior stays the same | `playbooks/refactor.md` |
+| Visual, layout, or interaction change | `playbooks/ui-change.md` |
+| Edit to a skill or an agent instruction file | `playbooks/skill-change.md` |
+
+- Pick one playbook before the first edit. If the user names one, use it.
+- Copy its steps into the todo list as written. A step you skip stays in the list as `skip: <reason>`.
+- A one-line change with no behavior change needs no playbook. Say so.
+- If no playbook fits, list the steps you will follow before starting.
+- Write the reply per the playbook's Reply line and `neural-antipattern`.
