@@ -5,7 +5,7 @@
 `scripts/lint.sh` checks every skill against the SKILL.md spec. It runs in CI on each PR, or locally:
 
 ```bash
-./scripts/lint.sh                  # lint all (name, description, format)
+./scripts/lint.sh                  # lint all (name, description, format, playbooks)
 ```
 
 ## Sync Upstream

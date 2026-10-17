@@ -84,6 +84,30 @@ for d in skill_dirs:
         if "\\" in m.group(1):
             errors.append(f"{md}: link '{m.group(1)}' uses backslashes; use forward slashes")
 
+    # Playbooks: required lines, links that resolve, and a SKILL.md table that matches the files
+    pb_dir = f"skills/{d}/playbooks"
+    if os.path.isdir(pb_dir):
+        files = sorted(f for f in os.listdir(pb_dir) if f.endswith(".md"))
+        listed = set(re.findall(r"playbooks/([a-z0-9-]+\.md)", body))
+        for f in files:
+            path = f"{pb_dir}/{f}"
+            with open(path, encoding="utf-8") as fh:
+                text = fh.read()
+            if not re.search(r"^\*\*You own ", text, re.M):
+                errors.append(f"{path}: missing ownership line ('**You own ...')")
+            if not re.search(r"^\*\*Reply:\*\*", text, re.M):
+                errors.append(f"{path}: missing '**Reply:**' line")
+            for ref in re.findall(r"`(\.\./[^`]+)`", text):
+                if not os.path.exists(os.path.normpath(f"{pb_dir}/{ref}")):
+                    errors.append(f"{path}: path '{ref}' does not exist")
+            for sib in re.findall(r"`([a-z0-9-]+\.md)`", text):
+                if sib not in files:
+                    errors.append(f"{path}: playbook '{sib}' does not exist")
+            if f not in listed:
+                errors.append(f"{md}: playbook '{f}' is not listed")
+        for f in sorted(listed - set(files)):
+            errors.append(f"{md}: lists playbooks/{f}, which does not exist")
+
 for name, dirs in seen.items():
     if len(dirs) > 1:
         errors.append(f"duplicate skill name '{name}' in: {', '.join(dirs)}")
