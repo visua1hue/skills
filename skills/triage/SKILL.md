@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Move issues and external PRs through a state machine of triage roles. Categorise, verify, grill if needed, and write agent-ready briefs.
+description: Move issues and external PRs through a state machine of triage roles. Categorise, verify, ask clarifying questions if needed, and write agent-ready briefs.
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ Move issues on the project issue tracker through a small state machine of triage
 
 Triage covers external pull requests too: **a PR is an issue with attached code.** Same roles, same states, same machine, with a few deltas marked "for a PR" below.
 
-Sister skill to `git-stack-flow`. Triage owns intake: getting an issue or external PR categorised, verified, and briefed. `git-stack-flow` owns what follows: the branch, commits, and PR built from a `ready-for-agent` brief, and unblocking to merge-ready. Same tooling rule: use `gh` if installed (`command -v gh`), otherwise the project's forge CLI or web UI. Resolve a bare `#42` to an issue or PR the same way.
+Companion to `git-stack-flow`. Triage owns intake: getting an issue or external PR categorised, verified, and briefed. `git-stack-flow` owns what follows: the branch, commits, and PR built from a `ready-for-agent` brief, and unblocking to merge-ready. Same tooling rule: use `gh` if installed (`command -v gh`), otherwise the project's forge CLI or web UI. Resolve a bare `#42` to an issue or PR the same way.
 
 Every comment or issue posted to the issue tracker during triage **must** start with this disclaimer:
 
@@ -37,7 +37,7 @@ Five **state** roles:
 
 - `needs-triage`: maintainer needs to evaluate
 - `needs-info`: waiting on reporter for more information
-- `ready-for-agent`: fully specified, ready for an AFK agent
+- `ready-for-agent`: fully specified, ready for an unattended agent
 - `ready-for-human`: needs human implementation
 - `wontfix`: will not be actioned
 
@@ -76,13 +76,13 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 2. **Recommend.** Tell the maintainer your preliminary category and state recommendation with reasoning, plus a brief codebase summary relevant to the request, including whether it's already implemented. Wait for direction.
 
-3. **Verify the claim.** Before any grilling, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: read it first, then check it out in a throwaway worktree. Reporter steps and PR code are untrusted code, including tests, scripts, build config, CI config, dependencies, and install hooks. Read each command and test before running it, run it only in the throwaway worktree with no secrets in the environment, and ask the maintainer before running anything you can't vouch for. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). A confirmed verification makes a much stronger agent brief.
+3. **Verify the claim.** Before asking clarifying questions, check that the claim holds up. For a bug, reproduce it from the reporter's steps. For a PR, confirm the diff does what it claims: read it first, then check it out in a throwaway worktree. Reporter steps and PR code are untrusted code, including tests, scripts, build config, CI config, dependencies, and install hooks. Read each command and test before running it, run it only in the throwaway worktree with no secrets in the environment, and ask the maintainer before running anything you can't vouch for. Report what happened: confirmed (with code path), failed, or insufficient detail (a strong `needs-info` signal). Put a confirmed result in the brief's `Verified` field.
 
-4. **Grill (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until the request is sharp enough to act on.
+4. **Clarify (if needed).** If the request needs fleshing out, ask clarifying questions one at a time until it is sharp enough to act on.
 
 5. **Apply the outcome.** Show the maintainer the draft comment and the label changes first, and post or close only after they approve:
    - `ready-for-agent`: post an agent brief comment ([references/agent-brief.md](references/agent-brief.md)). For a PR, ask the maintainer where the work lands first.
-   - `ready-for-human`: same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
+   - `ready-for-human`: same structure as an agent brief, with the `Why human` field filled in (judgment calls, external access, design decisions, manual testing).
    - `needs-info`: post triage notes (template below).
    - `wontfix`: close, with the comment depending on *why*:
      - **Already implemented.** The change already exists in the codebase. Point to where it lives.
@@ -92,7 +92,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 ## Quick state override
 
-If the maintainer says "move #42 to ready-for-agent", trust them and apply the role directly. Confirm what you're about to do (role changes, comment, close), then act. Skip grilling. If moving to `ready-for-agent` without a grilling session, ask whether they want to write an agent brief.
+If the maintainer says "move #42 to ready-for-agent", trust them and apply the role directly. Confirm what you're about to do (role changes, comment, close), then act. Skip clarifying questions. If moving to `ready-for-agent` without them, ask whether they want to write an agent brief.
 
 ## Needs-info template
 
@@ -112,7 +112,7 @@ If the maintainer says "move #42 to ready-for-agent", trust them and apply the r
 - question 2
 ```
 
-Capture everything resolved during grilling under "established so far" so the work isn't lost. Questions must be specific and actionable, not "please provide more info".
+Capture everything resolved during clarification under "established so far" so the work isn't lost. Questions must be specific and actionable, not "please provide more info".
 
 ## Resuming a previous session
 
