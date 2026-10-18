@@ -25,6 +25,7 @@ A few skills come from **Upstream** authors, mirrored and not forked. A weekly s
 - [triage](skills/triage/): GitHub issue and PR triage state machine
 - [security-audit](skills/security-audit/): Source-first security audits with independently verified findings. **Upstream**, Author: [Cloudflare](https://github.com/cloudflare/security-audit-skill/tree/main/skills/security-audit)
 - [typescript-magician](skills/typescript-magician/): Complex generics, type guards, and strict typing. **Upstream**, Author: [Matteo Collina](https://github.com/mcollina/skills/tree/main/skills/typescript-magician)
+- [ts-typesafe](skills/ts-typesafe/): Types that match runtime, with boundary parsing, no unchecked casts, inference, type tests, and strict tsconfig
 - [motion-sense](skills/motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](skills/motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [ui-baseline](skills/ui-baseline/): Type/spacing tokens, component patterns, adaptive CSS, and current platform features with browser support
