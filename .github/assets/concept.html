@@ -5,16 +5,16 @@
 <title>Agent Stack concept</title>
 <style>
   :root {
-    --bg: #f7f5f3;
-    --card: #fbfbfa;
-    --ink: #0d0d0d;
-    --label: #757575;
-    --muted: #a8a5a5;
-    --border: rgba(13, 13, 13, .09);
+    --bg: #0e0e0e;
+    --card: #151515;
+    --ink: #f2f0ee;
+    --label: #9a9796;
+    --muted: #6f6c6b;
+    --border: rgba(255, 255, 255, .09);
     --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
   }
   * { box-sizing: border-box; margin: 0; }
-  html, body { width: 1554px; height: 408px; overflow: hidden; }
+  html, body { width: 1554px; height: 448px; overflow: hidden; }
   body {
     position: relative;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -31,56 +31,65 @@
     position: absolute; width: 236px; height: 132px; padding: 19px 20px 15px;
     display: flex; flex-direction: column;
     background: var(--card); border: 1px solid var(--border); border-radius: 0;
-    box-shadow: 0 1px 2px rgba(13, 13, 13, .05);
   }
   .card h3 { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
   .card .sub { margin-top: 3px; font-family: var(--font-mono); font-size: 14px; color: var(--muted); white-space: nowrap; }
   .card .foot { margin-top: auto; padding-top: 10px; display: flex; align-items: center; }
   .pill {
-    padding: 2px 8px; background: #efeeec; color: var(--label);
+    padding: 2px 8px; background: #222120; color: var(--label);
     font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   }
 
-  .card.start { border-color: var(--ink); box-shadow: 0 0 0 5px rgba(13, 13, 13, .06); }
+  .card.start { border-color: #e9e7e5; box-shadow: 0 0 0 5px rgba(255, 255, 255, .06); }
   .card.start .pill { background: var(--ink); color: var(--bg); }
-  .card.solid { box-shadow: none; background: transparent; }
-  .card.mcp { background: #e8e6e4; box-shadow: none; }
-  .card.mcp .sub { color: #5f5c5c; }
-  .card.mcp .pill { background: rgba(13, 13, 13, .07); color: #4d4b4b; }
+  .card.solid { background: transparent; }
+  .card.mcp { background: #070707; border-color: rgba(255, 255, 255, .07); box-shadow: inset 0 1px 0 rgba(0, 0, 0, .6); }
+  .card.mcp .pill { background: #1a1a1a; color: #9d9a99; }
 
   .label {
     position: absolute; transform: translate(-50%, -50%); z-index: 6;
     padding: 3px 6px; background: var(--bg);
-    font-family: var(--font-mono); font-size: 12px; line-height: 1; color: #8d8a8a; white-space: nowrap;
+    font-family: var(--font-mono); font-size: 12px; line-height: 1; color: var(--muted); white-space: nowrap;
   }
+
+  .group { position: absolute; height: 12px; display: flex; align-items: center; gap: 10px; }
+  .group::before, .group::after { content: ""; width: 1px; height: 9px; background: var(--muted); opacity: .6; }
+  .group b {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #8a8786; white-space: nowrap;
+  }
+  .group i { flex: 1; height: 1px; background: rgba(255, 255, 255, .14); }
 </style>
 </head>
 <body>
-<svg width="1554" height="408" viewBox="0 0 1554 408" fill="none" stroke="#8d8a8a" stroke-width="1">
-  <path d="M364 114.5H478"/><path d="M718 114.5H832"/><path d="M1072 114.5H1186"/><path d="M600.5 180V224" stroke-dasharray="6 6.67"/>
-  <g fill="#8d8a8a" stroke="none"><path d="M482 114.5l-6 -3.5v7z"/><path d="M836 114.5l-6 -3.5v7z"/><path d="M1190 114.5l-6 -3.5v7z"/><path d="M600.5 228l-3.5 -6h7z"/></g>
-  <g fill="none"><path d="M128.5 64.5V48.5H144.5M347.5 48.5H363.5V64.5M363.5 163.5V179.5H347.5M144.5 179.5H128.5V163.5" stroke="rgba(13,13,13,.35)" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="butt"/><path d="M482.5 60.5V48.5H494.5M705.5 48.5H717.5V60.5M717.5 167.5V179.5H705.5M494.5 179.5H482.5V167.5" stroke="rgba(13,13,13,.35)" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="butt"/><path d="M836.5 60.5V48.5H848.5M1059.5 48.5H1071.5V60.5M1071.5 167.5V179.5H1059.5M848.5 179.5H836.5V167.5" stroke="rgba(13,13,13,.35)" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="butt"/><path d="M1190.5 60.5V48.5H1202.5M1413.5 48.5H1425.5V60.5M1425.5 167.5V179.5H1413.5M1202.5 179.5H1190.5V167.5" stroke="rgba(13,13,13,.35)" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="butt"/><path d="M482.5 240.5V228.5H494.5M705.5 228.5H717.5V240.5M717.5 347.5V359.5H705.5M494.5 359.5H482.5V347.5" stroke="rgba(13,13,13,.35)" stroke-width="1.75" stroke-linejoin="miter" stroke-linecap="butt"/></g>
+<svg width="1554" height="448" viewBox="0 0 1554 448" fill="none" stroke="#6f6c6b" stroke-width="1">
+  <path d="M364 138.5H478"/><path d="M718 138.5H832"/><path d="M1072 138.5H1186"/><path d="M600.5 204V252" stroke-dasharray="6 6.67"/>
+  <g fill="#6f6c6b" stroke="none"><path d="M482 138.5l-6 -3.5v7z"/><path d="M836 138.5l-6 -3.5v7z"/><path d="M1190 138.5l-6 -3.5v7z"/><path d="M600.5 256l-3.5 -6h7z"/></g>
+  <g fill="none" stroke="rgba(255,255,255,.32)" stroke-width="1.75"><path d="M482.5 84.5V72.5H494.5M705.5 72.5H717.5V84.5M717.5 191.5V203.5H705.5M494.5 203.5H482.5V191.5"/><path d="M836.5 84.5V72.5H848.5M1059.5 72.5H1071.5V84.5M1071.5 191.5V203.5H1059.5M848.5 203.5H836.5V191.5"/><path d="M1190.5 84.5V72.5H1202.5M1413.5 72.5H1425.5V84.5M1425.5 191.5V203.5H1413.5M1202.5 203.5H1190.5V191.5"/><path d="M482.5 268.5V256.5H494.5M705.5 256.5H717.5V268.5M717.5 375.5V387.5H705.5M494.5 387.5H482.5V375.5"/></g>
 </svg>
-<div class="label" style="left:423px; top:114.5px">Redirects</div><div class="label" style="left:777px; top:114.5px">References</div><div class="label" style="left:1131px; top:114.5px">Loads</div>
-<div class="card start" style="left:128px; top:48px">
+<div class="label" style="left:423px; top:138.5px">Redirects</div><div class="label" style="left:777px; top:138.5px">References</div><div class="label" style="left:1131px; top:138.5px">Loads</div>
+<div class="group" style="left:128px; top:42px; width:236px"><b>Always loaded</b><i></i></div>
+<div class="group" style="left:482px; top:42px; width:944px"><b>On demand</b><i></i></div>
+<div class="group" style="left:482px; top:406px; width:236px"><b>Optional</b><i></i></div>
+<div class="card start" style="left:128px; top:72px">
   <h3>AGENTS.md</h3><div class="sub">Entry point, kept short</div>
   <div class="foot"><span class="pill">Entry</span></div>
 </div>
-<div class="card " style="left:482px; top:48px">
+<div class="card" style="left:482px; top:72px">
   <h3>Skill</h3><div class="sub">Domain rules</div>
   <div class="foot"><span class="pill">Context</span></div>
 </div>
-<div class="card solid" style="left:836px; top:48px">
+<div class="card solid" style="left:836px; top:72px">
   <h3>Playbook</h3><div class="sub">Defined procedure</div>
   <div class="foot"><span class="pill">Reference</span></div>
 </div>
-<div class="card " style="left:1190px; top:48px">
+<div class="card" style="left:1190px; top:72px">
   <h3>Skill</h3><div class="sub">Loaded on demand</div>
   <div class="foot"><span class="pill">Context</span></div>
 </div>
-<div class="card mcp" style="left:482px; top:228px">
-  <h3>MCP Server</h3><div class="sub">External Connection</div>
-  <div class="foot"><span class="pill">Optional</span></div>
+<div class="card mcp" style="left:482px; top:256px">
+  <h3>MCP Server</h3><div class="sub">External connection</div>
+  <div class="foot"><span class="pill">External</span></div>
 </div>
 </body>
 </html>
