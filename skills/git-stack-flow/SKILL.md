@@ -1,6 +1,6 @@
 ---
 name: git-stack-flow
-description: Git commit and branch conventions, opening PRs, unblocking a PR stack to merge-readiness, branch deletion after merge, and worktree cleanup. Use when committing, branching, opening a PR, checking PR or CI status, resolving review threads, cleaning up after a PR merges, or pruning stale worktrees.
+description: Git commit and branch conventions, opening PRs, scoring merge risk, unblocking a PR stack to merge-readiness, branch deletion after merge, and worktree cleanup. Use when committing, branching, opening a PR, assessing how risky a PR is to merge, checking PR or CI status, resolving review threads, cleaning up after a PR merges, or pruning stale worktrees.
 ---
 
 # Git stack flow
@@ -29,7 +29,7 @@ Sister skill to `triage`, which owns intake of issues and external PRs up to a `
    - **Why.** Intent and approach, 1-2 paragraphs.
    - **Scope.** Real symbols/paths touched.
    - **Tradeoffs.** Rejected alternatives worth noting.
-   - **Blast radius.** Who/what it touches, safety assessment.
+   - **Merge risk.** The score line per [references/merge-risk.md](references/merge-risk.md), last, with no heading.
    - **Verification.** What was run, what happened.
    Cap it around 40 lines.
 6. Open the PR ready, never as a draft, unless the user asks for a draft. Use `gh pr create`, if available, or whatever forge tooling the project uses. Without a CLI, push the branch and open the PR through the forge's web UI, or hand the user the compare URL. Some PR-creation tools default to draft regardless of flags. When a draft wasn't requested, check with `gh pr view <number>` after creating and run `gh pr ready <number>` if it opened as a draft anyway.
@@ -61,7 +61,7 @@ Rules:
 9. **Stop at the human's line.** Owner approval is something to wait for, not something to push past. Never merge, and never treat "unblock this" as authorization to merge.
 10. **Keep review fixes inside the PR's intent.** Grade each finding yourself, whatever label the reviewer gave it. A blocker breaks the intended case. A should is a bug callers will hit within the intent. Everything else is a nit: another code path, a rare edge case, a small perf cost, an extra test or guard. Fix blockers and shoulds with the smallest change, and prefer one that deletes or narrows code. Decline each nit in one line with the reason, and list it as a follow-up in the report. Rule 8's escalation still applies to nits in sensitive areas. If a finding is still disputed after two replies, stop and put both positions to the human. Never concede just to end the loop.
 
-Report back: mode, frontier status, what got fixed vs. dismissed (with reasons), what's still pending, and what needs a human decision.
+Report back: mode, frontier status, merge risk score per [references/merge-risk.md](references/merge-risk.md), what got fixed vs. dismissed (with reasons), what's still pending, and what needs a human decision.
 
 **Rationalizations to catch:**
 

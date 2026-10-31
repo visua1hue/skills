@@ -21,7 +21,7 @@ A few skills come from **Upstream** authors, mirrored and not forked. A weekly s
 - [neural-antipattern](skills/neural-antipattern/): Plain, concise prose for docs, commits, and PRs
 - [eng-principles](skills/eng-principles/): Design and verification principles for code, with task playbooks
 - [tests-by-contract](skills/tests-by-contract/): Authoring gate and audit for test value
-- [git-stack-flow](skills/git-stack-flow/): Commit/branch conventions, PR flow, and worktree audit
+- [git-stack-flow](skills/git-stack-flow/): Commit/branch conventions, PR flow, merge risk score, and worktree audit
 - [triage](skills/triage/): GitHub issue and PR triage state machine
 - [security-audit](skills/security-audit/): Source-first security audits with independently verified findings. **Upstream**, Author: [Cloudflare](https://github.com/cloudflare/security-audit-skill/tree/main/skills/security-audit)
 - [ts-typesafe](skills/ts-typesafe/): Types that match runtime, with boundary parsing, no unchecked casts, inference, type tests, and strict tsconfig
