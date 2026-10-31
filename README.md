@@ -32,7 +32,6 @@ A few skills come from **Upstream** authors, mirrored and not forked. A weekly s
 ### Workflow
 
 - [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian via CLI. **Upstream**, Author: [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
-- [anatomy](skills/anatomy/): Animated isometric SVG illustrations. **Upstream**, Author: [Ryan](https://github.com/wheresryan22/anatomy)
 
 ## MCP Servers
 
