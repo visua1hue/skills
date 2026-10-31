@@ -82,7 +82,7 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 5. **Apply the outcome.** Show the maintainer the draft comment and the label changes first, and post or close only after they approve:
    - `ready-for-agent`: post an agent brief comment ([references/agent-brief.md](references/agent-brief.md)). For a PR, ask the maintainer where the work lands first.
-   - `ready-for-human`: same structure as an agent brief, with the `Why human` field filled in (judgment calls, external access, design decisions, manual testing).
+   - `ready-for-human`: same structure as an agent brief, with the `Why human` field filled in (judgment calls, external access, design decisions, manual testing). For a PR, add a merge risk score per `git-stack-flow`.
    - `needs-info`: post triage notes (template below).
    - `wontfix`: close, with the comment depending on *why*:
      - **Already implemented.** The change already exists in the codebase. Point to where it lives.
