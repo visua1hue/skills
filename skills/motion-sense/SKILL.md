@@ -168,15 +168,3 @@ Prefer earlier moves:
 | Focus left on a removed element after a view transition | Focus the new view's heading when `finished` resolves |
 | Load animations that don't replay after a client-side route change | Reinit on the router's post-navigation lifecycle event (load presets: `motion-engine` Paint & Load). A view the user returns to many times a day shows its final state instead; frequency still decides |
 | Abrupt state change with no transition where one would aid comprehension (instant visibility toggle, jarring content swap) | Add a purposeful transition, still gated by the Decision Framework above, not a license to animate everything |
-
-## External References
-
-- [`@starting-style`](https://developer.mozilla.org/en-US/docs/Web/CSS/@starting-style) / [`transition-behavior`](https://developer.mozilla.org/en-US/docs/Web/CSS/transition-behavior), MDN
-- [View Transitions API](https://developer.chrome.com/docs/web-platform/view-transitions) / [What's new in view transitions (2025)](https://developer.chrome.com/blog/view-transitions-in-2025), Chrome for Developers
-- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance), Chrome. Source of the cross-document render-blocking, focus and partial-page rules
-- [react-view-transitions](https://github.com/vercel-labs/agent-skills/tree/main/skills/react-view-transitions), Vercel. React `<ViewTransition>`
-- [`animateView()`](https://motion.dev/docs/animate-view), Motion.dev docs
-- [`linear()` easing function](https://developer.mozilla.org/en-US/docs/Web/CSS/easing-function/linear), MDN
-- [easing.dev](https://easing.dev/) / [easings.co](https://easings.co/), custom easing curve playgrounds
-- [emilkowalski/skills](https://github.com/emilkowalski/skills), Emil Kowalski. Source of the decision framework, curves, durations and component patterns
-- [jakubkrehel/skills](https://github.com/jakubkrehel/skills), Jakub Krehel. Source of the exit-size, first-render and theme-switch rules

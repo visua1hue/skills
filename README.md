@@ -14,7 +14,7 @@ MCP servers are optional, and this repo only links them. The [Agent Plugins spec
 
 Skills are either **Model-invoked**, where the agent activates them when your request matches, or **User-invoked** via a slash command like `/triage`.
 
-A few skills come from **Upstream** authors, mirrored and not forked. A weekly sync keeps them updated.
+A few skills come from **Upstream** authors, mirrored and not forked. A weekly sync keeps them updated. Adapted work is credited, with its license, in the skill's own `CREDITS.md`.
 
 ### Engineering
 

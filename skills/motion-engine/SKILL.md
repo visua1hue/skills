@@ -41,7 +41,7 @@ Animating any of these triggers layout or paint on the main thread every frame. 
 
 To animate size or position changes, use `transform: scale()` and `transform: translate()` instead. Where the end size or position is only known after layout, measure once before and once after, then animate the difference with `transform` (FLIP): one layout read, not one per frame.
 
-The three lists condense the six tiers (S to F) of Motion's performance tier list, linked under External References.
+The three lists condense the six tiers (S to F) of Motion's performance tier list (credit in `CREDITS.md`).
 
 ### Compositor Hygiene
 
@@ -197,15 +197,3 @@ Performance only. Feeds the Performance tier of `motion-sense`'s review, which o
 **Real device testing**: for touch gestures, test on physical hardware. Simulators don't replicate gesture latency or frame pacing.
 
 **Automated verification**: Chrome DevTools MCP (`chrome-devtools-mcp`): run `performance_start_trace` / `performance_stop_trace` and `lighthouse_audit` to validate compositor-only rendering.
-
-## External References
-
-- [Web Animation Performance Tier List](https://motion.dev/blog/web-animation-performance-tier-list). Motion.dev
-- [`animateView()`](https://motion.dev/docs/animate-view). Motion.dev docs
-- [CSS animation-timeline](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline). MDN
-- [easing.dev](https://easing.dev/). Custom easing curve playground
-- [detect-gpu](https://github.com/pmndrs/detect-gpu). GPU benchmark/tier classification, pmndrs
-- [Scaling performance](https://r3f.docs.pmnd.rs/advanced/scaling-performance). React Three Fiber
-- [`will-change`](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change). MDN
-- [Don't hide the LCP image behind animations](https://shopify.dev/docs/storefronts/themes/best-practices/performance/dont-hide-lcp-image-behind-animations). Shopify
-- [jakubkrehel/skills](https://github.com/jakubkrehel/skills). Jakub Krehel. Source of the keyframe hidden-state pattern and the `will-change` side effects
