@@ -14,24 +14,26 @@ MCP servers are optional, and this repo only links them. The [Agent Plugins spec
 
 Skills are either **Model-invoked**, where the agent activates them when your request matches, or **User-invoked** via a slash command like `/triage`.
 
-A few skills come from **Upstream** authors, mirrored and not forked. A weekly sync keeps them updated. Adapted work is credited, with its license, in the skill's own `CREDITS.md`.
+Adapted work is credited, with its license, in the skill's own `CREDITS.md`.
 
-### Engineering
+### Built-in
 
 - [neural-antipattern](skills/neural-antipattern/): Plain, concise prose for docs, commits, and PRs
 - [eng-principles](skills/eng-principles/): Design and verification principles for code, with task playbooks
 - [tests-by-contract](skills/tests-by-contract/): Authoring gate and audit for test value
 - [git-stack-flow](skills/git-stack-flow/): Commit/branch conventions, PR flow, merge risk score, and worktree audit
 - [triage](skills/triage/): GitHub issue and PR triage state machine
-- [security-audit](skills/security-audit/): Source-first security audits with independently verified findings. **Upstream**, Author: [Cloudflare](https://github.com/cloudflare/security-audit-skill/tree/main/skills/security-audit)
 - [ts-typesafe](skills/ts-typesafe/): Boundary parsing, inference, type tests, strict tsconfig
 - [motion-sense](skills/motion-sense/): Animation purpose, timing, and CSS technique
 - [motion-engine](skills/motion-engine/): Performant animations with CSS, WAAPI, and Motion.dev
 - [ui-baseline](skills/ui-baseline/): Type/spacing tokens, component patterns, adaptive CSS
 
-### Workflow
+### Upstream
 
-- [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian via CLI. **Upstream**, Author: [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
+Mirrored from their authors, not forked. A weekly sync keeps them updated.
+
+- [security-audit](skills/security-audit/): Source-first security audits with independently verified findings. Author: [Cloudflare](https://github.com/cloudflare/security-audit-skill/tree/main/skills/security-audit)
+- [obsidian-cli](skills/obsidian-cli/): Read, search, and manage Obsidian via CLI. Author: [Steph Ango](https://github.com/kepano/obsidian-skills/tree/main/skills/obsidian-cli)
 
 ## MCP Servers
 
