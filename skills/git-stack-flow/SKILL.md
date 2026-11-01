@@ -27,10 +27,10 @@ Sister skill to `triage`, which owns intake of issues and external PRs up to a `
 4. Prefer several narrow PRs over one large PR. In a stack, each child branch rebases onto its parent; the root targets trunk. Retarget an existing child onto a new parent with `gh pr edit <pr> --base <parent-branch>`, or the equivalent on the project's forge CLI.
 5. Write the description as a short brief, sections as applicable:
    - **Why.** Intent and approach, 1-2 paragraphs.
-   - **Scope.** Real symbols/paths touched.
+   - **Scope.** Real symbols/paths touched, caller before callee. When the change adds or reroutes a call path across 3 or more files, draw it as a call tree per [references/call-tree.md](references/call-tree.md).
    - **Tradeoffs.** Rejected alternatives worth noting.
-   - **Merge risk.** The score line per [references/merge-risk.md](references/merge-risk.md), last, with no heading.
    - **Verification.** What was run, what happened.
+   - **Merge risk.** The score line per [references/merge-risk.md](references/merge-risk.md), last, with no heading.
    Cap it around 40 lines.
 6. Open the PR ready, never as a draft, unless the user asks for a draft. Use `gh pr create`, if available, or whatever forge tooling the project uses. Without a CLI, push the branch and open the PR through the forge's web UI, or hand the user the compare URL. Some PR-creation tools default to draft regardless of flags. When a draft wasn't requested, check with `gh pr view <number>` after creating and run `gh pr ready <number>` if it opened as a draft anyway.
 7. Opening a PR does not start unblocking it. Post the URL and keep working; only move to the unblocking playbook when asked, or once all planned work in the stack exists.

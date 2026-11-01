@@ -21,7 +21,7 @@ Grade each check green, yellow, or red. Each grade cites its evidence, such as a
    - Green: it matches, and the description lists every extra change.
    - Yellow: the description is vague, or an extra change is unlisted.
    - Red: the diff contradicts the description, or changes behavior the description doesn't mention.
-2. **Blast radius.** What else could break. Search for code that imports or calls each changed export and count the results. Check for changes to public APIs, shared types, and config.
+2. **Blast radius.** What else could break. Search for code that imports or calls each changed export and count the results. When the PR has a call tree per [call-tree.md](call-tree.md), search only its `~` nodes; `+` nodes are new and have no callers outside the diff. Check for changes to public APIs, shared types, and config.
    - Green: few callers, no risky path.
    - Yellow: many callers, shared code, or a public API change that keeps old callers working.
    - Red: a risky path changed, or existing callers or consumers break.
