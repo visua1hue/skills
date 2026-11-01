@@ -5,7 +5,7 @@
 Use for a reported defect. For behavior that never existed, use `feature.md`.
 
 1. Reproduce the bug yourself where it was reported (P10, `../references/verification.md`). If you cannot reach that surface, say why before asking the user.
-2. List candidate causes. Rule them out with evidence: logs, a smaller input, `git bisect`, temporary logging, or a diff against similar code that works. Find where the bad value first appears and fix there, not where the error shows.
+2. List candidate causes. Rule them out with evidence: logs, a smaller input, `git bisect`, temporary logging, or a diff against similar code that works. Find where the bad value first appears and fix there, not where the error shows. If the bug comes and goes, list overlap, retries, and out-of-order results among the causes (P13).
 3. Confirm the mechanism before changing code. "The error goes away" is not a cause.
 4. If a cheap test path exists, write the failing test first and check it against `tests-by-contract`.
 5. Make the smallest change the evidence justifies (P1, P10). Revert anything a refuted hypothesis motivated.

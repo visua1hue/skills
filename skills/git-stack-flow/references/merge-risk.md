@@ -35,7 +35,7 @@ Grade each check green, yellow, or red. Each grade cites its evidence, such as a
    - Green: reverting the commit restores the old behavior.
    - Yellow: a revert also needs manual steps, such as a cache flush, a config change, or users redoing an action.
    - Red: a revert can't restore the old state. Examples are a migration that drops or rewrites data, deleted data, a published package or API version, and emails, webhooks, or payments already sent.
-5. **Detection.** If the change breaks after merge, someone finds out before users report it.
+5. **Detection.** If the change breaks after merge, someone finds out before users report it (`eng-principles` P14).
    - Green: failures throw, log, or reach monitoring, or the break shows at build or startup.
    - Yellow: failures on an important path are logged, but nothing alerts anyone.
    - Red: errors are swallowed by an empty catch, a fallback that hides the failure, or a default value returned in place of an error.
