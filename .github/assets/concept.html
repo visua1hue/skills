@@ -12,9 +12,13 @@
     --muted: #9a9695;
     --border: rgba(0, 0, 0, .08);
     --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+    --fs-title-lg: 28px;
+    --fs-title: 24px;
+    --fs-text: 13px;
+    --fs-tag: 11px;
   }
   * { box-sizing: border-box; margin: 0; }
-  html, body { width: 1554px; height: 448px; overflow: hidden; }
+  html, body { width: 1554px; height: 394px; overflow: hidden; }
   body {
     position: relative;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -28,19 +32,24 @@
   svg { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
 
   .card {
-    position: absolute; width: 236px; height: 132px; padding: 19px 20px 15px;
+    position: absolute; width: 196px; height: 108px; padding: 14px 16px 12px;
     display: flex; flex-direction: column;
     background: var(--card); border: 1px solid var(--border); border-radius: 0;
   }
-  .card h3 { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
-  .card .sub { margin-top: 3px; font-family: var(--font-mono); font-size: 14px; color: var(--muted); white-space: nowrap; }
+  .card h3 { font-size: var(--fs-title); font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
+  .card .sub { margin-top: 4px; font-family: var(--font-mono); font-size: var(--fs-text); color: var(--muted); white-space: nowrap; }
   .card .foot { margin-top: auto; padding-top: 10px; display: flex; align-items: center; }
   .pill {
     padding: 2px 8px; background: #f0eeeb; color: var(--label);
-    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    font-size: var(--fs-tag); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   }
 
-  .card.start { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .card.start {
+    width: 230px; height: 128px; padding: 18px 20px 16px;
+    background: var(--ink); border-color: var(--ink); color: var(--bg);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+  }
+  .card.start h3 { font-size: var(--fs-title-lg); }
   .card.start .sub { color: #d0cdcd; }
   .card.start .pill { background: var(--bg); color: var(--ink); }
   .card.solid { background: transparent; border-color: rgba(0, 0, 0, .24); }
@@ -50,45 +59,49 @@
   .label {
     position: absolute; transform: translate(-50%, -50%); z-index: 6;
     padding: 3px 6px; background: var(--bg);
-    font-family: var(--font-mono); font-size: 12px; line-height: 1; color: var(--muted); white-space: nowrap;
+    font-family: var(--font-mono); font-size: var(--fs-text); line-height: 1; color: var(--muted); white-space: nowrap;
   }
 
   .group { position: absolute; height: 12px; display: flex; align-items: center; gap: 10px; }
   .group::before, .group::after { content: ""; width: 1px; height: 9px; background: var(--muted); opacity: .6; }
   .group b {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    font-size: var(--fs-tag); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
     color: #8a8685; white-space: nowrap;
   }
   .group i { flex: 1; height: 1px; background: rgba(0, 0, 0, .1); }
 </style>
 </head>
 <body>
-<svg width="1554" height="448" viewBox="0 0 1554 448" fill="none" stroke="#b4b0ae" stroke-width="1">
-  <path d="M364 138.5H478"/><path d="M718 138.5H832"/><path d="M1072 138.5H1186"/><path d="M600.5 204V252" stroke-dasharray="6 6.67"/>
-  <g fill="#b4b0ae" stroke="none"><path d="M482 138.5l-6 -3.5v7z"/><path d="M836 138.5l-6 -3.5v7z"/><path d="M1190 138.5l-6 -3.5v7z"/><path d="M600.5 256l-3.5 -6h7z"/></g>
-  <g fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1.75"><path d="M482.5 84.5V72.5H494.5M705.5 72.5H717.5V84.5M717.5 191.5V203.5H705.5M494.5 203.5H482.5V191.5"/><path d="M836.5 84.5V72.5H848.5M1059.5 72.5H1071.5V84.5M1071.5 191.5V203.5H1059.5M848.5 203.5H836.5V191.5"/><path d="M1190.5 84.5V72.5H1202.5M1413.5 72.5H1425.5V84.5M1425.5 191.5V203.5H1413.5M1202.5 203.5H1190.5V191.5"/><path d="M482.5 268.5V256.5H494.5M705.5 256.5H717.5V268.5M717.5 375.5V387.5H705.5M494.5 387.5H482.5V375.5"/></g>
+<svg width="1554" height="394" viewBox="0 0 1554 394" fill="none" stroke="#b4b0ae" stroke-width="1">
+  <path d="M292 136.5H392"/><path d="M592 136.5H692"/><path d="M892 136.5H992"/><path d="M1192 136.5H1292"/><path d="M494.5 190.0V234.0" stroke-dasharray="6 6.67"/>
+  <g fill="#b4b0ae" stroke="none"><path d="M396 136.5l-6 -3.5v7z"/><path d="M696 136.5l-6 -3.5v7z"/><path d="M996 136.5l-6 -3.5v7z"/><path d="M1296 136.5l-6 -3.5v7z"/><path d="M494.5 238.0l-3.5 -6h7z"/></g>
+  <g fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1.75"><path d="M396.5 94.5V82.5H408.5M579.5 82.5H591.5V94.5M591.5 177.5V189.5H579.5M408.5 189.5H396.5V177.5"/><path d="M696.5 94.5V82.5H708.5M879.5 82.5H891.5V94.5M891.5 177.5V189.5H879.5M708.5 189.5H696.5V177.5"/><path d="M996.5 94.5V82.5H1008.5M1179.5 82.5H1191.5V94.5M1191.5 177.5V189.5H1179.5M1008.5 189.5H996.5V177.5"/><path d="M1296.5 94.5V82.5H1308.5M1479.5 82.5H1491.5V94.5M1491.5 177.5V189.5H1479.5M1308.5 189.5H1296.5V177.5"/><path d="M396.5 250.5V238.5H408.5M579.5 238.5H591.5V250.5M591.5 333.5V345.5H579.5M408.5 345.5H396.5V333.5"/></g>
 </svg>
-<div class="label" style="left:423px; top:138.5px">Redirects</div><div class="label" style="left:777px; top:138.5px">References</div><div class="label" style="left:1131px; top:138.5px">Loads</div>
-<div class="group" style="left:128px; top:42px; width:236px"><b>Always loaded</b><i></i></div>
-<div class="group" style="left:482px; top:42px; width:944px"><b>On demand</b><i></i></div>
-<div class="group" style="left:482px; top:406px; width:236px"><b>Optional</b><i></i></div>
-<div class="card start" style="left:128px; top:72px">
+<div class="label" style="left:344.0px; top:136.5px">Redirects</div><div class="label" style="left:644.0px; top:136.5px">References</div><div class="label" style="left:944.0px; top:136.5px">Loads</div><div class="label" style="left:1244.0px; top:136.5px">Executes</div>
+<div class="group" style="left:62px; top:42px; width:230px"><b>Always loaded</b><i></i></div>
+<div class="group" style="left:396px; top:42px; width:1096px"><b>On demand</b><i></i></div>
+<div class="group" style="left:396px; top:364.0px; width:196px"><b>Optional</b><i></i></div>
+<div class="card start" style="left:62px; top:72px">
   <h3>AGENTS.md</h3><div class="sub">Entry point, kept short</div>
   <div class="foot"><span class="pill">Entry</span></div>
 </div>
-<div class="card" style="left:482px; top:72px">
+<div class="card " style="left:396px; top:82.0px">
   <h3>Skill</h3><div class="sub">Domain rules</div>
   <div class="foot"><span class="pill">Context</span></div>
 </div>
-<div class="card solid" style="left:836px; top:72px">
+<div class="card solid" style="left:696px; top:82.0px">
   <h3>Playbook</h3><div class="sub">Defined procedure</div>
   <div class="foot"><span class="pill">Reference</span></div>
 </div>
-<div class="card" style="left:1190px; top:72px">
+<div class="card " style="left:996px; top:82.0px">
   <h3>Skill</h3><div class="sub">Loaded on demand</div>
   <div class="foot"><span class="pill">Context</span></div>
 </div>
-<div class="card mcp" style="left:482px; top:256px">
+<div class="card solid" style="left:1296px; top:82.0px">
+  <h3>Script</h3><div class="sub">Compact output</div>
+  <div class="foot"><span class="pill">Execution</span></div>
+</div>
+<div class="card mcp" style="left:396px; top:238.0px">
   <h3>MCP Server</h3><div class="sub">External connection</div>
   <div class="foot"><span class="pill">External</span></div>
 </div>
