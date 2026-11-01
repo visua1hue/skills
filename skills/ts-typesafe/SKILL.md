@@ -57,7 +57,7 @@ Numbers are stable ids. Cite them in replies and reviews (`TS7`). A removed rule
 | [references/pitfalls.md](references/pitfalls.md) | A claim about TS behavior needs checking, or advice depends on the version |
 | [references/performance.md](references/performance.md) | Type checking or the editor is slow |
 
-Every `ts` block in this skill was compiled on TS 5.5 and 7.0 with the baseline in [references/tsconfig.md](references/tsconfig.md). Blocks marked `ts skip` need a library and were not compiled. Sources and licenses are in [SOURCES.md](SOURCES.md).
+Every `ts` block in this skill was compiled on TS 5.5 and 7.0 with the baseline in [references/tsconfig.md](references/tsconfig.md). Blocks marked `ts skip` need a library and were not compiled.
 
 ## Related skills
 

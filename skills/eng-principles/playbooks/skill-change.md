@@ -6,7 +6,7 @@ Use for an edit to a skill, a playbook, or an agent instruction file such as `AG
 
 1. State the behavior change in one sentence: what agents do now, and what they should do instead.
 2. Read the current file in full and the files it links. If another skill already covers the rule, edit it there instead of adding a copy.
-3. If the change draws on outside sources, record each source and its license. Rewrite their text instead of copying it.
+3. If the change copies or adapts outside text, or one source shaped the structure, record author, source, license, and use in the skill's `CREDITS.md`. Doc links and single facts need no entry. Rewrite outside text instead of copying it.
 4. Write down each decision and its reason before editing.
 5. Edit. Keep only text that changes a decision. Point to other skills by name instead of restating them. A correction that keeps coming back becomes a lint rule or check, not more text (P5).
 6. Run `neural-antipattern` over the changed text.

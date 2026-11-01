@@ -68,5 +68,3 @@ Write it as markdown, not inside a code block:
 - Not tested in the app
 
 All green is the line alone: **Merge risk** `[#####]` 5/5, skim
-
-Sources and licenses: [SOURCES.md](../SOURCES.md).

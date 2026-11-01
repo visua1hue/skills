@@ -95,15 +95,3 @@ A rule that needs a rendered page to judge (overflow at 320px, a stuck hover sta
 | Truncated text with no way to the full value | Expand control, detail view, or a keyboard-reachable tooltip |
 | Input text under 16px on touch | `font-size: max(16px, 1rem)` |
 | Padded parent and child with the same `border-radius` | Outer radius = inner radius + padding |
-
-## External References
-
-- [`text-wrap`](https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap), MDN
-- [browser-compat-data](https://github.com/mdn/browser-compat-data), MDN. Source of every version in `platform-features.md`
-- [WCAG 2.2](https://www.w3.org/TR/WCAG22/), W3C. Target size (2.5.8, 2.5.5), focus not obscured (2.4.11), resize and reflow (1.4.4, 1.4.10)
-- [Addressing Accessibility Concerns With Using Fluid Type](https://www.smashingmagazine.com/2023/11/addressing-accessibility-concerns-fluid-type/), Maxwell Barvian. Source of the 2.5× cap
-- [vojtaholik/good-css](https://github.com/vojtaholik/good-css), Vojta Holik, MIT. Source of the intrinsic patterns, the hit-area inset, the `none` hue rule and several "watch for" notes
-- [jakubkrehel/skills](https://github.com/jakubkrehel/skills), Jakub Krehel, MIT. Source of the color notation rule, the WCAG target-size correction, truncation with a way back, the grouping gap and the "Not verified" rule
-- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance), Chrome, Apache-2.0. Source of the validation timing, numeric-code inputs and style query rules
-- [ibelick/ui-skills](https://github.com/ibelick/ui-skills), ibelick, MIT. Source of the "existing accessible primitives first" rule
-- [Utopia.fyi](https://utopia.fyi/), fluid type & space scale calculator; the convention this baseline's raw step naming is drawn from

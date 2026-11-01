@@ -108,6 +108,21 @@ for d in skill_dirs:
         for f in sorted(listed - set(files)):
             errors.append(f"{md}: lists playbooks/{f}, which does not exist")
 
+    # CREDITS.md: each entry is "- Name, [source](url), License." plus indented "- " sub-bullets on what was used
+    cr = f"skills/{d}/CREDITS.md"
+    if os.path.isfile(cr):
+        lines = open(cr, encoding="utf-8").read().splitlines()
+        entries = 0
+        for i, line in enumerate(lines):
+            if line.startswith("- "):
+                entries += 1
+                if not re.match(r"^- [^,]+, \[[^\]]+\]\(https?://[^)]+\), [^,.]+\.$", line):
+                    errors.append(f"{cr}: entry '{line}' must read '- Name, [source](url), License.'")
+                if i + 1 >= len(lines) or not lines[i + 1].startswith("  - "):
+                    errors.append(f"{cr}: entry '{line}' needs a sub-bullet saying what was used")
+        if not entries:
+            errors.append(f"{cr}: no entries")
+
 for name, dirs in seen.items():
     if len(dirs) > 1:
         errors.append(f"duplicate skill name '{name}' in: {', '.join(dirs)}")
