@@ -10,6 +10,14 @@ Context, loaded when it matters. [`AGENTS.md`](AGENTS.md) stays short and redire
 
 MCP servers are optional, and this repo only links them. The [Agent Plugins specification](https://agent-plugins.org/specification) describes skills and MCP servers as the two parts of a plugin. This repo ships no `plugin.json` or `mcp.json`, so it follows the idea but not the format.
 
+### Build on it
+
+Drop the prompt below into your agent. The stack is agent/harness agnostic.
+
+```text
+Review https://github.com/visua1hue/skills and explain the concept. Then help me adopt the relevant parts, or design my own stack. Propose the stack first, apply only what gets approved.
+```
+
 ## Skills
 
 Skills are either **Model-invoked**, where the agent activates them when your request matches, or **User-invoked** via a slash command like `/triage`.
