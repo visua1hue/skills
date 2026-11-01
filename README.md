@@ -15,7 +15,8 @@ MCP servers are optional, and this repo only links them. The [Agent Plugins spec
 Drop the prompt below into your agent. The stack is agent/harness agnostic.
 
 ```text
-Review https://github.com/visua1hue/skills and explain the concept. Then help me adopt the relevant parts, or design my own stack. Propose the stack first, apply only what gets approved.
+Review https://github.com/visua1hue/skills and explain the concept in depth.
+Then help me adopt the relevant parts, or design my own stack. Draft the stack first, apply only what gets approved.
 ```
 
 ## Skills
