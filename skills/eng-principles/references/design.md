@@ -10,6 +10,7 @@ Pick the shape before the logic. The shape decides how many states the code can 
 - Use a lookup table instead of a growing `switch` or `if` chain keyed on the same value.
 - Parse untrusted input once at the boundary into a typed value. Code past the boundary trusts the type and does not re-check.
 - Derive related types and values from one source, so a rename fails the build instead of drifting.
+- Store each fact once. Compute the rest from it: totals, counts, flags, and view state that follows from props. A stored copy, such as a cache, a denormalized column, or state mirrored from the server, names its owner and the event that invalidates it. Two writable copies of the same fact drift.
 
 ```ts
 // Before: 8 combinations, 3 of them valid
@@ -34,6 +35,8 @@ A module should have one reason to change. When a fix for a display bug touches 
 
 Keep the data layer pure, so it runs and tests without the framework or the network.
 
+Dependencies point inward. UI and IO import the data layer, and the data layer imports neither. The boundary is wrong when one change forces edits in several modules, or when a module can't be tested without another module's internals. Move the boundary so the change lands in one place.
+
 ```ts
 // Before: fetch, rule, and rendering in one function
 async function renderOverdue(el: HTMLElement) {
@@ -56,7 +59,7 @@ Hot code runs per frame, per keystroke, per event, per item, or per request. Fin
 - Hoist constants, compiled patterns, formatters, and lookup tables out of the function.
 - Replace repeated searches inside a loop with an index built once. That turns O(n·m) into O(n + m).
 - Batch reads before writes when both touch the same expensive resource. Never interleave them in a loop.
-- Cache derived values keyed on their inputs, and invalidate on change.
+- Cache derived values. The key covers every input, the size has a bound, and one owner invalidates the entry when an input changes. A cache is a copy, so P6 applies.
 - Debounce or throttle high-frequency events when the work does not need every event.
 - Flag O(n²) or worse on input with no upper bound.
 
