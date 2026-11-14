@@ -28,7 +28,7 @@ Detail and examples: `references/design.md`.
 
 ## Verification
 
-Detail and what counts as proof per change type: `references/verification.md`.
+Steps for P10: `playbooks/bug-fix.md`. What counts as proof per change type: `references/verification.md`.
 
 10. **Fix root causes.** Reproduce first. Narrow the cause with evidence, not guesses. Ship the smallest change the evidence justifies and nothing that only "might help".
 11. **Prove it works.** Verify where the change shows up: the running app, the command, the endpoint. A passing build or typecheck is not proof of behavior. "Inconclusive" is not a pass.
