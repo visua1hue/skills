@@ -6,10 +6,10 @@ Use for a question about how code works, why it is built a certain way, or which
 
 1. Restate the question in one sentence. If the scope is unclear, state your reading and go on (P2).
 2. Search for the code that answers it, then read the matching files in ranges.
-3. For a "why" question, read the history: `git log` and `git blame` on the lines, and the PR or issue they link.
+3. For a "why" question, read the project's decision records and ARCHITECTURE.md first, then the history: `git log` and `git blame` on the lines, and the PR or issue they link. If the answer is a hard-to-undo decision nobody recorded, offer to draft a record (P12).
 4. Run what you can observe instead of inferring it from source (P2).
 5. If the question rests on a wrong premise, say so with the evidence (P3).
-6. For a choice between options, compare them in a table and recommend one.
+6. For a choice between options, compare them in a table and recommend one. For a structural choice, compare what each hides behind its interface (P15), what it couples (P16), and the cost of undoing it (P12).
 
 **Evidence.** Every claim cites `file:line`, a commit, or command output. Mark anything inferred as inferred.
 

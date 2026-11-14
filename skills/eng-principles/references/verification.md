@@ -16,6 +16,7 @@ Match the check to the change:
 | Data or migration | Run it on realistic data. Before and after counts or samples |
 | Performance | The same measurement before and after the change. Both numbers |
 | Refactor | Behavior unchanged: the same checks pass before and after |
+| Module boundary | The boundary check fails on a planted violation and passes once it is removed |
 
 Use the project's own scripts and tools for these checks. Its `AGENTS.md` or `package.json` names them.
 

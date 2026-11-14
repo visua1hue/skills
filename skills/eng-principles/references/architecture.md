@@ -1,6 +1,6 @@
 # Architecture principles
 
-Detail for P12 to P14. Examples use TypeScript as the illustration language. The principles apply to any language.
+Detail for P12 to P16. Examples use TypeScript as the illustration language. The principles apply to any language.
 
 ## P12. Name the trade-off
 
@@ -10,6 +10,19 @@ A design choice with a real alternative is a trade-off. Write it where the revie
 - Name the condition that would change the choice, such as a size, a load, or a new requirement. "Filtering runs in the client. Move it to the server if the list passes 10k rows."
 - A choice with no real alternative needs no entry. Don't invent options to compare.
 - Technical debt is a shortcut taken on purpose. Before taking it, open an issue that names the shortcut, its cost, and the event that should trigger the fix. Link the issue from the PR.
+
+### Reversibility
+
+- Rate each choice by the cost of undoing it. A function name or an internal file layout is cheap to undo, so decide and move on.
+- A database schema, a public API, a message format, a vendor, or a module boundary that other teams build on is expensive to undo. Sketch two or three different designs, recommend one, and get the user's approval before building it (P2).
+
+### Decision records
+
+- Write one when a choice is hard to undo, would surprise a later reader, and had a real alternative. If any of the three is missing, the PR text is enough.
+- Use the project's location and format. Without one, use `docs/adr/YYYY-MM-DD-slug.md`. Date names don't collide when two people write records at the same time.
+- A paragraph is enough: the context, the decision, the reason, and the condition that should reopen it.
+- Draft the record in the PR that carries the change. It counts once the team merges it. One developer's approval in a session is not a team decision.
+- Before proposing a design, read the records for the code it touches. When a proposal conflicts with an accepted record, cite the record and its reopen condition. Don't drop the proposal without saying so, and don't argue against the record without a new fact.
 
 ## P13. Assume overlap and retries
 
@@ -94,3 +107,60 @@ const tasks = await loadTasks().then(
   },
 );
 ```
+
+## P15. Modules hide more than they expose
+
+A caller learns a module's interface. The module pays for itself when that interface is smaller than the work it hides.
+
+- Deletion test: imagine deleting the module. If its logic would reappear in every caller, it earns its place. If the callers would barely change, it is a pass-through. Delete it.
+- An interface with one implementation adds a name and an indirection and hides nothing. Add it once a second implementation exists. A test double counts.
+- The interface is everything a caller must know: inputs, outputs, errors, invariants, and call order. If a caller has to read the implementation to use the module correctly, the interface is incomplete.
+- Prefer one call that handles the common case over several calls the caller must combine in the right order.
+- Before adding a module, find the one that already owns the concept. A second module for the same concept splits its rules across two places.
+
+```ts
+// Before: three exports that hide nothing, and a fourth file to open
+export const getUserId = (u: User) => u.id;
+export const isActive = (u: User) => u.status === "active";
+if (isActive(user)) await cache.set(getUserId(user), user);
+
+// After: callers read the fields
+if (user.status === "active") await cache.set(user.id, user);
+```
+
+## P16. Match coupling to distance
+
+Coupling is the knowledge two parts of the code share. From least to most:
+
+1. A published contract: an exported type, an API schema, an event format.
+2. Shared domain types.
+3. Internals: private fields, the order of internal calls, implementation details.
+4. Shared storage, or the same rule written in two places.
+
+Distance is how far apart the parts are: the same module, the same package, separate services, separate teams or release schedules.
+
+- Close parts may share internals. Distant parts share only a contract.
+- The costly case is distant parts that share internals in code that changes often. One change then needs edits, reviews, and releases in several places. Fix those first.
+- A rule copied into two modules is coupling that no import shows. The copies drift. Move the rule to one owner and have the other module call it (P6).
+- Splitting a module raises distance. Split only where the parts already share little.
+
+```ts
+// Before: cart and checkout each hold the threshold, and one copy was changed
+const freeShipping = subtotal >= 50; // cart.ts
+const freeShipping = subtotal > 49.99; // checkout.ts
+
+// After: shipping owns the rule, and both import it
+export const qualifiesForFreeShipping = (subtotal: number) => subtotal >= 50; // shipping.ts
+```
+
+### Changes across a boundary
+
+When callers can't change in the same release, as with a published package, a public API, stored data, or another team's service, change in three steps. Each step ships and reverts on its own.
+
+1. Expand: add the new form next to the old one.
+2. Migrate: move callers and data to the new form.
+3. Contract: remove the old form once nothing uses it.
+
+### Boundary checks
+
+Encode each boundary as a check that fails the build (P5). Use the language's module visibility, or a dependency rule tool such as dependency-cruiser, import-linter, or ArchUnit. Write the error message as the fix: which import is forbidden and where the code belongs.
