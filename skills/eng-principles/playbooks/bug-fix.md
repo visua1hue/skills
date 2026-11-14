@@ -6,9 +6,9 @@ Use for a reported defect. For behavior that never existed, use `feature.md`.
 
 1. Reproduce the bug yourself where it was reported (P10). If you cannot reach that surface, say why before asking the user.
 2. List candidate causes. Rule them out with evidence: logs, a smaller input, `git bisect`, temporary logging, or a diff against similar code that works. Find where the bad value first appears and fix there, not where the error shows. If the bug comes and goes, list overlap, retries, and out-of-order results among the causes (P13).
-3. Confirm the mechanism before changing code. "The error goes away" is not a cause.
+3. Confirm the mechanism before changing code. "The error goes away" is not a cause. Then check whether the structure caused it, such as a rule copied into two modules or two modules that disagree on an invariant (P6, P16).
 4. If a cheap test path exists, write the failing test first and check it against `tests-by-contract`.
-5. Make the smallest change the evidence justifies (P1, P10). A defensive check, retry, or longer timeout that "might help" is a hypothesis, not a fix. Revert anything a refuted hypothesis motivated.
+5. Make the smallest change the evidence justifies (P1, P10). A defensive check, retry, or longer timeout that "might help" is a hypothesis, not a fix. Revert anything a refuted hypothesis motivated. For a structural cause, the smallest fix may remove the copy so one owner remains. A larger reshape waits for `refactor.md`, with a check or an issue so it isn't lost (P5).
 6. Rerun the original reproduction on the same surface (P11).
 7. If the reproduction still fails, return to step 2. After three failed fixes, or when you can't prove a cause, stop. Your model of the system is wrong. Report what you ruled out. A retry, timeout, or design change needs the user's approval (P2).
 8. Open the PR per `git-stack-flow`, with the failing test committed before the fix.
