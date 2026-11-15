@@ -4,11 +4,17 @@ The agent stack, or profile, is a curated selection of what an agent works with:
 
 ## The Concept
 
-Context, loaded when it matters. [`AGENTS.md`](AGENTS.md) stays short and redirects the agent to a skill. The skill references a playbook, and the playbook loads further skills on demand. The concept builds on the [Agent Skills](https://agentskills.io/home) open standard.
+Context, loaded when it matters. [`AGENTS.md`](AGENTS.md) holds short, always-on rules and redirects the agent to a skill. The skill references a playbook, and the playbook loads further skills on demand. The concept builds on the [Agent Skills open standard](https://agentskills.io/home).
 
-![AGENTS.md is always loaded and redirects to a skill. On demand, the skill references a playbook, the playbook loads another skill, and that skill executes a script that returns only its output. A skill may call an optional external MCP server.](.github/assets/concept@2x.png)
+![AGENTS.md is always loaded. It holds short, always-on rules and redirects to a skill. On demand, the skill references a playbook, the playbook loads another skill, and that skill executes a script that returns compact output. A skill may call an MCP server.](.github/assets/concept@2x.png)
 
 MCP servers are optional, and this repo only links them. The [Agent Plugins specification](https://agent-plugins.org/specification) describes skills and MCP servers as the two parts of a plugin. This repo ships no `plugin.json` or `mcp.json`, so it follows the idea but not the format.
+
+From issue to merged PR, each stage loads its own skills. A human decides at two points, dispatch and review.
+
+![Five stages: Intake, Build, Verify, Pull Request, Prune. An external issue or PR enters at Intake, where triage reproduces the report and writes a brief. After a human dispatches the brief, Build starts. A direct prompt also starts at Build. Verify runs the tests, and Pull Request opens a narrow PR scored for merge risk. A human review cycle ends when the PR merges. Prune then deletes the branch, and the loop starts over with the next issue or PR.](.github/assets/sdlc-flow@2x.png)
+
+Intake takes GitHub issues and PRs. Jira, GitLab or Bitbucket work after changes to the triage setup. In a CI/CD pipeline, a label can replace the manual dispatch.
 
 ### Build on it
 

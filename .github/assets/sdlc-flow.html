@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Agent Stack SDLC flow</title>
+<style>
+  :root { --bg:#f7f5f3; --card:#fff; --ink:#0d0d0d; --muted:#9a9695; --tag:#8a8685;
+    --border:rgba(0,0,0,.08); --chip:#f0eeeb; --signal-ink:#3b3837; --signal-bg:#ebe8e5; --mcp:#555555;
+    --mono: ui-monospace,"SFMono-Regular",Menlo,Monaco,Consolas,monospace; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1554px; height:493px; overflow:hidden; }
+  body { position:relative; font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif; color:var(--ink);
+    background:var(--bg); -webkit-font-smoothing:antialiased; }
+  svg { position:absolute; inset:0; pointer-events:none; z-index:5; }
+  .card { position:absolute; padding:16px 12px 14px; display:flex; flex-direction:column;
+    background:var(--card); border:1px solid var(--border); }
+  .head { height:80px; flex-shrink:0; }
+  .card h3 { white-space:nowrap; font-size:26px; font-weight:600; letter-spacing:-0.02em; line-height:1.1; }
+  .desc { margin-top:8px; font-family:var(--mono); font-size:15px; line-height:1.45; color:var(--muted); }
+  .skills { padding-top:16px; flex-shrink:0; display:flex; flex-direction:column; align-items:flex-start; gap:5px; }
+  code { padding:2px 6px; background:var(--chip); font-family:var(--mono); font-size:16px; line-height:1.4; white-space:nowrap; }
+  code.more { color:var(--muted); }
+  .foot { margin-top:auto; flex-shrink:0; }
+  .pill { display:inline-block; padding:3px 7px; background:var(--mcp); color:#fff;
+    font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; }
+  .entry, .signal { position:absolute; z-index:6; font-size:13px; font-weight:700; letter-spacing:0.08em;
+    text-transform:uppercase; line-height:1; white-space:nowrap; }
+  .entry { transform:translate(-50%,-100%); padding:9px 13px; background:var(--ink); color:var(--bg);
+    clip-path:polygon(0 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%); }
+  .signal { transform:translateX(-50%); padding:7px 11px; background:var(--signal-bg); color:var(--signal-ink); }
+  .signal.loop { transform:translate(-50%,-50%); }
+  .gate { position:absolute; z-index:6; transform:translateX(-50%); padding:4px 10px; background:var(--bg);
+    text-align:center; white-space:nowrap; font-size:13px; font-weight:700; letter-spacing:0.08em;
+    text-transform:uppercase; line-height:1.25; }
+  .gate small { display:block; margin-bottom:5px; font-size:10px; letter-spacing:0.1em; color:var(--tag); }
+</style></head><body>
+<svg width="1554" height="493" viewBox="0 0 1554 493" fill="none" stroke="#b4b0ae" stroke-width="1">
+  <path d="M250 218.5H416"/><path d="M638 218.5H662"/><path d="M884 218.5H908"/><path d="M1130 218.5H1296"/><path d="M141.5 61V91"/><path d="M529.5 61V91"/><g fill="#b4b0ae" stroke="none"><path d="M420 218.5l-6 -3.5v7z"/><path d="M666 218.5l-6 -3.5v7z"/><path d="M912 218.5l-6 -3.5v7z"/><path d="M1300 218.5l-6 -3.5v7z"/><path d="M141.5 95l-3.5 -6h7z"/><path d="M529.5 95l-3.5 -6h7z"/></g>
+  <g stroke="#8a8685"><path d="M406 218.5V388"/><path d="M1144 218.5V388"/><path d="M1286 218.5V388"/><path d="M1409.5 342V449H141.5V346"/></g><g fill="#8a8685" stroke="none"><path d="M141.5 342l-3.5 6h7z"/><rect x="403" y="215.5" width="6" height="6"/><rect x="1141" y="215.5" width="6" height="6"/><rect x="1283" y="215.5" width="6" height="6"/></g>
+  <g fill="#0d0d0d" stroke="none"></g>
+  <g fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1.75"><path d="M32.5 107.5V95.5H44.5M237.5 95.5H249.5V107.5M249.5 329.5V341.5H237.5M44.5 341.5H32.5V329.5"/><path d="M420.5 107.5V95.5H432.5M625.5 95.5H637.5V107.5M637.5 329.5V341.5H625.5M432.5 341.5H420.5V329.5"/><path d="M666.5 107.5V95.5H678.5M871.5 95.5H883.5V107.5M883.5 329.5V341.5H871.5M678.5 341.5H666.5V329.5"/><path d="M912.5 107.5V95.5H924.5M1117.5 95.5H1129.5V107.5M1129.5 329.5V341.5H1117.5M924.5 341.5H912.5V329.5"/><path d="M1300.5 107.5V95.5H1312.5M1505.5 95.5H1517.5V107.5M1517.5 329.5V341.5H1505.5M1312.5 341.5H1300.5V329.5"/></g>
+</svg>
+
+<div class="card" style="left:32px;top:95px;width:218px;height:247px"><div class="head"><h3>Intake</h3><p class="desc">Reproduces report, then writes a brief.</p></div><div class="skills"><code>triage</code></div></div>
+<div class="card" style="left:420px;top:95px;width:218px;height:247px"><div class="head"><h3>Build</h3><p class="desc">Playbook first, then domain rules.</p></div><div class="skills"><code>eng-principles</code><code class="more">…</code></div><div class="foot"><span class="pill">MCP</span></div></div>
+<div class="card" style="left:666px;top:95px;width:218px;height:247px"><div class="head"><h3>Verify</h3><p class="desc">Tests prove behavior, then the app.</p></div><div class="skills"><code>eng-principles</code><code>tests-by-contract</code></div><div class="foot"><span class="pill">MCP</span></div></div>
+<div class="card" style="left:912px;top:95px;width:218px;height:247px"><div class="head"><h3>Pull Request</h3><p class="desc">Narrow PRs, scored for merge risk.</p></div><div class="skills"><code>git-stack-flow</code><code>neural-antipattern</code></div></div>
+<div class="card" style="left:1300px;top:95px;width:218px;height:247px"><div class="head"><h3>Prune</h3><p class="desc">Deletes the branch once merged.</p></div><div class="skills"><code>git-stack-flow</code></div></div>
+<div class="gate" style="left:335.0px;top:200.5px"><small>Human</small>Dispatch</div>
+<div class="gate" style="left:1215.0px;top:200.5px"><small>Human</small>Review<br>cycle</div>
+<div class="entry" style="left:141.0px;top:61px">External issue / PR</div>
+<div class="entry" style="left:529.0px;top:61px">Direct prompt</div>
+<div class="signal" style="left:406px;top:388px">Brief approved</div>
+<div class="signal" style="left:1144px;top:388px">PR ready</div>
+<div class="signal" style="left:1286px;top:388px">PR merged</div>
+<div class="signal loop" style="left:775.5px;top:449px">Next issue / PR</div>
+</body></html>
